@@ -1,0 +1,3 @@
+Low Tide
+Mid Tide
+High Tide
