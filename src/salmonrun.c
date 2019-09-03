@@ -57,7 +57,7 @@ string_list *bosses = NULL;
 string_list *weapons = NULL;
 
 
-void shift_ReadFromFile(shift **head);
+void shift_ReadAllFromFile(shift **head);
 
 const char* getfield(char* line, int num);
 
@@ -87,12 +87,12 @@ int main (int argc, char *argv) {
 	printf("Loaded all Weapons!\n");
 	
 	shift *head = NULL;
-	shift_ReadFromFile(&head);
+	shift_ReadAllFromFile(&head);
 }
 
 
 
-void shift_ReadFromFile(shift **head) {
+void shift_ReadAllFromFile(shift **head) {
 	FILE *shifts = fopen("salmon.csv", "r");
 	char c;
 	do {
@@ -100,9 +100,9 @@ void shift_ReadFromFile(shift **head) {
 	} while (c != '\n');
 	while (!feof(shifts)) {
 		shift *new = malloc(sizeof(shift));
-		char string[100000];
-		fgets(string, 100000, shifts);
-		char string_two[100000];
+		char string[10000];
+		fgets(string, 10000, shifts);
+		char string_two[10000];
 		strcpy(string_two, string);
 		new->statink_id = atoi(getfield(string_two, 1));
 		strcpy(string_two, string);
@@ -127,21 +127,59 @@ void shift_ReadFromFile(shift **head) {
 		new->title_after_name = string_list_FindIndexByString(titles, getfield(string_two, 16));
 		strcpy(string_two, string);
 		new->title_after_num = atoi(getfield(string_two, 17));
+		// get all general wave info
 		for (int i = 0; i < 3; i++) {
 			strcpy(string_two, string);
-			new->waves[i].event = string_list_FindIndexByString(events, getfield(string_two, 19 + 7 * i));
+			new->waves[i].event = string_list_FindIndexByString(events, getfield(string_two, 19 + 8 * i));
 			strcpy(string_two, string);
-			new->waves[i].water = string_list_FindIndexByString(water_levels, getfield(string_two, 21 + 7 * i));
+			new->waves[i].water = string_list_FindIndexByString(water_levels, getfield(string_two, 21 + 8 * i));
 			strcpy(string_two, string);
-			new->waves[i].quota = atoi(getfield(string_two, 22 + 7 * i));
+			new->waves[i].quota = atoi(getfield(string_two, 22 + 8 * i));
 			strcpy(string_two, string);
-			new->waves[i].delivers = atoi(getfield(string_two, 23 + 7 * i));
+			new->waves[i].delivers = atoi(getfield(string_two, 23 + 8 * i));
 			strcpy(string_two, string);
-			new->waves[i].appearances = atoi(getfield(string_two, 24 + 7 * i));
+			new->waves[i].appearances = atoi(getfield(string_two, 24 + 8 * i));
 			strcpy(string_two, string);
-			new->waves[i].power_eggs = atoi(getfield(string_two, 25 + 7 * i));
+			new->waves[i].power_eggs = atoi(getfield(string_two, 25 + 8 * i));
 		}
-		//printf("%s", string_list_FindStringByIndex(fail_reasons, new->fail_reason));
+		
+		// player reading currently non-functional right now sadly
+		// throws a segfault and I don't know why
+		/*for (int i = 0; i < 4; i++) {
+			strcpy(string_two, string);
+			strcpy(new->players[i].id, getfield(string_two, 42 + 17 * i));
+			strcpy(string_two, string);
+			strcpy(new->players[i].name, getfield(string_two, 43 + 17 * i));
+			
+			for (int j = 0; j < 3; j++) {
+				strcpy(string_two, string);
+				new->players[i].weapon[j] = string_list_FindIndexByString(weapons, getfield(string_two, 45 + 2 * j + 17 * i));
+			}
+			
+			strcpy(string_two, string);
+			new->players[i].special = string_list_FindIndexByString(specials, getfield(string_two, 51 + 17 * i));
+			
+			for (int j = 0; j < 3; j++) {
+				strcpy(string_two, string);
+				new->players[i].special_use[j] = atoi(getfield(string_two, 52 + j + 17 * i));
+			}
+			
+			strcpy(string_two, string);
+			new->players[i].player_rescues = atoi(getfield(string_two, 53 + 17 * i));
+			strcpy(string_two, string);
+			new->players[i].players_rescued = atoi(getfield(string_two, 54 + 17 * i));
+			strcpy(string_two, string);
+			new->players[i].golden_eggs = atoi(getfield(string_two, 55 + 17 * i));
+			strcpy(string_two, string);
+			new->players[i].power_eggs = atoi(getfield(string_two, 56 + 17 * i));
+		}*/
+		
+		// boss appearance reading currently non-functional right now sadly
+		// throws a segfault and I don't know why
+		/*for (int i = 0; i < 9; i++) {
+			new->boss_appearances[i] = atoi(getfield(string_two, 110 + i * 5));
+		}*/
+		
 		new->next == NULL;
 		new->prev == NULL;
 		if (!(*head)) {
