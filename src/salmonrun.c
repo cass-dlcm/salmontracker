@@ -143,9 +143,7 @@ void shift_ReadAllFromFile(shift **head) {
 			new->waves[i].power_eggs = atoi(getfield(string_two, 25 + 8 * i));
 		}
 		
-		// player reading currently non-functional right now sadly
-		// throws a segfault and I don't know why
-		/*for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			strcpy(string_two, string);
 			strcpy(new->players[i].id, getfield(string_two, 42 + 17 * i));
 			strcpy(string_two, string);
@@ -172,13 +170,12 @@ void shift_ReadAllFromFile(shift **head) {
 			new->players[i].golden_eggs = atoi(getfield(string_two, 55 + 17 * i));
 			strcpy(string_two, string);
 			new->players[i].power_eggs = atoi(getfield(string_two, 56 + 17 * i));
-		}*/
+		}
 		
-		// boss appearance reading currently non-functional right now sadly
-		// throws a segfault and I don't know why
-		/*for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 9; i++) {
+			strcpy(string_two, string);
 			new->boss_appearances[i] = atoi(getfield(string_two, 110 + i * 5));
-		}*/
+		}
 		
 		new->next == NULL;
 		new->prev == NULL;
@@ -193,6 +190,7 @@ void shift_ReadAllFromFile(shift **head) {
 			new->prev = temp;
 		}
 	}
+	printf("Loaded all Shifts!\n");
 }
 
 
@@ -206,5 +204,5 @@ const char* getfield(char* line, int num)
         if (!--num)
             return tok;
     }
-    return NULL;
+    return "";
 }
