@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include "string_list.h"
-
+#include "zString-master/zstring_strtok.h"
 
 typedef struct wave {
 	short event;
@@ -69,12 +69,12 @@ char* getfield(char* line, int num);
 
 int main (int argc, char *argv) {
 	Init();
-	
+
 	shift *head = NULL;
 	int shift_count = shift_ReadAllFromFile(&head);
 	shift *working_set_a;
 	shift *working_set_b;
-	
+
 	printf("\n\nWelcome to the Salmon Run Match Analyzer!\n");
 	int input = -1;
 	printf("Please select a subset of matches to work with.\n");
@@ -139,25 +139,25 @@ int main (int argc, char *argv) {
 void Init() {
 	string_list_ReadFromFile(&stages, "stages.txt");
 	printf("Loaded all Stages!\n");
-	
+
 	string_list_ReadFromFile(&fail_reasons, "fail_reasons.txt");
 	printf("Loaded all Fail Reasons!\n");
-	
+
 	string_list_ReadFromFile(&titles, "titles.txt");
 	printf("Loaded all Titles!\n");
-	
+
 	string_list_ReadFromFile(&events, "events.txt");
 	printf("Loaded all Events!\n");
-	
+
 	string_list_ReadFromFile(&water_levels, "water_levels.txt");
 	printf("Loaded all Water Levels!\n");
-	
+
 	string_list_ReadFromFile(&specials, "specials.txt");
 	printf("Loaded all Specials!\n");
-	
+
 	string_list_ReadFromFile(&bosses, "bosses.txt");
 	printf("Loaded all Bosses!\n");
-	
+
 	string_list_ReadFromFile(&weapons, "weapons.txt");
 	printf("Loaded all Weapons!\n");
 }
@@ -214,26 +214,26 @@ int shift_ReadAllFromFile(shift **head) {
 			strcpy(string_two, string);
 			new->waves[i].power_eggs = atoi(getfield(string_two, 25 + 8 * i));
 		}
-		
+
 		for (int i = 0; i < 4; i++) {
 			strcpy(string_two, string);
 			strcpy(new->players[i].id, getfield(string_two, 42 + 17 * i));
 			strcpy(string_two, string);
 			strcpy(new->players[i].name, getfield(string_two, 43 + 17 * i));
-			
+
 			for (int j = 0; j < 3; j++) {
 				strcpy(string_two, string);
 				new->players[i].weapon[j] = string_list_FindIndexByString(weapons, getfield(string_two, 45 + 2 * j + 17 * i));
 			}
-			
+
 			strcpy(string_two, string);
 			new->players[i].special = string_list_FindIndexByString(specials, getfield(string_two, 51 + 17 * i));
-			
+
 			for (int j = 0; j < 3; j++) {
 				strcpy(string_two, string);
 				new->players[i].special_use[j] = atoi(getfield(string_two, 52 + j + 17 * i));
 			}
-			
+
 			strcpy(string_two, string);
 			new->players[i].player_rescues = atoi(getfield(string_two, 53 + 17 * i));
 			strcpy(string_two, string);
@@ -243,12 +243,12 @@ int shift_ReadAllFromFile(shift **head) {
 			strcpy(string_two, string);
 			new->players[i].power_eggs = atoi(getfield(string_two, 56 + 17 * i));
 		}
-		
+
 		for (int i = 0; i < 9; i++) {
 			strcpy(string_two, string);
 			new->boss_appearances[i] = atoi(getfield(string_two, 110 + i * 5));
 		}
-		
+
 		new->next == NULL;
 		new->prev == NULL;
 		if (!(*head)) {
@@ -378,7 +378,7 @@ shift* shift_FindAllByHazardLevel(shift *head, double lower, double upper) {
 }
 
 double shift_WavePercent(shift *head, int wave) {
-	int count = 0;
+	double count = 0;
 	double total = 0;
 	while (head) {
 		if (head->clear_wave >= wave) {
@@ -391,12 +391,13 @@ double shift_WavePercent(shift *head, int wave) {
 }
 
 // taken from stack overflow (https://stackoverflow.com/a/12911465)
+// modified to use zString tokenizer
 char* getfield(char* line, int num)
 {
     char* tok;
-    for (tok = strtok(line, ",");
+    for (tok = zstring_strtok(line, ",");
             tok && *tok;
-            tok = strtok(NULL, ",\n"))
+            tok = zstring_strtok(NULL, ",\n"))
     {
         if (!--num)
             return tok;

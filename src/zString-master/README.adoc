@@ -1,0 +1,100 @@
+== About zString
+
+zString is a C library providing _slightly_ different functionality than the standard library string processing functions.
+
+zString does not aim to replace standard library string functions, rather introduces new functions with different capabilities (such as `zstring_strtok()`)
+
+zString is developed by mailto:fnoyanisi@yahoo.com[Fehmi Noyan ISI]
+
+== Version History
+* *version 1.8.3 - (Aug 2018)*   
+** minor changes to improve run time
+** zstring_trim() reimplemented by using zstring_ltrim() and zstrin_rtrim()
+
+* *version 1.8.2 - (July 2018)*   
+** gitignore file added 
+** several optimizations to reduce the run time 
+** some style changes (based on style(9) of FreeBSD) 
+
+* *version 1.8.1 - (Jan 2017)*   
+** Fixed typos in comments and README file
+** LICENSE file added to the repo
+** License for zstring_remove_chr.h has been updated as 2-Clause BSD License
+** Changes in version 1.8.1 submitted by GitHub user tbeu 
+
+* *version 1.8 - (Oct 2016)*   
+** trim family functions are isspace(3) compatible 
+** added input validation checks for most of the functions  
+
+* *version 1.7 - (Oct 2016)*   
+** Used _const char*_ instead of _char*_ where possible
+** performed a lint(1) check and cleared discrepancies  
+
+* *version 1.6 - (Feb 2016)*   
+** Library is licensed with 2-Clause BSD License
+** zstring_trim() added
+** zstring_ltrim() added
+** zstring_rtrim() added
+
+* *version 1.5 - (Feb 2016)*   
+** zstring_strtok_dquotes() added
+** zstring_replace_chr() added
+** zstring_replace_str() added
+
+* *version 1.4 - (Jan 2016)*   
+** Updated zstring_search_chr() to make the library compatible with llvm/clang
+
+* *version 1.3*	
+** Bug fixes
+
+* *version 1.2*	
+** Performance improvements for zstring_remove_chr()
+
+* *version 1.1*	
+** Additions
+
+* *version 1.0 - (Nov 2012)*	
+** First version
+
+== Functions and Usage 
+
+It is enough to include `zstring.h` in your code. Alternatively, any header file can be included separately for the respective function defined in it.
+
+Refer the individual header file for the function to get more details on its usage and arguments.
+
+zstring_search_chr(char *token, char s)::
+Searches for character `s` in string `token`.
+
+zstring_remove_chr(char *str,char *bad)::
+Removes characters contained in string `bad`, from string `str`. Each
+character in `bad` is searched separately. 
+
+zstring_strtok(char *str, const char *delim)::
+An alternative to standard library's `strtok()` function that is also capable of
+handling successive delimiters.
+
+zstring_strtok_dquotes(char *str, const char *delim, const char quote)::
+Extended version of `zStrtok()` that treats any text enclosed within `quote`
+characters as a single entry even if `delim` is included in it. 
+
+zstring_replace_chr(char *str, char x, char y)::
+Replaces every occurrence of character `x` with character `y` within string `str`.
+
+zstring_replace_str(char *str, char *x, char *y)::
+Replaces every occurrence of string `x` with string `y` within string `str`.
+
+zstring_trim(char *str)::
+Trims leading and trailing white-space characters from the character string `str`.
+
+zstring_ltrim(char *str)::
+Trims leading white-space characters from the character string `str`.
+
+zstring_rtrim(char *str)::
+Trims trailing white-space characters from the character string `str`.
+
+== License
+
+zString can be distributed, modified and used under the terms of 2-clause BSD license (FreeBSD license). 
+
+Fehmi Noyan ISI
+mailto:fnoyanisi@yahoo.com[fnoyanisi@yahoo.com] 

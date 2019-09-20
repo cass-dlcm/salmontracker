@@ -33,7 +33,7 @@ void string_list_ReadFromFile(string_list **head, char *file_name) {
 void string_list_PrintAll(string_list *head) {
 	int i = 0;
 	while (head) {
-		if (strcmp(head->string, "\n") != 0 && strcmp(head->string, "") != 0){
+		if (strcmp(head->string, "\n") != 0 && strcmp(head->string, "\r\n") != 0 && strcmp(head->string, "") != 0){
 			printf("[%d]: %s", i, head->string);
 			i++;
 		}
