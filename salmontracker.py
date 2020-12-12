@@ -84,8 +84,35 @@ def hasWeapon(weapon: str) -> bool:
             (len(var["teammates"][2]["weapons"]) > 1 and var["teammates"][2]["weapons"][1]["key"] == weapon) or
             (len(var["teammates"][2]["weapons"]) > 2 and var["teammates"][2]["weapons"][2]["key"] == weapon))))
 
+def doesntHaveWeapon(weapon: str) -> bool:
+    return lambda var: not (
+        var["my_data"]["weapons"][0]["key"] == weapon or
+        (len(var["my_data"]["weapons"]) > 1 and var["my_data"]["weapons"][1]["key"] == weapon) or
+        (len(var["my_data"]["weapons"]) > 2 and var["my_data"]["weapons"][2]["key"] == weapon) or
+        (len(var["teammates"]) > 0 and var["teammates"][0]["weapons"] != None and (
+            var["teammates"][0]["weapons"][0]["key"] == weapon or
+            (len(var["teammates"][0]["weapons"]) > 1 and var["teammates"][0]["weapons"][1]["key"] == weapon) or
+            (len(var["teammates"][0]["weapons"]) > 2 and var["teammates"][0]["weapons"][2]["key"] == weapon))) or
+        (len(var["teammates"]) > 1 and var["teammates"][1]["weapons"] != None and (
+            var["teammates"][1]["weapons"][0]["key"] == weapon or
+            (len(var["teammates"][1]["weapons"]) > 1 and var["teammates"][1]["weapons"][1]["key"] == weapon) or
+            (len(var["teammates"][1]["weapons"]) > 2 and var["teammates"][1]["weapons"][2]["key"] == weapon))) or
+        (len(var["teammates"]) > 2 and var["teammates"][2]["weapons"] != None and (
+            var["teammates"][2]["weapons"][0]["key"] == weapon or
+            (len(var["teammates"][2]["weapons"]) > 1 and var["teammates"][2]["weapons"][1]["key"] == weapon) or
+            (len(var["teammates"][2]["weapons"]) > 2 and var["teammates"][2]["weapons"][2]["key"] == weapon))))
+
 def usesWeapon(weapon: str) -> bool:
-    return lambda var: (var["my_data"]["weapons"][0]["key"] == weapon or var["my_data"]["weapons"][1]["key"] or var["my_data"]["weapons"][2]["key"])
+    return lambda var: (
+        var["my_data"]["weapons"][0]["key"] == weapon or
+        (len(var["my_data"]["weapons"]) > 1 and var["my_data"]["weapons"][1]["key"] == weapon) or
+        (len(var["my_data"]["weapons"]) > 2 and var["my_data"]["weapons"][2]["key"] == weapon))
+
+def doesntUseWeapon(weapon: str) -> bool:
+    return lambda var: not (
+        var["my_data"]["weapons"][0]["key"] == weapon or
+        (len(var["my_data"]["weapons"]) > 1 and var["my_data"]["weapons"][1]["key"] == weapon) or
+        (len(var["my_data"]["weapons"]) > 2 and var["my_data"]["weapons"][2]["key"] == weapon))
 
 def findPlayerIdByName(data: list, player: str) -> list:
     foundIds: list = []
@@ -364,7 +391,7 @@ def init() -> list:
 
 #json.dump(data, open("salmon.json", "w"))
 data = init()
-hasChosenWeapon = list(filter(hasWeapon(utility.weaponNameToKey("", locale)), data))
+hasChosenWeapon = list(filter(doesntUseWeapon(utility.weaponNameToKey("Grizzco Charger", locale)), data))
 printOverview(hasChosenWeapon)
 """for job in data:
     printGeneral(job)
