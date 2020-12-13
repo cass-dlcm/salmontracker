@@ -469,6 +469,24 @@ def lessThanClearWave(wave: int) -> bool:
 def notLessThanClearWave(wave: int) -> bool:
     return lambda var: not (var["clear_waves"] < wave)
 
+def dangerRate(wave: int) -> bool:
+    return lambda var: var["danger_rate"] == wave
+
+def notDangerRate(wave: int) -> bool:
+    return lambda var: not (var["danger_rate"] == wave)
+
+def greaterThanDangerRate(wave: int) -> bool:
+    return lambda var: var["danger_rate"] > wave
+
+def notGreaterThanDangerRate(wave: int) -> bool:
+    return lambda var: not (var["danger_rate"] > wave)
+
+def lessThanDangerRate(wave: int) -> bool:
+    return lambda var: var["danger_rate"] < wave
+
+def notLessThandDangerRate(wave: int) -> bool:
+    return lambda var: not (var["danger_rate"] < wave)
+
 def splatnet_number(num: int) -> bool:
     return lambda var: var["splatnet_number"] == num
 
@@ -717,9 +735,10 @@ def init() -> list:
 
 
 #json.dump(data, open("salmon.json", "w"))
-data = init()
-rotations = findRotationByWeaponsAndStage(data, ("Grizzco Charger", "Grizzco Brella", "Grizzco Blaster", "Grizzco Slosher"), "Ruins of Ark Polaris")
-printOverview(list(filter(duringRotationInt(rotations[1]), data)))
+if __name__ == "__main__":
+    data = init()
+    rotations = findRotationByWeaponsAndStage(data, ("Grizzco Charger", "Grizzco Brella", "Grizzco Blaster", "Grizzco Slosher"), "Ruins of Ark Polaris")
+    printOverview(list(filter(dangerRate("200.0"), list(filter(duringRotationInt(rotations[1]), data)))))
 """for job in data:
     printGeneral(job)
     print()
