@@ -58,88 +58,416 @@ def fetchNew(recentId: int) -> list:
     return data
 
 def hasPlayer(player: str) -> bool:
-    return lambda var: var["teammates"][0]["splatnet_id"] == player or (len(var["teammates"]) > 1 and var["teammates"][1]["splatnet_id"] == player) or (len(var["teammates"]) > 2 and var["teammates"][2]["splatnet_id"] == player)
+    return lambda var: (
+        var["teammates"][0]["splatnet_id"] == player or (
+            len(var["teammates"]) > 1 and
+            var["teammates"][1]["splatnet_id"] == player
+        ) or (
+            len(var["teammates"]) > 2 and
+            var["teammates"][2]["splatnet_id"] == player
+        )
+    )
 
 def withoutPlayer(player: str) -> bool:
-    return lambda var: var["teammates"][0]["splatnet_id"] != player and ((len(var["teammates"]) > 1 and var["teammates"][1]["splatnet_id"] != player) or (len(var["teammates"]) < 2)) and ((len(var["teammates"]) > 2 and var["teammates"][2]["splatnet_id"] != player) or (len(var["teammates"]) < 3))
+    return lambda var: not (
+        var["teammates"][0]["splatnet_id"] == player or (
+            len(var["teammates"]) > 1 and
+            var["teammates"][1]["splatnet_id"] == player
+        ) or (
+            len(var["teammates"]) > 2 and
+            var["teammates"][2]["splatnet_id"] == player
+        )
+    )
 
 def hasPlayerByName(player: str) -> bool:
-    return lambda var: var["teammates"][0]["name"] == player or (len(var["teammates"]) > 1 and var["teammates"][1]["name"] == player) or (len(var["teammates"]) > 2 and var["teammates"][2]["name"] == player)
+    return lambda var: (
+        var["teammates"][0]["name"] == player or (
+            len(var["teammates"]) > 1 and
+            var["teammates"][1]["name"] == player
+        ) or (
+            len(var["teammates"]) > 2 and
+            var["teammates"][2]["name"] == player
+        )
+    )
+
+def findRotationByWeaponsAndStage(data: list, weapons: list, stage: str) -> list:
+    foundRotations = []
+    for job in data:
+        found = (
+            job["stage"]["key"] == stage or
+            job["stage"]["name"][locale] == stage
+        )
+        for weapon in weapons:
+            found = found and (
+                job["my_data"]["weapons"][0]["key"] == weapon or (
+                    len(job["my_data"]["weapons"]) > 1 and
+                    job["my_data"]["weapons"][1]["key"] == weapon
+                ) or (
+                    len(job["my_data"]["weapons"]) > 2 and
+                    job["my_data"]["weapons"][2]["key"] == weapon
+                ) or (
+                    len(job["teammates"]) > 0 and
+                    job["teammates"][0]["weapons"] != None and (
+                        job["teammates"][0]["weapons"][0]["key"] == weapon or (
+                            len(job["teammates"][0]["weapons"]) > 1 and
+                            job["teammates"][0]["weapons"][1]["key"] == weapon
+                        ) or (
+                            len(job["teammates"][0]["weapons"]) > 2 and
+                            job["teammates"][0]["weapons"][2]["key"] == weapon
+                        )
+                    )
+                ) or (
+                    len(job["teammates"]) > 1 and
+                    job["teammates"][1]["weapons"] != None and (
+                        job["teammates"][1]["weapons"][0]["key"] == weapon or (
+                            len(job["teammates"][1]["weapons"]) > 1 and
+                            job["teammates"][1]["weapons"][1]["key"] == weapon
+                        ) or (
+                            len(job["teammates"][1]["weapons"]) > 2 and
+                            job["teammates"][1]["weapons"][2]["key"] == weapon
+                        )
+                    )
+                ) or (
+                    len(job["teammates"]) > 2 and job["teammates"][2]["weapons"] != None and (
+                        job["teammates"][2]["weapons"][0]["key"] == weapon or (
+                            len(job["teammates"][2]["weapons"]) > 1 and
+                            job["teammates"][2]["weapons"][1]["key"] == weapon
+                        ) or (
+                            len(job["teammates"][2]["weapons"]) > 2 and
+                            job["teammates"][2]["weapons"][2]["key"] == weapon
+                        )
+                    )
+                ) or
+                job["my_data"]["weapons"][0]["name"][locale] == weapon or(
+                    len(job["my_data"]["weapons"]) > 1 and
+                    job["my_data"]["weapons"][1]["name"][locale] == weapon
+                ) or (
+                    len(job["my_data"]["weapons"]) > 2 and
+                    job["my_data"]["weapons"][2]["name"][locale] == weapon
+                ) or (
+                    len(job["teammates"]) > 0 and
+                    job["teammates"][0]["weapons"] != None and (
+                        job["teammates"][0]["weapons"][0]["name"][locale] == weapon or (
+                            len(job["teammates"][0]["weapons"]) > 1 and
+                            job["teammates"][0]["weapons"][1]["name"][locale] == weapon
+                        ) or (
+                            len(job["teammates"][0]["weapons"]) > 2 and
+                            job["teammates"][0]["weapons"][2]["name"][locale] == weapon
+                        )
+                    )
+                ) or (
+                    len(job["teammates"]) > 1 and
+                    job["teammates"][1]["weapons"] != None and (
+                        job["teammates"][1]["weapons"][0]["name"][locale] == weapon or
+                        (
+                            len(job["teammates"][1]["weapons"]) > 1 and
+                            job["teammates"][1]["weapons"][1]["name"][locale] == weapon
+                        ) or (
+                            len(job["teammates"][1]["weapons"]) > 2 and
+                            job["teammates"][1]["weapons"][2]["name"][locale] == weapon
+                        )
+                    )
+                ) or (
+                    len(job["teammates"]) > 2 and
+                    job["teammates"][2]["weapons"] != None and (
+                        job["teammates"][2]["weapons"][0]["name"][locale] == weapon or (
+                            len(job["teammates"][2]["weapons"]) > 1 and
+                            job["teammates"][2]["weapons"][1]["name"][locale] == weapon
+                        ) or (
+                            len(job["teammates"][2]["weapons"]) > 2 and
+                            job["teammates"][2]["weapons"][2]["name"][locale] == weapon
+                        )
+                    )
+                )
+            )
+        if (
+            found and
+            job["shift_start_at"]["time"] not in foundRotations
+        ):
+            foundRotations.append(job["shift_start_at"]["time"])
+    return foundRotations
 
 def hasWeapon(weapon: str) -> bool:
     return lambda var: (
-        var["my_data"]["weapons"][0]["key"] == weapon or
-        (len(var["my_data"]["weapons"]) > 1 and var["my_data"]["weapons"][1]["key"] == weapon) or
-        (len(var["my_data"]["weapons"]) > 2 and var["my_data"]["weapons"][2]["key"] == weapon) or
-        (len(var["teammates"]) > 0 and var["teammates"][0]["weapons"] != None and (
-            var["teammates"][0]["weapons"][0]["key"] == weapon or
-            (len(var["teammates"][0]["weapons"]) > 1 and var["teammates"][0]["weapons"][1]["key"] == weapon) or
-            (len(var["teammates"][0]["weapons"]) > 2 and var["teammates"][0]["weapons"][2]["key"] == weapon))) or
-        (len(var["teammates"]) > 1 and var["teammates"][1]["weapons"] != None and (
-            var["teammates"][1]["weapons"][0]["key"] == weapon or
-            (len(var["teammates"][1]["weapons"]) > 1 and var["teammates"][1]["weapons"][1]["key"] == weapon) or
-            (len(var["teammates"][1]["weapons"]) > 2 and var["teammates"][1]["weapons"][2]["key"] == weapon))) or
-        (len(var["teammates"]) > 2 and var["teammates"][2]["weapons"] != None and (
-            var["teammates"][2]["weapons"][0]["key"] == weapon or
-            (len(var["teammates"][2]["weapons"]) > 1 and var["teammates"][2]["weapons"][1]["key"] == weapon) or
-            (len(var["teammates"][2]["weapons"]) > 2 and var["teammates"][2]["weapons"][2]["key"] == weapon))))
+        var["my_data"]["weapons"][0]["key"] == weapon or (
+            len(var["my_data"]["weapons"]) > 1 and
+            var["my_data"]["weapons"][1]["key"] == weapon
+        ) or (
+            len(var["my_data"]["weapons"]) > 2 and
+            var["my_data"]["weapons"][2]["key"] == weapon
+        ) or (
+            len(var["teammates"]) > 0 and
+            var["teammates"][0]["weapons"] != None and (
+                var["teammates"][0]["weapons"][0]["key"] == weapon or
+                (
+                    len(var["teammates"][0]["weapons"]) > 1 and
+                    var["teammates"][0]["weapons"][1]["key"] == weapon
+                ) or (
+                    len(var["teammates"][0]["weapons"]) > 2 and
+                    var["teammates"][0]["weapons"][2]["key"] == weapon
+                )
+            )
+        ) or (
+            len(var["teammates"]) > 1 and
+            var["teammates"][1]["weapons"] != None and (
+                var["teammates"][1]["weapons"][0]["key"] == weapon or (
+                    len(var["teammates"][1]["weapons"]) > 1 and 
+                    var["teammates"][1]["weapons"][1]["key"] == weapon
+                ) or (
+                    len(var["teammates"][1]["weapons"]) > 2 and
+                    var["teammates"][1]["weapons"][2]["key"] == weapon
+                )
+            )
+        ) or (
+            len(var["teammates"]) > 2 and
+            var["teammates"][2]["weapons"] != None and (
+                var["teammates"][2]["weapons"][0]["key"] == weapon or (
+                    len(var["teammates"][2]["weapons"]) > 1 and
+                    var["teammates"][2]["weapons"][1]["key"] == weapon
+                ) or (
+                    len(var["teammates"][2]["weapons"]) > 2 and
+                    var["teammates"][2]["weapons"][2]["key"] == weapon
+                )
+            )
+        ) or
+        var["my_data"]["weapons"][0]["name"][locale] == weapon or (
+            len(var["my_data"]["weapons"]) > 1 and
+            var["my_data"]["weapons"][1]["name"][locale] == weapon
+        ) or (
+            len(var["my_data"]["weapons"]) > 2 and
+            var["my_data"]["weapons"][2]["name"][locale] == weapon
+        ) or (
+            len(var["teammates"]) > 0 and
+            var["teammates"][0]["weapons"] != None and (
+                var["teammates"][0]["weapons"][0]["name"][locale] == weapon or
+                (
+                    len(var["teammates"][0]["weapons"]) > 1 and
+                    var["teammates"][0]["weapons"][1]["name"][locale] == weapon
+                ) or (
+                    len(var["teammates"][0]["weapons"]) > 2 and
+                    var["teammates"][0]["weapons"][2]["name"][locale] == weapon
+                )
+            )
+        ) or (
+            len(var["teammates"]) > 1 and
+            var["teammates"][1]["weapons"] != None and (
+                var["teammates"][1]["weapons"][0]["name"][locale] == weapon or
+                (
+                    len(var["teammates"][1]["weapons"]) > 1 and
+                    var["teammates"][1]["weapons"][1]["name"][locale] == weapon
+                ) or (
+                    len(var["teammates"][1]["weapons"]) > 2 and
+                    var["teammates"][1]["weapons"][2]["name"][locale] == weapon
+                )
+            )
+        ) or (
+            len(var["teammates"]) > 2 and
+            var["teammates"][2]["weapons"] != None and (
+                var["teammates"][2]["weapons"][0]["name"][locale] == weapon or
+                (
+                    len(var["teammates"][2]["weapons"]) > 1 and
+                    var["teammates"][2]["weapons"][1]["name"][locale] == weapon
+                ) or (
+                    len(var["teammates"][2]["weapons"]) > 2 and
+                    var["teammates"][2]["weapons"][2]["name"][locale] == weapon
+                )
+            )
+        )
+    )
 
 def doesntHaveWeapon(weapon: str) -> bool:
     return lambda var: not (
-        var["my_data"]["weapons"][0]["key"] == weapon or
-        (len(var["my_data"]["weapons"]) > 1 and var["my_data"]["weapons"][1]["key"] == weapon) or
-        (len(var["my_data"]["weapons"]) > 2 and var["my_data"]["weapons"][2]["key"] == weapon) or
-        (len(var["teammates"]) > 0 and var["teammates"][0]["weapons"] != None and (
-            var["teammates"][0]["weapons"][0]["key"] == weapon or
-            (len(var["teammates"][0]["weapons"]) > 1 and var["teammates"][0]["weapons"][1]["key"] == weapon) or
-            (len(var["teammates"][0]["weapons"]) > 2 and var["teammates"][0]["weapons"][2]["key"] == weapon))) or
-        (len(var["teammates"]) > 1 and var["teammates"][1]["weapons"] != None and (
-            var["teammates"][1]["weapons"][0]["key"] == weapon or
-            (len(var["teammates"][1]["weapons"]) > 1 and var["teammates"][1]["weapons"][1]["key"] == weapon) or
-            (len(var["teammates"][1]["weapons"]) > 2 and var["teammates"][1]["weapons"][2]["key"] == weapon))) or
-        (len(var["teammates"]) > 2 and var["teammates"][2]["weapons"] != None and (
-            var["teammates"][2]["weapons"][0]["key"] == weapon or
-            (len(var["teammates"][2]["weapons"]) > 1 and var["teammates"][2]["weapons"][1]["key"] == weapon) or
-            (len(var["teammates"][2]["weapons"]) > 2 and var["teammates"][2]["weapons"][2]["key"] == weapon))))
+        var["my_data"]["weapons"][0]["key"] == weapon or (
+            len(var["my_data"]["weapons"]) > 1 and
+            var["my_data"]["weapons"][1]["key"] == weapon
+        ) or (
+            len(var["my_data"]["weapons"]) > 2 and
+            var["my_data"]["weapons"][2]["key"] == weapon
+        ) or (
+            len(var["teammates"]) > 0 and
+            var["teammates"][0]["weapons"] != None and (
+                var["teammates"][0]["weapons"][0]["key"] == weapon or
+                (
+                    len(var["teammates"][0]["weapons"]) > 1 and
+                    var["teammates"][0]["weapons"][1]["key"] == weapon
+                ) or (
+                    len(var["teammates"][0]["weapons"]) > 2 and
+                    var["teammates"][0]["weapons"][2]["key"] == weapon
+                )
+            )
+        ) or (
+            len(var["teammates"]) > 1 and
+            var["teammates"][1]["weapons"] != None and (
+                var["teammates"][1]["weapons"][0]["key"] == weapon or (
+                    len(var["teammates"][1]["weapons"]) > 1 and 
+                    var["teammates"][1]["weapons"][1]["key"] == weapon
+                ) or (
+                    len(var["teammates"][1]["weapons"]) > 2 and
+                    var["teammates"][1]["weapons"][2]["key"] == weapon
+                )
+            )
+        ) or (
+            len(var["teammates"]) > 2 and
+            var["teammates"][2]["weapons"] != None and (
+                var["teammates"][2]["weapons"][0]["key"] == weapon or (
+                    len(var["teammates"][2]["weapons"]) > 1 and
+                    var["teammates"][2]["weapons"][1]["key"] == weapon
+                ) or (
+                    len(var["teammates"][2]["weapons"]) > 2 and
+                    var["teammates"][2]["weapons"][2]["key"] == weapon
+                )
+            )
+        ) or
+        var["my_data"]["weapons"][0]["name"][locale] == weapon or (
+            len(var["my_data"]["weapons"]) > 1 and
+            var["my_data"]["weapons"][1]["name"][locale] == weapon
+        ) or (
+            len(var["my_data"]["weapons"]) > 2 and
+            var["my_data"]["weapons"][2]["name"][locale] == weapon
+        ) or (
+            len(var["teammates"]) > 0 and
+            var["teammates"][0]["weapons"] != None and (
+                var["teammates"][0]["weapons"][0]["name"][locale] == weapon or
+                (
+                    len(var["teammates"][0]["weapons"]) > 1 and
+                    var["teammates"][0]["weapons"][1]["name"][locale] == weapon
+                ) or (
+                    len(var["teammates"][0]["weapons"]) > 2 and
+                    var["teammates"][0]["weapons"][2]["name"][locale] == weapon
+                )
+            )
+        ) or (
+            len(var["teammates"]) > 1 and
+            var["teammates"][1]["weapons"] != None and (
+                var["teammates"][1]["weapons"][0]["name"][locale] == weapon or
+                (
+                    len(var["teammates"][1]["weapons"]) > 1 and
+                    var["teammates"][1]["weapons"][1]["name"][locale] == weapon
+                ) or (
+                    len(var["teammates"][1]["weapons"]) > 2 and
+                    var["teammates"][1]["weapons"][2]["name"][locale] == weapon
+                )
+            )
+        ) or (
+            len(var["teammates"]) > 2 and
+            var["teammates"][2]["weapons"] != None and (
+                var["teammates"][2]["weapons"][0]["name"][locale] == weapon or
+                (
+                    len(var["teammates"][2]["weapons"]) > 1 and
+                    var["teammates"][2]["weapons"][1]["name"][locale] == weapon
+                ) or (
+                    len(var["teammates"][2]["weapons"]) > 2 and
+                    var["teammates"][2]["weapons"][2]["name"][locale] == weapon
+                )
+            )
+        )
+    )
 
 def usesWeapon(weapon: str) -> bool:
-    return lambda var: (
-        var["my_data"]["weapons"][0]["key"] == weapon or
-        (len(var["my_data"]["weapons"]) > 1 and var["my_data"]["weapons"][1]["key"] == weapon) or
-        (len(var["my_data"]["weapons"]) > 2 and var["my_data"]["weapons"][2]["key"] == weapon))
+    return lambda var: (var["my_data"]["weapons"][0]["key"] == weapon or (
+            len(var["my_data"]["weapons"]) > 1 and
+            var["my_data"]["weapons"][1]["key"] == weapon
+        ) or (
+            len(var["my_data"]["weapons"]) > 2 and
+            var["my_data"]["weapons"][2]["key"] == weapon
+        ) or
+        var["my_data"]["weapons"][0]["name"][locale] == weapon or (
+            len(var["my_data"]["weapons"]) > 1 and
+            var["my_data"]["weapons"][1]["name"][locale] == weapon
+        ) or (
+            len(var["my_data"]["weapons"]) > 2 and
+            var["my_data"]["weapons"][2]["name"][locale] == weapon
+        )
+    )
 
 def doesntUseWeapon(weapon: str) -> bool:
-    return lambda var: not (
-        var["my_data"]["weapons"][0]["key"] == weapon or
-        (len(var["my_data"]["weapons"]) > 1 and var["my_data"]["weapons"][1]["key"] == weapon) or
-        (len(var["my_data"]["weapons"]) > 2 and var["my_data"]["weapons"][2]["key"] == weapon))
+    return lambda var: not (var["my_data"]["weapons"][0]["key"] == weapon or (
+            len(var["my_data"]["weapons"]) > 1 and
+            var["my_data"]["weapons"][1]["key"] == weapon
+        ) or (
+            len(var["my_data"]["weapons"]) > 2 and
+            var["my_data"]["weapons"][2]["key"] == weapon
+        ) or
+        var["my_data"]["weapons"][0]["name"][locale] == weapon or (
+            len(var["my_data"]["weapons"]) > 1 and
+            var["my_data"]["weapons"][1]["name"][locale] == weapon
+        ) or (
+            len(var["my_data"]["weapons"]) > 2 and
+            var["my_data"]["weapons"][2]["name"][locale] == weapon
+        )
+    )
 
 def findPlayerIdByName(data: list, player: str) -> list:
     foundIds: list = []
     matches = list(filter(hasPlayerByName(player), data))
     for match in matches:
         for teammate in match["teammates"]:
-            if teammate["name"] == player and teammate["splatnet_id"] not in foundIds:
+            if (
+                teammate["name"] == player and
+                teammate["splatnet_id"] not in foundIds
+            ):
                 foundIds.append(teammate["splatnet_id"])
     return foundIds
 
 def onStage(stage: str) -> bool:
-    return lambda var: var["stage_name"] == stage or var["stage_key"] == stage
+    return lambda var: (
+        var["stage"]["key"] == stage or
+        var["stage"]["name"][locale] == stage
+    )
+
+def notOnStage(stage: str) -> bool:
+    return lambda var: not (
+        var["stage"]["key"] == stage or
+        var["stage"]["name"][locale] == stage
+    )
 
 def withSpecial(special: str) -> bool:
-    return lambda var: var["player_special"] == special or var["player_special__1"] == special
+    return lambda var: (
+        var["my_data"]["special"]["key"] == special or
+        var["my_data"]["special"]["name"][locale] == special
+    )
 
-def withWeapon(weapon: str) -> bool:
-    return lambda var: var["player_w1_weapon"] == weapon or var["player_w1_weapon__1"] == weapon or var["player_w2_weapon"] == weapon or var["player_w2_weapon__1"] == weapon or var["player_w3_weapon"] == weapon or var["player_w3_weapon__1"] == weapon
+def withoutSpecial(special: str) -> bool:
+    return lambda var: not (
+        var["my_data"]["special"]["key"] == special or
+        var["my_data"]["special"]["name"][locale] == special
+    )
 
 def failReason(reason: str) -> bool:
-    return lambda var: var["fail_reason"] == reason or var["fail_reason__1"] == reason
+    return lambda var: var["fail_reason"] == reason
 
-def rotationPeriod(rotation: int) -> bool:
-    return lambda var: var["rotation_period"] == rotation
+def notFailReason(reason: str) -> bool:
+    return lambda var: not (var["fail_reason"] == reason)
+
+def duringRotationInt(rotation: int) -> bool:
+    return lambda var: var["shift_start_at"]["time"] == rotation
+
+def duringRotationStr(rotation: str) -> bool:
+    return lambda var: var["shift_start_at"]["iso8601"] == rotation
+
+def notDuringRotationInt(rotation: int) -> bool:
+    return lambda var: not (var["shift_start_at"]["time"] == rotation)
+
+def notDuringRotationStr(rotation: str) -> bool:
+    return lambda var: not (var["shift_start_at"]["iso8601"] == rotation)
 
 def clearWave(wave: int) -> bool:
     return lambda var: var["clear_waves"] == wave
+
+def notClearWave(wave: int) -> bool:
+    return lambda var: not (var["clear_waves"] == wave)
+
+def greaterThanClearWave(wave: int) -> bool:
+    return lambda var: var["clear_waves"] > wave
+
+def notGreaterThanClearWave(wave: int) -> bool:
+    return lambda var: not (var["clear_waves"] > wave)
+
+def lessThanClearWave(wave: int) -> bool:
+    return lambda var: var["clear_waves"] < wave
+
+def notLessThanClearWave(wave: int) -> bool:
+    return lambda var: not (var["clear_waves"] < wave)
 
 def splatnet_number(num: int) -> bool:
     return lambda var: var["splatnet_number"] == num
@@ -278,7 +606,6 @@ def getWavesAttribute3D(data: dict, firstD: str, secondD, thirdD) -> str:
 
 def getBossDataStr(data: dict, boss: str) -> str:
     return "{:<16}\t{:}".format(data[boss + "_appearances"] or 0, getPlayersAttribute(data, "kills", boss + "_"))
-    return "{:<16}\t{:<16}\t{:<16}\t{:<16}\t{:<16}".format(data[boss + "_appearances"] or 0, data[boss + "_player_kills"] or 0, data[boss + "_mate1_kills"] or 0, data[boss + "_mate2_kills"] or 0, data[boss + "_mate3_kills"] or 0)
 
 def getTotalBosses(data: list, player: str) -> int:
     return sum(int(data[boss.replace(" ", "_").lower() + "_" + player] or 0) for boss in bosses)
@@ -391,8 +718,8 @@ def init() -> list:
 
 #json.dump(data, open("salmon.json", "w"))
 data = init()
-hasChosenWeapon = list(filter(doesntUseWeapon(utility.weaponNameToKey("Grizzco Charger", locale)), data))
-printOverview(hasChosenWeapon)
+rotations = findRotationByWeaponsAndStage(data, ("Grizzco Charger", "Grizzco Brella", "Grizzco Blaster", "Grizzco Slosher"), "Ruins of Ark Polaris")
+printOverview(list(filter(duringRotationInt(rotations[1]), data)))
 """for job in data:
     printGeneral(job)
     print()
