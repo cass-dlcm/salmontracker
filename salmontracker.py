@@ -9,7 +9,7 @@ locale = "en_US"
 
 api_key = json.load(open("keys.json", "r"))["statink_key"]
 
-def fetchAll() -> list:
+def fetchAllUser() -> list:
     headers = {'Authorization': 'Bearer {}'.format(api_key)}
     data = []
     lastId = 0
@@ -32,7 +32,29 @@ def fetchAll() -> list:
         print(lastId)
     return data
 
-def fetchNew(recentId: int) -> list:
+def fetchAll() -> list:
+    data = []
+    lastId = 0
+    prevLastId = 0
+    params = {'order': 'asc'}
+    temp = requests.get("http://stat.ink/api/v2/salmon", params = params).json()
+    lastId = temp[-1]["id"]
+    print(lastId)
+    while lastId != prevLastId:
+        for i in temp:
+            data.append(i)
+        params['newer_than'] = lastId
+        result = requests.get("http://stat.ink/api/v2/salmon", params = params)
+        print(result.url)
+        print(result)
+        temp = result.json()
+        prevLastId = lastId
+        if len(temp) > 0:
+            lastId = temp[-1]["id"]
+        print(lastId)
+    return data
+
+def fetchNewUser(recentId: int) -> list:
     headers = {'Authorization': 'Bearer {}'.format(api_key)}
     data = []
     lastId = 0
@@ -56,6 +78,31 @@ def fetchNew(recentId: int) -> list:
                 lastId = temp[-1]["id"]
             print(lastId)
     return data
+
+def fetchNewAll(recentId: int) -> list:
+    data = []
+    lastId = 0
+    prevLastId = 0
+    params = {'order': 'asc'}
+    params['newer_than'] = recentId
+    temp = requests.get("http://stat.ink/api/v2/salmon", params = params).json()
+    if len(temp) > 0:
+        lastId = temp[-1]["id"]
+        print(lastId)
+        while lastId != prevLastId:
+            for i in temp:
+                data.append(i)
+            params['newer_than'] = lastId
+            result = requests.get("http://stat.ink/api/v2/salmon", params = params)
+            print(result.url)
+            print(result)
+            temp = result.json()
+            prevLastId = lastId
+            if len(temp) > 0:
+                lastId = temp[-1]["id"]
+            print(lastId)
+    return data
+
 
 def hasPlayer(player: str) -> bool:
     return lambda var: (
@@ -719,24 +766,35 @@ def getArrayOfStat2D(data: list, firstD, secondD) -> list:
         results.append(float(job[firstD][secondD]))
     return results
 
-def init() -> list:
+def initAll() -> list:
+    data = []
+    if os.path.exists("salmonAll.json"):
+        data = json.load(open("salmonAll.json", "r"))
+        new = fetchNewAll(data[-1]["id"])
+        for i in new:
+            data.append(i)
+        json.dump(data, open("salmonAll.json", "w"), indent=4)
+    else:
+        data = fetchAll()
+        json.dump(data, open("salmonAll.json", "w"), indent=4)
+    return data
+        
+def initUser() -> list:
     data = []
     if os.path.exists("salmon.json"):
         data = json.load(open("salmon.json", "r"))
-        new = fetchNew(data[-1]["id"])
+        new = fetchNewUser(data[-1]["id"])
         for i in new:
             data.append(i)
         json.dump(data, open("salmon.json", "w"), indent=4)
     else:
-        data = fetchAll()
+        data = fetchAllUser()
         json.dump(data, open("salmon.json", "w"), indent=4)
     return data
-        
-
 
 #json.dump(data, open("salmon.json", "w"))
 if __name__ == "__main__":
-    data = init()
+    data = initAll()
     rotations = findRotationByWeaponsAndStage(data, ("Grizzco Charger", "Grizzco Brella", "Grizzco Blaster", "Grizzco Slosher"), "Ruins of Ark Polaris")
     printOverview(list(filter(dangerRate("200.0"), list(filter(duringRotationInt(rotations[1]), data)))))
 """for job in data:
