@@ -1,7 +1,7 @@
-from salmontracker import initUser, locale, hasWeapon, doesntHaveWeapon, avgStat
-from utility import grizzcoWeapons
+from salmontracker import initUser, locale, hasWeapon, doesntHaveWeapon, avgStat, grizzcoWeapons
 import requests
 import pprint
+
 
 def sortWeapons(data: list) -> None:
     weaponsList = requests.get("https://stat.ink/api/v2/weapon").json()
@@ -22,9 +22,10 @@ def sortWeapons(data: list) -> None:
             result["name"] = weapon["name"][locale]
             result["value"] = avgStat(withVal, "clear_waves") - avgStat(withoutVal, "clear_waves")
             results.append(result)
-    pprint.pprint(sorted(results, key = lambda val: val["value"]))
+    pprint.pprint(sorted(results, key=lambda val: val["value"]))
 
-def sortStages(data: list) -> None:
+
+def sortStages(data: list, stat: str) -> None:
     stageDict = {}
     stageList = []
     for job in data:
@@ -34,11 +35,12 @@ def sortStages(data: list) -> None:
                 "clear_waves": 0.0,
                 "count": 0.0
             }
-        stageDict[job["stage"]["name"][locale]]["clear_waves"] += job["clear_waves"]
+        stageDict[job["stage"]["name"][locale]][stat] += job[stat]
         stageDict[job["stage"]["name"][locale]]["count"] += 1.0
     for stage in stageDict.values():
-        stageList.append({"name": stage["name"], "value": stage["clear_waves"] / stage["count"]})
-    pprint.pprint(sorted(stageList, key = lambda val: val["value"]))
+        stageList.append({"name": stage["name"], "value": stage[stat] / stage["count"]})
+    pprint.pprint(sorted(stageList, key=lambda val: val["value"]))
+
 
 data = initUser()
-sortStages(data)
+sortStages(data, "clear_waves")
