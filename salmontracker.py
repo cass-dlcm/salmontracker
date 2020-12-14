@@ -845,12 +845,15 @@ def getArrayOfStat2D(data: list, firstD, secondD) -> list:
 
 
 def initAll():
-    data = []
     if os.path.exists("salmonAll.jsonl"):
-        fetchNewAll(data[-1]["id"])
+        recentId = 0
+        with jsonlines.open("salmonAll.jsonl", mode="r") as reader:
+            for line in reader:
+                recentId = line["id"]
+                print(recentId)
+        fetchNewAll(recentId)
     else:
         fetchAll()
-    return data
 
 
 def initUser() -> list:
