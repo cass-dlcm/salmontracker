@@ -3,6 +3,7 @@ import json
 import numpy as np
 import requests
 import jsonlines
+import sys
 
 locale = "en_US"
 
@@ -14,65 +15,17 @@ grizzcoWeapons = (("Grizzco Charger", "kuma_charger"),
 api_key = json.load(open("keys.json", "r"))["statink_key"]
 
 
-def fetchAllUser() -> list:
+def fetchAllUser() -> None:
     headers = {'Authorization': 'Bearer {}'.format(api_key)}
-    data = []
     lastId = 0
     prevLastId = 0
     params = {'order': 'asc'}
     temp = requests.get("http://stat.ink/api/v2/user-salmon", headers=headers, params=params).json()
     lastId = temp[-1]["id"]
     print(lastId)
-    while lastId != prevLastId:
-        for i in temp:
-            data.append(i)
-        params['newer_than'] = lastId
-        result = requests.get("http://stat.ink/api/v2/user-salmon", headers=headers, params=params)
-        print(result.url)
-        print(result)
-        temp = result.json()
-        prevLastId = lastId
-        if len(temp) > 0:
-            lastId = temp[-1]["id"]
-        print(lastId)
-    return data
-
-
-def fetchAll() -> list:
-    lastId = 0
-    prevLastId = 0
-    params = {'order': 'asc'}
-    temp = requests.get("http://stat.ink/api/v2/salmon", params=params).json()
-    lastId = temp[-1]["id"]
-    print(lastId)
-    with jsonlines.open("salmonAll.jsonl", mode="w") as writer:
+    with jsonlines.open("data/salmon.jsonl", mode="w") as writer:
         while lastId != prevLastId:
             writer.write_all(temp)
-            params['newer_than'] = lastId
-            result = requests.get("http://stat.ink/api/v2/salmon", params=params)
-            print(result.url)
-            print(result)
-            temp = result.json()
-            prevLastId = lastId
-            if len(temp) > 0:
-                lastId = temp[-1]["id"]
-            print(lastId)
-
-
-def fetchNewUser(recentId: int) -> list:
-    headers = {'Authorization': 'Bearer {}'.format(api_key)}
-    data = []
-    lastId = 0
-    prevLastId = 0
-    params = {'order': 'asc'}
-    params['newer_than'] = recentId
-    temp = requests.get("http://stat.ink/api/v2/user-salmon", headers=headers, params=params).json()
-    if len(temp) > 0:
-        lastId = temp[-1]["id"]
-        print(lastId)
-        while lastId != prevLastId:
-            for i in temp:
-                data.append(i)
             params['newer_than'] = lastId
             result = requests.get("http://stat.ink/api/v2/user-salmon", headers=headers, params=params)
             print(result.url)
@@ -82,22 +35,19 @@ def fetchNewUser(recentId: int) -> list:
             if len(temp) > 0:
                 lastId = temp[-1]["id"]
             print(lastId)
-    return data
 
 
-def fetchNewAll(recentId: int) -> list:
-    data = []
+def fetchAll() -> None:
     lastId = 0
     prevLastId = 0
     params = {'order': 'asc'}
-    params['newer_than'] = recentId
     temp = requests.get("http://stat.ink/api/v2/salmon", params=params).json()
-    if len(temp) > 0:
-        lastId = temp[-1]["id"]
-        print(lastId)
+    lastId = temp[-1]["id"]
+    print(lastId)
+    with jsonlines.open("data/salmonAll.jsonl", mode="w") as writer:
         while lastId != prevLastId:
-            for i in temp:
-                data.append(i)
+            writer.write_all(temp)
+            print(os.path.getsize("data/salmonAll.jsonl"))
             params['newer_than'] = lastId
             result = requests.get("http://stat.ink/api/v2/salmon", params=params)
             print(result.url)
@@ -107,7 +57,63 @@ def fetchNewAll(recentId: int) -> list:
             if len(temp) > 0:
                 lastId = temp[-1]["id"]
             print(lastId)
-    return data
+
+
+def fetchNewUser(recentId: int) -> None:
+    headers = {'Authorization': 'Bearer {}'.format(api_key)}
+    lastId = 0
+    prevLastId = 0
+    params = {'order': 'asc'}
+    params['newer_than'] = recentId
+    temp = requests.get("http://stat.ink/api/v2/user-salmon", headers=headers, params=params).json()
+    if len(temp) > 0:
+        lastId = temp[-1]["id"]
+        print(lastId)
+        with jsonlines.open("data/salmon.jsonl", mode="a") as writer:
+            while lastId != prevLastId:
+                writer.write_all(temp)
+                params['newer_than'] = lastId
+                result = requests.get("http://stat.ink/api/v2/user-salmon", headers=headers, params=params)
+                print(result.url)
+                print(result)
+                temp = result.json()
+                prevLastId = lastId
+                if len(temp) > 0:
+                    lastId = temp[-1]["id"]
+                print(lastId)
+
+
+def fetchNewAll(recentId: int) -> None:
+    lastId = 0
+    prevLastId = 0
+    params = {'order': 'asc'}
+    params['newer_than'] = recentId
+    temp = requests.get("http://stat.ink/api/v2/salmon", params=params).json()
+    if len(temp) > 0:
+        lastId = temp[-1]["id"]
+        print(lastId)
+        with jsonlines.open("data/salmonAll.jsonl", mode="a") as writer:
+            while lastId != prevLastId:
+                writer.write_all(temp)
+                print(os.path.getsize("data/salmonAll.jsonl"))
+                params['newer_than'] = lastId
+                result = requests.get("http://stat.ink/api/v2/salmon", params=params)
+                print(result.url)
+                print(result)
+                temp = result.json()
+                prevLastId = lastId
+                if len(temp) > 0:
+                    lastId = temp[-1]["id"]
+                print(lastId)
+
+
+def hasJobs(path: str, data: str) -> bool:
+    with jsonlines.open(path + data, "r") as reader:
+        try:
+            reader.read()
+            return True
+        except EOFError:
+            return False
 
 
 def hasPlayer(player: str) -> bool:
@@ -146,282 +152,308 @@ def hasPlayerByName(player: str) -> bool:
     )
 
 
-def findRotationByWeaponsAndStage(data: list, weapons: list, stage: str
-                                  ) -> list:
+def findRotationByWeaponsAndStage(data: str, weapons: list, stage: str) -> list:
     foundRotations = []
-    for job in data:
-        found = (
-            job["stage"]["key"] == stage or
-            job["stage"]["name"][locale] == stage
-        )
-        for weapon in weapons:
-            found = found and (
-                job["my_data"]["weapons"][0]["key"] == weapon or (
-                    len(job["my_data"]["weapons"]) > 1 and
-                    job["my_data"]["weapons"][1]["key"] == weapon
-                ) or (
-                    len(job["my_data"]["weapons"]) > 2 and
-                    job["my_data"]["weapons"][2]["key"] == weapon
-                ) or (
-                    len(job["teammates"]) > 0 and
-                    job["teammates"][0]["weapons"] is not None and (
-                        job["teammates"][0]["weapons"][0]["key"] == weapon or (
-                            len(job["teammates"][0]["weapons"]) > 1 and
-                            job["teammates"][0]["weapons"][1]["key"] == weapon
-                        ) or (
-                            len(job["teammates"][0]["weapons"]) > 2 and
-                            job["teammates"][0]["weapons"][2]["key"] == weapon
+    with jsonlines.open(data, mode="r") as reader:
+        for job in reader:
+            found = (
+                job["stage"]["key"] == stage or
+                job["stage"]["name"][locale] == stage
+            )
+            for weapon in weapons:
+                found = found and (
+                    job["my_data"]["weapons"][0]["key"] == weapon or (
+                        len(job["my_data"]["weapons"]) > 1 and
+                        job["my_data"]["weapons"][1]["key"] == weapon
+                    ) or (
+                        len(job["my_data"]["weapons"]) > 2 and
+                        job["my_data"]["weapons"][2]["key"] == weapon
+                    ) or (
+                        len(job["teammates"]) > 0 and
+                        job["teammates"][0]["weapons"] is not None and (
+                            job["teammates"][0]["weapons"][0]["key"] == weapon or (
+                                len(job["teammates"][0]["weapons"]) > 1 and
+                                job["teammates"][0]["weapons"][1]["key"] == weapon
+                            ) or (
+                                len(job["teammates"][0]["weapons"]) > 2 and
+                                job["teammates"][0]["weapons"][2]["key"] == weapon
+                            )
                         )
-                    )
-                ) or (
-                    len(job["teammates"]) > 1 and
-                    job["teammates"][1]["weapons"] is not None and (
-                        job["teammates"][1]["weapons"][0]["key"] == weapon or (
-                            len(job["teammates"][1]["weapons"]) > 1 and
-                            job["teammates"][1]["weapons"][1]["key"] == weapon
-                        ) or (
-                            len(job["teammates"][1]["weapons"]) > 2 and
-                            job["teammates"][1]["weapons"][2]["key"] == weapon
+                    ) or (
+                        len(job["teammates"]) > 1 and
+                        job["teammates"][1]["weapons"] is not None and (
+                            job["teammates"][1]["weapons"][0]["key"] == weapon or (
+                                len(job["teammates"][1]["weapons"]) > 1 and
+                                job["teammates"][1]["weapons"][1]["key"] == weapon
+                            ) or (
+                                len(job["teammates"][1]["weapons"]) > 2 and
+                                job["teammates"][1]["weapons"][2]["key"] == weapon
+                            )
                         )
-                    )
-                ) or (
-                    len(job["teammates"]) > 2 and
-                    job["teammates"][2]["weapons"] is not None and (
-                        job["teammates"][2]["weapons"][0]["key"] == weapon or (
-                            len(job["teammates"][2]["weapons"]) > 1 and
-                            job["teammates"][2]["weapons"][1]["key"] == weapon
-                        ) or (
-                            len(job["teammates"][2]["weapons"]) > 2 and
-                            job["teammates"][2]["weapons"][2]["key"] == weapon
+                    ) or (
+                        len(job["teammates"]) > 2 and
+                        job["teammates"][2]["weapons"] is not None and (
+                            job["teammates"][2]["weapons"][0]["key"] == weapon or (
+                                len(job["teammates"][2]["weapons"]) > 1 and
+                                job["teammates"][2]["weapons"][1]["key"] == weapon
+                            ) or (
+                                len(job["teammates"][2]["weapons"]) > 2 and
+                                job["teammates"][2]["weapons"][2]["key"] == weapon
+                            )
                         )
-                    )
-                ) or
-                job["my_data"]["weapons"][0]["name"][locale] == weapon or (
-                    len(job["my_data"]["weapons"]) > 1 and
-                    job["my_data"]["weapons"][1]["name"][locale] == weapon
-                ) or (
-                    len(job["my_data"]["weapons"]) > 2 and
-                    job["my_data"]["weapons"][2]["name"][locale] == weapon
-                ) or (
-                    len(job["teammates"]) > 0 and
-                    job["teammates"][0]["weapons"] is not None and (
-                        job["teammates"][0]["weapons"][0]["name"][locale] == weapon or (
-                            len(job["teammates"][0]["weapons"]) > 1 and
-                            job["teammates"][0]["weapons"][1]["name"][locale] == weapon
-                        ) or (
-                            len(job["teammates"][0]["weapons"]) > 2 and
-                            job["teammates"][0]["weapons"][2]["name"][locale] == weapon
+                    ) or
+                    job["my_data"]["weapons"][0]["name"][locale] == weapon or (
+                        len(job["my_data"]["weapons"]) > 1 and
+                        job["my_data"]["weapons"][1]["name"][locale] == weapon
+                    ) or (
+                        len(job["my_data"]["weapons"]) > 2 and
+                        job["my_data"]["weapons"][2]["name"][locale] == weapon
+                    ) or (
+                        len(job["teammates"]) > 0 and
+                        job["teammates"][0]["weapons"] is not None and (
+                            job["teammates"][0]["weapons"][0]["name"][locale] == weapon or (
+                                len(job["teammates"][0]["weapons"]) > 1 and
+                                job["teammates"][0]["weapons"][1]["name"][locale] == weapon
+                            ) or (
+                                len(job["teammates"][0]["weapons"]) > 2 and
+                                job["teammates"][0]["weapons"][2]["name"][locale] == weapon
+                            )
                         )
-                    )
-                ) or (
-                    len(job["teammates"]) > 1 and
-                    job["teammates"][1]["weapons"] is not None and (
-                        job["teammates"][1]["weapons"][0]["name"][locale] == weapon or
-                        (
-                            len(job["teammates"][1]["weapons"]) > 1 and
-                            job["teammates"][1]["weapons"][1]["name"][locale] == weapon
-                        ) or (
-                            len(job["teammates"][1]["weapons"]) > 2 and
-                            job["teammates"][1]["weapons"][2]["name"][locale] == weapon
+                    ) or (
+                        len(job["teammates"]) > 1 and
+                        job["teammates"][1]["weapons"] is not None and (
+                            job["teammates"][1]["weapons"][0]["name"][locale] == weapon or
+                            (
+                                len(job["teammates"][1]["weapons"]) > 1 and
+                                job["teammates"][1]["weapons"][1]["name"][locale] == weapon
+                            ) or (
+                                len(job["teammates"][1]["weapons"]) > 2 and
+                                job["teammates"][1]["weapons"][2]["name"][locale] == weapon
+                            )
                         )
-                    )
-                ) or (
-                    len(job["teammates"]) > 2 and
-                    job["teammates"][2]["weapons"] is not None and (
-                        job["teammates"][2]["weapons"][0]["name"][locale] == weapon or (
-                            len(job["teammates"][2]["weapons"]) > 1 and
-                            job["teammates"][2]["weapons"][1]["name"][locale] == weapon
-                        ) or (
-                            len(job["teammates"][2]["weapons"]) > 2 and
-                            job["teammates"][2]["weapons"][2]["name"][locale] == weapon
+                    ) or (
+                        len(job["teammates"]) > 2 and
+                        job["teammates"][2]["weapons"] is not None and (
+                            job["teammates"][2]["weapons"][0]["name"][locale] == weapon or (
+                                len(job["teammates"][2]["weapons"]) > 1 and
+                                job["teammates"][2]["weapons"][1]["name"][locale] == weapon
+                            ) or (
+                                len(job["teammates"][2]["weapons"]) > 2 and
+                                job["teammates"][2]["weapons"][2]["name"][locale] == weapon
+                            )
                         )
                     )
                 )
-            )
-        if (
-            found and
-            job["shift_start_at"]["time"] not in foundRotations
-        ):
-            foundRotations.append(job["shift_start_at"]["time"])
+            if (
+                found and
+                job["shift_start_at"]["time"] not in foundRotations
+            ):
+                foundRotations.append(job["shift_start_at"]["time"])
     return foundRotations
 
 
-def hasWeapon(weapon: str) -> bool:
-    return lambda var: (
-        var["my_data"]["weapons"][0]["key"] == weapon or (
-            len(var["my_data"]["weapons"]) > 1 and
-            var["my_data"]["weapons"][1]["key"] == weapon
-        ) or (
-            len(var["my_data"]["weapons"]) > 2 and
-            var["my_data"]["weapons"][2]["key"] == weapon
-        ) or (
-            len(var["teammates"]) > 0 and
-            var["teammates"][0]["weapons"] is not None and (
-                var["teammates"][0]["weapons"][0]["key"] == weapon or
-                (
-                    len(var["teammates"][0]["weapons"]) > 1 and
-                    var["teammates"][0]["weapons"][1]["key"] == weapon
+def hasWeapon(path: str, data: str, weapon: str) -> tuple:
+    try:
+        os.mkdir(path + data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(path + data[0:-6] + "/weapon/")
+    except FileExistsError:
+        pass
+    with jsonlines.open(path + data, "r") as reader:
+        with jsonlines.open(path + data[0:-6] + "/weapon/" + weapon + ".jsonl", "w") as writer:
+            for var in reader:
+                if var["my_data"]["weapons"][0]["key"] == weapon or (
+                    len(var["my_data"]["weapons"]) > 1 and
+                    var["my_data"]["weapons"][1]["key"] == weapon
                 ) or (
-                    len(var["teammates"][0]["weapons"]) > 2 and
-                    var["teammates"][0]["weapons"][2]["key"] == weapon
-                )
-            )
-        ) or (
-            len(var["teammates"]) > 1 and
-            var["teammates"][1]["weapons"] is not None and (
-                var["teammates"][1]["weapons"][0]["key"] == weapon or (
-                    len(var["teammates"][1]["weapons"]) > 1 and
-                    var["teammates"][1]["weapons"][1]["key"] == weapon
+                    len(var["my_data"]["weapons"]) > 2 and
+                    var["my_data"]["weapons"][2]["key"] == weapon
                 ) or (
-                    len(var["teammates"][1]["weapons"]) > 2 and
-                    var["teammates"][1]["weapons"][2]["key"] == weapon
-                )
-            )
-        ) or (
-            len(var["teammates"]) > 2 and
-            var["teammates"][2]["weapons"] is not None and (
-                var["teammates"][2]["weapons"][0]["key"] == weapon or (
-                    len(var["teammates"][2]["weapons"]) > 1 and
-                    var["teammates"][2]["weapons"][1]["key"] == weapon
+                    len(var["teammates"]) > 0 and
+                    var["teammates"][0]["weapons"] is not None and (
+                        var["teammates"][0]["weapons"][0]["key"] == weapon or
+                        (
+                            len(var["teammates"][0]["weapons"]) > 1 and
+                            var["teammates"][0]["weapons"][1]["key"] == weapon
+                        ) or (
+                            len(var["teammates"][0]["weapons"]) > 2 and
+                            var["teammates"][0]["weapons"][2]["key"] == weapon
+                        )
+                    )
                 ) or (
-                    len(var["teammates"][2]["weapons"]) > 2 and
-                    var["teammates"][2]["weapons"][2]["key"] == weapon
-                )
-            )
-        ) or
-        var["my_data"]["weapons"][0]["name"][locale] == weapon or (
-            len(var["my_data"]["weapons"]) > 1 and
-            var["my_data"]["weapons"][1]["name"][locale] == weapon
-        ) or (
-            len(var["my_data"]["weapons"]) > 2 and
-            var["my_data"]["weapons"][2]["name"][locale] == weapon
-        ) or (
-            len(var["teammates"]) > 0 and
-            var["teammates"][0]["weapons"] is not None and (
-                var["teammates"][0]["weapons"][0]["name"][locale] == weapon or
-                (
-                    len(var["teammates"][0]["weapons"]) > 1 and
-                    var["teammates"][0]["weapons"][1]["name"][locale] == weapon
+                    len(var["teammates"]) > 1 and
+                    var["teammates"][1]["weapons"] is not None and (
+                        var["teammates"][1]["weapons"][0]["key"] == weapon or (
+                            len(var["teammates"][1]["weapons"]) > 1 and
+                            var["teammates"][1]["weapons"][1]["key"] == weapon
+                        ) or (
+                            len(var["teammates"][1]["weapons"]) > 2 and
+                            var["teammates"][1]["weapons"][2]["key"] == weapon
+                        )
+                    )
                 ) or (
-                    len(var["teammates"][0]["weapons"]) > 2 and
-                    var["teammates"][0]["weapons"][2]["name"][locale] == weapon
-                )
-            )
-        ) or (
-            len(var["teammates"]) > 1 and
-            var["teammates"][1]["weapons"] is not None and (
-                var["teammates"][1]["weapons"][0]["name"][locale] == weapon or
-                (
-                    len(var["teammates"][1]["weapons"]) > 1 and
-                    var["teammates"][1]["weapons"][1]["name"][locale] == weapon
+                    len(var["teammates"]) > 2 and
+                    var["teammates"][2]["weapons"] is not None and (
+                        var["teammates"][2]["weapons"][0]["key"] == weapon or (
+                            len(var["teammates"][2]["weapons"]) > 1 and
+                            var["teammates"][2]["weapons"][1]["key"] == weapon
+                        ) or (
+                            len(var["teammates"][2]["weapons"]) > 2 and
+                            var["teammates"][2]["weapons"][2]["key"] == weapon
+                        )
+                    )
                 ) or (
-                    len(var["teammates"][1]["weapons"]) > 2 and
-                    var["teammates"][1]["weapons"][2]["name"][locale] == weapon
-                )
-            )
-        ) or (
-            len(var["teammates"]) > 2 and
-            var["teammates"][2]["weapons"] is not None and (
-                var["teammates"][2]["weapons"][0]["name"][locale] == weapon or
-                (
-                    len(var["teammates"][2]["weapons"]) > 1 and
-                    var["teammates"][2]["weapons"][1]["name"][locale] == weapon
+                    var["my_data"]["weapons"][0]["name"][locale] == weapon
                 ) or (
-                    len(var["teammates"][2]["weapons"]) > 2 and
-                    var["teammates"][2]["weapons"][2]["name"][locale] == weapon
-                )
-            )
-        )
-    )
+                    len(var["my_data"]["weapons"]) > 1 and
+                    var["my_data"]["weapons"][1]["name"][locale] == weapon
+                ) or (
+                    len(var["my_data"]["weapons"]) > 2 and
+                    var["my_data"]["weapons"][2]["name"][locale] == weapon
+                ) or (
+                    len(var["teammates"]) > 0 and
+                    var["teammates"][0]["weapons"] is not None and (
+                        var["teammates"][0]["weapons"][0]["name"][locale] == weapon or
+                        (
+                            len(var["teammates"][0]["weapons"]) > 1 and
+                            var["teammates"][0]["weapons"][1]["name"][locale] == weapon
+                        ) or (
+                            len(var["teammates"][0]["weapons"]) > 2 and
+                            var["teammates"][0]["weapons"][2]["name"][locale] == weapon
+                        )
+                    )
+                ) or (
+                    len(var["teammates"]) > 1 and
+                    var["teammates"][1]["weapons"] is not None and (
+                        var["teammates"][1]["weapons"][0]["name"][locale] == weapon or
+                        (
+                            len(var["teammates"][1]["weapons"]) > 1 and
+                            var["teammates"][1]["weapons"][1]["name"][locale] == weapon
+                        ) or (
+                            len(var["teammates"][1]["weapons"]) > 2 and
+                            var["teammates"][1]["weapons"][2]["name"][locale] == weapon
+                        )
+                    )
+                ) or (
+                    len(var["teammates"]) > 2 and
+                    var["teammates"][2]["weapons"] is not None and (
+                        var["teammates"][2]["weapons"][0]["name"][locale] == weapon or
+                        (
+                            len(var["teammates"][2]["weapons"]) > 1 and
+                            var["teammates"][2]["weapons"][1]["name"][locale] == weapon
+                        ) or (
+                            len(var["teammates"][2]["weapons"]) > 2 and
+                            var["teammates"][2]["weapons"][2]["name"][locale] == weapon
+                        )
+                    )
+                ):
+                    writer.write(var)
+    return (path + data[0:-6] + "/weapon/", weapon + ".jsonl")
 
 
-def doesntHaveWeapon(weapon: str) -> bool:
-    return lambda var: not (
-        var["my_data"]["weapons"][0]["key"] == weapon or (
-            len(var["my_data"]["weapons"]) > 1 and
-            var["my_data"]["weapons"][1]["key"] == weapon
-        ) or (
-            len(var["my_data"]["weapons"]) > 2 and
-            var["my_data"]["weapons"][2]["key"] == weapon
-        ) or (
-            len(var["teammates"]) > 0 and
-            var["teammates"][0]["weapons"] is not None and (
-                var["teammates"][0]["weapons"][0]["key"] == weapon or
-                (
-                    len(var["teammates"][0]["weapons"]) > 1 and
-                    var["teammates"][0]["weapons"][1]["key"] == weapon
-                ) or (
-                    len(var["teammates"][0]["weapons"]) > 2 and
-                    var["teammates"][0]["weapons"][2]["key"] == weapon
-                )
-            )
-        ) or (
-            len(var["teammates"]) > 1 and
-            var["teammates"][1]["weapons"] is not None and (
-                var["teammates"][1]["weapons"][0]["key"] == weapon or (
-                    len(var["teammates"][1]["weapons"]) > 1 and
-                    var["teammates"][1]["weapons"][1]["key"] == weapon
-                ) or (
-                    len(var["teammates"][1]["weapons"]) > 2 and
-                    var["teammates"][1]["weapons"][2]["key"] == weapon
-                )
-            )
-        ) or (
-            len(var["teammates"]) > 2 and
-            var["teammates"][2]["weapons"] is not None and (
-                var["teammates"][2]["weapons"][0]["key"] == weapon or (
-                    len(var["teammates"][2]["weapons"]) > 1 and
-                    var["teammates"][2]["weapons"][1]["key"] == weapon
-                ) or (
-                    len(var["teammates"][2]["weapons"]) > 2 and
-                    var["teammates"][2]["weapons"][2]["key"] == weapon
-                )
-            )
-        ) or
-        var["my_data"]["weapons"][0]["name"][locale] == weapon or (
-            len(var["my_data"]["weapons"]) > 1 and
-            var["my_data"]["weapons"][1]["name"][locale] == weapon
-        ) or (
-            len(var["my_data"]["weapons"]) > 2 and
-            var["my_data"]["weapons"][2]["name"][locale] == weapon
-        ) or (
-            len(var["teammates"]) > 0 and
-            var["teammates"][0]["weapons"] is not None and (
-                var["teammates"][0]["weapons"][0]["name"][locale] == weapon or
-                (
-                    len(var["teammates"][0]["weapons"]) > 1 and
-                    var["teammates"][0]["weapons"][1]["name"][locale] == weapon
-                ) or (
-                    len(var["teammates"][0]["weapons"]) > 2 and
-                    var["teammates"][0]["weapons"][2]["name"][locale] == weapon
-                )
-            )
-        ) or (
-            len(var["teammates"]) > 1 and
-            var["teammates"][1]["weapons"] is not None and (
-                var["teammates"][1]["weapons"][0]["name"][locale] == weapon or
-                (
-                    len(var["teammates"][1]["weapons"]) > 1 and
-                    var["teammates"][1]["weapons"][1]["name"][locale] == weapon
-                ) or (
-                    len(var["teammates"][1]["weapons"]) > 2 and
-                    var["teammates"][1]["weapons"][2]["name"][locale] == weapon
-                )
-            )
-        ) or (
-            len(var["teammates"]) > 2 and
-            var["teammates"][2]["weapons"] is not None and (
-                var["teammates"][2]["weapons"][0]["name"][locale] == weapon or
-                (
-                    len(var["teammates"][2]["weapons"]) > 1 and
-                    var["teammates"][2]["weapons"][1]["name"][locale] == weapon
-                ) or (
-                    len(var["teammates"][2]["weapons"]) > 2 and
-                    var["teammates"][2]["weapons"][2]["name"][locale] == weapon
-                )
-            )
-        )
-    )
+def doesntHaveWeapon(path: str, data: str, weapon: str) -> tuple:
+    try:
+        os.mkdir(path + data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(path + data[0:-6] + "/notWeapon/")
+    except FileExistsError:
+        pass
+    with jsonlines.open(path + data, "r") as reader:
+        with jsonlines.open(path + data[0:-6] + "/notWeapon/" + weapon + ".jsonl", "w") as writer:
+            for var in reader:
+                if not (
+                    var["my_data"]["weapons"][0]["key"] == weapon or (
+                        len(var["my_data"]["weapons"]) > 1 and
+                        var["my_data"]["weapons"][1]["key"] == weapon
+                    ) or (
+                        len(var["my_data"]["weapons"]) > 2 and
+                        var["my_data"]["weapons"][2]["key"] == weapon
+                    ) or (
+                        len(var["teammates"]) > 0 and
+                        var["teammates"][0]["weapons"] is not None and (
+                            var["teammates"][0]["weapons"][0]["key"] == weapon or
+                            (
+                                len(var["teammates"][0]["weapons"]) > 1 and
+                                var["teammates"][0]["weapons"][1]["key"] == weapon
+                            ) or (
+                                len(var["teammates"][0]["weapons"]) > 2 and
+                                var["teammates"][0]["weapons"][2]["key"] == weapon
+                            )
+                        )
+                    ) or (
+                        len(var["teammates"]) > 1 and
+                        var["teammates"][1]["weapons"] is not None and (
+                            var["teammates"][1]["weapons"][0]["key"] == weapon or (
+                                len(var["teammates"][1]["weapons"]) > 1 and
+                                var["teammates"][1]["weapons"][1]["key"] == weapon
+                            ) or (
+                                len(var["teammates"][1]["weapons"]) > 2 and
+                                var["teammates"][1]["weapons"][2]["key"] == weapon
+                            )
+                        )
+                    ) or (
+                        len(var["teammates"]) > 2 and
+                        var["teammates"][2]["weapons"] is not None and (
+                            var["teammates"][2]["weapons"][0]["key"] == weapon or (
+                                len(var["teammates"][2]["weapons"]) > 1 and
+                                var["teammates"][2]["weapons"][1]["key"] == weapon
+                            ) or (
+                                len(var["teammates"][2]["weapons"]) > 2 and
+                                var["teammates"][2]["weapons"][2]["key"] == weapon
+                            )
+                        )
+                    ) or (
+                        var["my_data"]["weapons"][0]["name"][locale] == weapon
+                    ) or (
+                        len(var["my_data"]["weapons"]) > 1 and
+                        var["my_data"]["weapons"][1]["name"][locale] == weapon
+                    ) or (
+                        len(var["my_data"]["weapons"]) > 2 and
+                        var["my_data"]["weapons"][2]["name"][locale] == weapon
+                    ) or (
+                        len(var["teammates"]) > 0 and
+                        var["teammates"][0]["weapons"] is not None and (
+                            var["teammates"][0]["weapons"][0]["name"][locale] == weapon or
+                            (
+                                len(var["teammates"][0]["weapons"]) > 1 and
+                                var["teammates"][0]["weapons"][1]["name"][locale] == weapon
+                            ) or (
+                                len(var["teammates"][0]["weapons"]) > 2 and
+                                var["teammates"][0]["weapons"][2]["name"][locale] == weapon
+                            )
+                        )
+                    ) or (
+                        len(var["teammates"]) > 1 and
+                        var["teammates"][1]["weapons"] is not None and (
+                            var["teammates"][1]["weapons"][0]["name"][locale] == weapon or
+                            (
+                                len(var["teammates"][1]["weapons"]) > 1 and
+                                var["teammates"][1]["weapons"][1]["name"][locale] == weapon
+                            ) or (
+                                len(var["teammates"][1]["weapons"]) > 2 and
+                                var["teammates"][1]["weapons"][2]["name"][locale] == weapon
+                            )
+                        )
+                    ) or (
+                        len(var["teammates"]) > 2 and
+                        var["teammates"][2]["weapons"] is not None and (
+                            var["teammates"][2]["weapons"][0]["name"][locale] == weapon or
+                            (
+                                len(var["teammates"][2]["weapons"]) > 1 and
+                                var["teammates"][2]["weapons"][1]["name"][locale] == weapon
+                            ) or (
+                                len(var["teammates"][2]["weapons"]) > 2 and
+                                var["teammates"][2]["weapons"][2]["name"][locale] == weapon
+                            )
+                        )
+                    )
+                ):
+                    writer.write(var)
+    return (path + data[0:-6] + "/notWeapon/", weapon + ".jsonl")
 
 
 def usesWeapon(weapon: str) -> bool:
@@ -509,8 +541,17 @@ def notFailReason(reason: str) -> bool:
     return lambda var: not (var["fail_reason"] == reason)
 
 
-def duringRotationInt(rotation: int) -> bool:
-    return lambda var: var["shift_start_at"]["time"] == rotation
+def duringRotationInt(path: str, data: str, rotation: int) -> str:
+    if not os.path.exists(path + data[0:-6]):
+        os.mkdir(path + data[0:-6])
+    if not os.path.exists(path + data[0:-6] + "/rotations/"):
+        os.mkdir(path + data[0:-6] + "/rotations/")
+    with jsonlines.open(path + data, mode="r") as reader:
+        with jsonlines.open(path + data[0:-6] + "/rotations/" + str(rotation) + ".jsonl", "w") as writer:
+            for job in reader:
+                if job["shift_start_at"]["time"] == rotation:
+                    writer.write(job)
+    return (path + data[0:-6] + "/rotations/", str(rotation) + ".jsonl")
 
 
 def duringRotationStr(rotation: str) -> bool:
@@ -549,28 +590,37 @@ def notLessThanClearWave(wave: int) -> bool:
     return lambda var: not (var["clear_waves"] < wave)
 
 
-def dangerRate(wave: int) -> bool:
-    return lambda var: var["danger_rate"] == wave
+def dangerRate(path: str, data: str, rate: int) -> tuple:
+    if not os.path.exists(path + data[0:-6]):
+        os.mkdir(path + data[0:-6])
+    if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
+        os.mkdir(path + data[0:-6] + "/dangerRate/")
+    with jsonlines.open(path + data, mode="r") as reader:
+        with jsonlines.open(path + data[0:-6] + "/dangerRate/" + rate + ".jsonl", "w") as writer:
+            for job in reader:
+                if job["danger_rate"] == rate:
+                    writer.write(job)
+    return path + data[0:-6] + "/dangerRate/", rate + ".jsonl"
 
 
-def notDangerRate(wave: int) -> bool:
-    return lambda var: not (var["danger_rate"] == wave)
+def notDangerRate(rate: int) -> bool:
+    return lambda var: not (var["danger_rate"] == rate)
 
 
-def greaterThanDangerRate(wave: int) -> bool:
-    return lambda var: var["danger_rate"] > wave
+def greaterThanDangerRate(rate: int) -> bool:
+    return lambda var: var["danger_rate"] > rate
 
 
-def notGreaterThanDangerRate(wave: int) -> bool:
-    return lambda var: not (var["danger_rate"] > wave)
+def notGreaterThanDangerRate(rate: int) -> bool:
+    return lambda var: not (var["danger_rate"] > rate)
 
 
-def lessThanDangerRate(wave: int) -> bool:
-    return lambda var: var["danger_rate"] < wave
+def lessThanDangerRate(rate: int) -> bool:
+    return lambda var: var["danger_rate"] < rate
 
 
-def notLessThandDangerRate(wave: int) -> bool:
-    return lambda var: not (var["danger_rate"] < wave)
+def notLessThandDangerRate(rate: int) -> bool:
+    return lambda var: not (var["danger_rate"] < rate)
 
 
 def splatnet_number(num: int) -> bool:
@@ -581,100 +631,114 @@ def jobsCount(data: list) -> int:
     return len(data)
 
 
-def avgStat(data: list, stat: str) -> float:
-    return sum(float(d[stat]) for d in data) / jobsCount(data)
+def avgStat(data: str, stat: str) -> float:
+    with jsonlines.open(data, mode="r") as reader:
+        sumVal = 0.0
+        count = 0.0
+        for job in reader:
+            sumVal += float(job[stat])
+            count += 1.0
+        return sumVal / count
 
 
-def avgStat2D(data: list, firstD: str, secondD: str) -> float:
-    return sum(d[firstD][secondD] for d in data) / jobsCount(data)
+def avgStat2D(data: str, firstD: str, secondD: str) -> float:
+    with jsonlines.open(data, mode="r") as reader:
+        sumVal = 0.0
+        count = 0.0
+        for job in reader:
+            sumVal += float(job[firstD][secondD])
+            count += 1.0
+        return sumVal / count
 
 
-def avgStat3D(data: list, firstD: str, secondD: str, thirdD: str) -> float:
-    return sum(d[firstD][secondD][thirdD] for d in data) / jobsCount(data)
-
-
-def maxStat(data: list, stat: str) -> float:
-    max = data[0][stat]
-    for job in data:
-        if (max < job[stat]):
-            max = job[stat]
+def maxStat(data: str, stat: str) -> float:
+    max = 0
+    with jsonlines.open(data, "r") as reader:
+        for job in reader:
+            if (max < float(job[stat])):
+                max = float(job[stat])
     return max
 
 
-def maxStat2D(data: list, firstD: str, secondD: str) -> float:
-    max = data[0][firstD][secondD]
-    for job in data:
-        if (max < job[firstD][secondD]):
-            max = job[firstD][secondD]
+def maxStat2D(data: str, firstD: str, secondD: str) -> float:
+    max = 0
+    with jsonlines.open(data, "r") as reader:
+        for job in reader:
+            if (max < job[firstD][secondD]):
+                max = job[firstD][secondD]
     return max
 
 
-def maxStat3D(data: list, firstD: str, secondD: str, thirdD: str) -> float:
-    max = data[0][firstD][secondD][thirdD]
-    for job in data:
-        if (max < job[firstD][secondD][thirdD]):
-            max = job[firstD][secondD][thirdD]
-    return max
-
-
-def minStat(data: list, stat: str) -> float:
-    min = data[0][stat]
-    for job in data:
-        if (min > job[stat]):
-            min = job[stat]
+def minStat(data: str, stat: str) -> float:
+    with jsonlines.open(data, "r") as reader:
+        min = sys.maxsize
+        for job in reader:
+            if (min > float(job[stat])):
+                min = float(job[stat])
     return min
 
 
 def minStat2D(data: list, firstD: str, secondD: str) -> float:
-    min = data[0][firstD][secondD]
-    for job in data:
-        if (min > job[firstD][secondD]):
-            min = job[firstD][secondD]
+    with jsonlines.open(data, "r") as reader:
+        min = sys.maxsize
+        for job in reader:
+            if (min > job[firstD][secondD]):
+                min = job[firstD][secondD]
     return min
 
 
-def minStat3D(data: list, firstD: str, secondD: str, thirdD: str) -> float:
-    min = data[0][firstD][secondD][thirdD]
-    for job in data:
-        if (min > job[firstD][secondD][thirdD]):
-            min = job[firstD][secondD][thirdD]
-    return min
+def medianStat(data: str, stat: str) -> float:
+    vals = []
+    with jsonlines.open(data, "r") as reader:
+        for job in reader:
+            vals.append(float(job[stat]))
+    return np.median(vals)
 
 
-def medianStat(data: list, stat: str) -> float:
-    return np.median([float(x[stat]) for x in data])
+def medianStat2D(data: str, firstD: str, secondD: str) -> float:
+    vals = []
+    with jsonlines.open(data, "r") as reader:
+        for job in reader:
+            vals.append(job[firstD][secondD])
+    return np.median(vals)
 
 
-def medianStat2D(data: list, firstD: str, secondD: str) -> float:
-    return np.median([x[firstD][secondD] for x in data])
+def clearPercentage(data: str) -> float:
+    with jsonlines.open(data, mode="r") as reader:
+        sumVal = 0.0
+        count = 0.0
+        for job in reader:
+            sumVal += int(job["clear_waves"] == 3)
+            count += 1.0
+        return sumVal / count
 
 
-def medianStat3D(data: list, firstD: str, secondD: str, thirdD: str) -> float:
-    return np.median([x[firstD][secondD][thirdD] for x in data])
+def waveTwoPercentage(data: str) -> float:
+    with jsonlines.open(data, mode="r") as reader:
+        sumVal = 0.0
+        count = 0.0
+        for job in reader:
+            sumVal += int(job["clear_waves"] >= 2)
+            count += 1.0
+        return sumVal / count
 
 
-def clearPercentage(data: list) -> float:
-    return sum(d["clear_waves"] == 3 for d in data) / jobsCount(data)
+def waveOnePercentage(data: str) -> float:
+    with jsonlines.open(data, mode="r") as reader:
+        sumVal = 0.0
+        count = 0.0
+        for job in reader:
+            sumVal += int(job["clear_waves"] >= 1)
+            count += 1.0
+        return sumVal / count
 
 
-def waveTwoPercentage(data: list) -> float:
-    return sum(d["clear_waves"] >= 2 for d in data) / jobsCount(data)
-
-
-def waveOnePercentage(data: list) -> float:
-    return sum(d["clear_waves"] >= 1 for d in data) / jobsCount(data)
-
-
-def statSummary(data: list, stat: str) -> str:
+def statSummary(data: str, stat: str) -> str:
     return str(avgStat(data, stat)) + " (" + str(minStat(data, stat)) + ", " + str(medianStat(data, stat)) + ", " + str(maxStat(data, stat)) + ")"
 
 
-def statSummary2D(data: list, firstD: str, secondD: str) -> str:
+def statSummary2D(data: str, firstD: str, secondD: str) -> str:
     return str(avgStat2D(data, firstD, secondD)) + " (" + str(minStat2D(data, firstD, secondD)) + ", " + str(medianStat2D(data, firstD, secondD)) + ", " + str(maxStat2D(data, firstD, secondD)) + ")"
-
-
-def statSummary3D(data: list, firstD: str, secondD: str, thirdD: str) -> str:
-    return str(avgStat3D(data, firstD, secondD, thirdD)) + " (" + str(minStat3D(data, firstD, secondD, thirdD)) + ", " + str(medianStat3D(data, firstD, secondD, thirdD)) + ", " + str(maxStat3D(data, firstD, secondD, thirdD)) + ")"
 
 
 def sumStatWaves(data: dict, stat: str) -> int:
@@ -717,9 +781,9 @@ def getPlayersAttribute4D(data: dict, firstD: str, secondD: str, thirdD: str, fo
 
 def getWavesAttribute(data: dict, attr: str) -> str:
     attrs = ""
-    for w in data["waves"]:
-        if w[attr]:
-            attrs += "{:<16}\t".format(w[attr])
+    for i in range(0, 3):
+        if i < len(data["waves"]):
+            attrs += "{:<16}\t".format(data["waves"][i][attr])
         else:
             attrs += "{:<16}\t".format("")
     return attrs
@@ -727,9 +791,9 @@ def getWavesAttribute(data: dict, attr: str) -> str:
 
 def getWavesAttribute3D(data: dict, firstD: str, secondD, thirdD) -> str:
     attrs = ""
-    for w in data["waves"]:
-        if w[firstD]:
-            attrs += "{:<16}\t".format(w[firstD][secondD][thirdD])
+    for i in range(0, 3):
+        if i < len(data["waves"]) and data["waves"][i][firstD]:
+            attrs += "{:<16}\t".format(data["waves"][i][firstD][secondD][thirdD])
         else:
             attrs += "{:<16}\t".format("")
     return attrs
@@ -743,27 +807,27 @@ def getTotalBosses(data: list, bosses: list, player: str) -> int:
     return sum(int(data[boss.replace(" ", "_").lower() + "_" + player] or 0) for boss in bosses)
 
 
-def printOverview(data: list) -> None:
-    print("Jobs: " + str(jobsCount(data)))
-    print("Average Waves: " + str(avgStat(data, "clear_waves")))
-    print("Clear %: " + str(clearPercentage(data)))
-    print("Wave 2 %: " + str(waveTwoPercentage(data)))
-    print("Wave 1 %: " + str(waveOnePercentage(data)))
-    print("Golden: " + statSummary2D(data, "my_data", "golden_egg_delivered"))
-    print("Power Eggs: " + statSummary2D(data, "my_data", "power_egg_collected"))
-    print("Rescued: " + statSummary2D(data, "my_data", "rescue"))
-    print("Deaths: " + statSummary2D(data, "my_data", "death"))
-    print("Hazard Level: " + statSummary(data, "danger_rate"))
+def printOverview(path: str, data: str) -> None:
+    print("Jobs: " + str(jobsCount(path + data)))
+    print("Average Waves: " + str(avgStat(path + data, "clear_waves")))
+    print("Clear %: " + str(clearPercentage(path + data)))
+    print("Wave 2 %: " + str(waveTwoPercentage(path + data)))
+    print("Wave 1 %: " + str(waveOnePercentage(path + data)))
+    print("Golden: " + statSummary2D(path + data, "my_data", "golden_egg_delivered"))
+    print("Power Eggs: " + statSummary2D(path + data, "my_data", "power_egg_collected"))
+    print("Rescued: " + statSummary2D(path + data, "my_data", "rescue"))
+    print("Deaths: " + statSummary2D(path + data, "my_data", "death"))
+    print("Hazard Level: " + statSummary(path + data, "danger_rate"))
 
 
-def printGeneral(data: list) -> None:
+def printGeneral(data: dict) -> None:
     print("Stat.ink Link: " + data["url"])
     print("Splatnet #: {:<}".format(data["splatnet_number"]))
     print("Stage: {:}".format(data["stage"]["name"][locale]))
     print("Rotation Start Date: " + str(data["shift_start_at"]["iso8601"]))
     print("Start Date: " + data["start_at"]["iso8601"])
     print("Result: {:}".format("Cleared" if data["clear_waves"] == 3 else "Failed"))
-    print("Title: {:} {:<3} -> {:} {:<3}".format(data["title"]["name"][locale], data["title_exp"], data["title_after"]["name"][locale], data["title_exp_after"]))
+    print("Title: {:} {:<3} -> {:} {:<3}".format(data["title"]["name"][locale] if data["title"] else "", data["title_exp"], data["title_after"]["name"][locale] if data["title_after"] else "", data["title_exp_after"]))
 
 
 def printWaves(data: dict) -> None:
@@ -830,58 +894,61 @@ def printBosses(data: dict) -> None:
     getBosses(data)
 
 
-def getArrayOfStat(data: list, stat) -> list:
-    results = []
-    for job in data:
-        results.append(float(job[stat]))
-    return results
+def getArrayOfStat(data: str, stat) -> list:
+    with jsonlines.open(data, "r") as reader:
+        results = []
+        for job in reader:
+            results.append(float(job[stat]))
+        return results
 
 
 def getArrayOfStat2D(data: list, firstD, secondD) -> list:
-    results = []
-    for job in data:
-        results.append(float(job[firstD][secondD]))
-    return results
+    with jsonlines.open(data, "r") as reader:
+        results = []
+        for job in reader:
+            results.append(float(job[firstD][secondD]))
+        return results
 
 
 def initAll():
-    if os.path.exists("salmonAll.jsonl"):
+    if os.path.exists("data/salmonAll.jsonl"):
         recentId = 0
-        with jsonlines.open("salmonAll.jsonl", mode="r") as reader:
+        with jsonlines.open("data/salmonAll.jsonl", mode="r") as reader:
             for line in reader:
                 recentId = line["id"]
-                print(recentId)
         fetchNewAll(recentId)
     else:
         fetchAll()
 
 
 def initUser() -> list:
-    data = []
-    if os.path.exists("salmon.json"):
-        data = json.load(open("salmon.json", "r"))
-        new = fetchNewUser(data[-1]["id"])
-        for i in new:
-            data.append(i)
-        json.dump(data, open("salmon.json", "w"), indent=4)
+    if os.path.exists("data/salmon.jsonl"):
+        recentId = 0
+        with jsonlines.open("data/salmon.jsonl", mode="r") as reader:
+            for line in reader:
+                recentId = line["id"]
+        fetchNewUser(recentId)
     else:
-        data = fetchAllUser()
-        json.dump(data, open("salmon.json", "w"), indent=4)
-    return data
+        fetchAllUser()
 
 
-# json.dump(data, open("salmon.json", "w"))
 if __name__ == "__main__":
     initAll()
-    # rotations = findRotationByWeaponsAndStage(data, ("Grizzco Charger", "Grizzco Brella", "Grizzco Blaster", "Grizzco Slosher"), "Ruins of Ark Polaris")
-    # printOverview(list(filter(dangerRate("200.0"), list(filter(duringRotationInt(rotations[1]), data)))))
-"""for job in data:
-    printGeneral(job)
+    data = "salmonAll.jsonl"
+    rotations = findRotationByWeaponsAndStage("data/" + data, ("Grizzco Charger", "Grizzco Brella", "Grizzco Blaster", "Grizzco Slosher"), "Ruins of Ark Polaris")
+    print(rotations)
+    jobs = duringRotationInt("data/", data, rotations[1])
+    jobs = dangerRate(jobs[0], jobs[1], "200.0")
+    printOverview(jobs[0], jobs[1])
     print()
-    printWaves(job)
-    print()
-    printPlayers(job)
-    print()
-    printBosses(job)
-    print()
-    print()"""
+    with jsonlines.open(jobs[0] + jobs[1], "r") as reader:
+        """for job in reader:
+            printGeneral(job)
+            print()
+            printWaves(job)
+            print()
+            printPlayers(job)
+            print()
+            printBosses(job)
+            print()
+            print()"""
