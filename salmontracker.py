@@ -865,7 +865,7 @@ def withSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
                 if (
                     special in (
                         var["my_data"]["special"]["key"],
-                        or var["my_data"]["special"]["name"][locale]
+                        var["my_data"]["special"]["name"][locale]
                     )
                 ):
                     writer.write(var)
@@ -896,7 +896,7 @@ def withoutSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
                 if not (
                     special in (
                         var["my_data"]["special"]["key"],
-                        or var["my_data"]["special"]["name"][locale]
+                        var["my_data"]["special"]["name"][locale]
                     )
                 ):
                     writer.write(var)
