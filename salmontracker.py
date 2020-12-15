@@ -199,8 +199,10 @@ def findRotationByWeaponsAndStage(data: str, weapons: list, stage: str) -> list:
     with jsonlines.open(data, mode="r") as reader:
         for job in reader:
             found = (
-                job["stage"]["key"] == stage or
-                job["stage"]["name"][locale] == stage
+                stage in (
+                    job["stage"]["key"],
+                    job["stage"]["name"][locale]
+                )
             )
             for weapon in weapons:
                 found = found and (
@@ -561,8 +563,10 @@ def onStage(path: str, data: str, stage: str) -> bool:
         with jsonlines.open(path + data[0:-6] + "/stage/" + stage + ".jsonl", "w") as writer:
             for var in reader:
                 if (
-                    var["stage"]["key"] == stage or
-                    var["stage"]["name"][locale] == stage
+                    stage in (
+                        var["stage"]["key"],
+                        var["stage"]["name"][locale]
+                    )
                 ):
                     writer.write(var)
     return (path + data[0:-6] + "/stage/", stage + ".jsonl")
@@ -581,8 +585,10 @@ def notOnStage(path: str, data: str, stage: str) -> bool:
         with jsonlines.open(path + data[0:-6] + "/notStage/" + stage + ".jsonl", "w") as writer:
             for var in reader:
                 if not (
-                    var["stage"]["key"] == stage or
-                    var["stage"]["name"][locale] == stage
+                    stage in (
+                        var["stage"]["key"],
+                        var["stage"]["name"][locale]
+                    )
                 ):
                     writer.write(var)
     return (path + data[0:-6] + "/notStage/", stage + ".jsonl")
