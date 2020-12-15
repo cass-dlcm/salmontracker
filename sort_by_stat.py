@@ -73,7 +73,7 @@ def sortStages(path: str, data: str, stat: str) -> None:
 
 
 initUser(json.load(open("keys.json", "r"))["statink_key"])
-path = "data/"
-data = "salmon.jsonl"
-sortStages(path, data, "clear_waves")
-sortWeapons(path, data, "clear_waves")
+filePath = "data/"
+dataFile = "salmon.jsonl"
+sortStages(filePath, dataFile, "clear_waves")
+sortWeapons(filePath, dataFile, "clear_waves")
