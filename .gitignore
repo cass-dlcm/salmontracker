@@ -3,3 +3,4 @@ data/
 __pycache__
 example_job.json
 python-probe.log
+.mypy_cache
