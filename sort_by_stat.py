@@ -13,6 +13,7 @@ import requests
 import pprint
 from typing import Tuple, List, Dict, Union
 import json
+import os
 
 
 def sortWeapons(path: str, data: str, stat: str) -> None:
@@ -42,6 +43,8 @@ def sortWeapons(path: str, data: str, stat: str) -> None:
                 withoutVal[0] + withoutVal[1], stat
             )
             results.append(result)
+        os.remove(withVal[0] + withVal[1])
+        os.remove(withoutVal[0] + withoutVal[1])
     pprint.pprint(sorted(results, key=lambda val: val["value"]))
 
 
@@ -57,14 +60,15 @@ def sortStages(path: str, data: str, stat: str) -> None:
     stageList = []
     with jsonlines.open(path + data, "r") as reader:
         for job in reader:
-            if not (job["stage"]["name"][locale] in stageDict):
-                stageDict[job["stage"]["name"][locale]] = {
-                    "name": job["stage"]["name"][locale],
-                    "clear_waves": 0.0,
-                    "count": 0.0,
-                }
-            stageDict[job["stage"]["name"][locale]][stat] += job[stat]
-            stageDict[job["stage"]["name"][locale]]["count"] += 1.0
+            if job["stage"] is not None:
+                if not (job["stage"]["name"][locale] in stageDict):
+                    stageDict[job["stage"]["name"][locale]] = {
+                        "name": job["stage"]["name"][locale],
+                        "clear_waves": 0.0,
+                        "count": 0.0,
+                    }
+                stageDict[job["stage"]["name"][locale]][stat] += job[stat]
+                stageDict[job["stage"]["name"][locale]]["count"] += 1.0
         for stage in stageDict.values():
             stageList.append(
                 {"name": stage["name"], "value": stage[stat] / stage["count"]}
@@ -72,8 +76,9 @@ def sortStages(path: str, data: str, stat: str) -> None:
         pprint.pprint(sorted(stageList, key=lambda val: val["value"]))
 
 
-initUser(json.load(open("keys.json", "r"))["statink_key"])
+# initUser(json.load(open("keys.json", "r"))["statink_key"])
+# initAll()
 filePath = "data/"
-dataFile = "salmon.jsonl"
-sortStages(filePath, dataFile, "clear_waves")
+dataFile = "salmonAll.jsonl"
+# sortStages(filePath, dataFile, "clear_waves")
 sortWeapons(filePath, dataFile, "clear_waves")
