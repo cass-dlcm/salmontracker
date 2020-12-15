@@ -31,14 +31,14 @@ def sortWeapons(path: str, data: str, stat: str) -> None:
     for weapon in weaponsList:
         result: Dict[str, Union[str, float]] = {}
         withVal: Tuple[str, str] = hasWeapon(path, data, weapon["name"][locale])
-        withoutVal: Tuple[str, str] = doesntHaveWeapon(path, data, weapon["name"][locale])
+        withoutVal: Tuple[str, str] = doesntHaveWeapon(
+            path, data, weapon["name"][locale]
+        )
         if (hasJobs(withVal[0], withVal[1])) and (
             hasJobs(withoutVal[0], withoutVal[1])
         ):
             result["name"] = weapon["name"][locale]
-            result["value"] = avgStat(
-                withVal[0] + withVal[1], stat
-            ) - avgStat(
+            result["value"] = avgStat(withVal[0] + withVal[1], stat) - avgStat(
                 withoutVal[0] + withoutVal[1], stat
             )
             results.append(result)

@@ -43,7 +43,9 @@ elif stat == "Rotation":
     for i in range(0, 4):
         weapons.append(input("Enter a weapon: "))
     stageChoice = input("Enter the stage: ")
-    rotations: List[int] = findRotationByWeaponsAndStage(path + data, weapons, stageChoice)
+    rotations: List[int] = findRotationByWeaponsAndStage(
+        path + data, weapons, stageChoice
+    )
     print(rotations)
     rot: int = rotations[int(input("Pick the rotation id by index: "))]
     withVal = duringRotationInt(path, data, rot)
