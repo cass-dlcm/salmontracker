@@ -869,11 +869,9 @@ def withSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
             path + data[0:-6] + "/special/" + special + ".jsonl", "w"
         ) as writer:
             for var in reader:
-                if (
-                    special in (
-                        var["my_data"]["special"]["key"],
-                        var["my_data"]["special"]["name"][locale]
-                    )
+                if special in (
+                    var["my_data"]["special"]["key"],
+                    var["my_data"]["special"]["name"][locale],
                 ):
                     writer.write(var)
     return (path + data[0:-6] + "/special/", special + ".jsonl")
@@ -901,9 +899,10 @@ def withoutSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
         ) as writer:
             for var in reader:
                 if not (
-                    special in (
+                    special
+                    in (
                         var["my_data"]["special"]["key"],
-                        var["my_data"]["special"]["name"][locale]
+                        var["my_data"]["special"]["name"][locale],
                     )
                 ):
                     writer.write(var)
