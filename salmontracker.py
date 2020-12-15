@@ -1385,7 +1385,7 @@ def notGreaterThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]
                 path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jsonl", "w"
             ) as writer:
                 for job in reader:
-                    if not float(job["danger_rate"]) > float(rate):
+                    if float(job["danger_rate"]) <= float(rate):
                         writer.write(job)
     return (path + data[0:-6] + "/dangerRate/notGreaterThan/", rate + ".jsonl")
 
