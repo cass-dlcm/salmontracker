@@ -160,33 +160,34 @@ def hasPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
     :param player: str: the Splatnet ID of the chosen player
 
     """
-    try:
-        os.mkdir(path + data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(path + data[0:-6] + "/playerId/")
-    except FileExistsError:
-        pass
-    with jsonlines.open(path + data, "r") as reader:
-        if hasJobs(path, data):
-            with jsonlines.open(
-                path + data[0:-6] + "/playerId/" + player + ".jsonl", "w"
-            ) as writer:
-                for var in reader:
-                    if (
-                        var["teammates"][0]["splatnet_id"] == player
-                        or (
-                            len(var["teammates"]) > 1
-                            and var["teammates"][1]["splatnet_id"] == player
-                        )
-                        or (
-                            len(var["teammates"]) > 2
-                            and var["teammates"][2]["splatnet_id"] == player
-                        )
-                    ):
-                        writer.write(var)
-        return (path + data[0:-6] + "/playerId/", player + ".jsonl")
+    if not os.path.exists(path + data[0:-6] + "/playerId/" + player + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/playerId/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, "r") as reader:
+            if hasJobs(path, data):
+                with jsonlines.open(
+                    path + data[0:-6] + "/playerId/" + player + ".jsonl", "w"
+                ) as writer:
+                    for var in reader:
+                        if (
+                            var["teammates"][0]["splatnet_id"] == player
+                            or (
+                                len(var["teammates"]) > 1
+                                and var["teammates"][1]["splatnet_id"] == player
+                            )
+                            or (
+                                len(var["teammates"]) > 2
+                                and var["teammates"][2]["splatnet_id"] == player
+                            )
+                        ):
+                            writer.write(var)
+    return (path + data[0:-6] + "/playerId/", player + ".jsonl")
 
 
 def withoutPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
@@ -198,33 +199,34 @@ def withoutPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
     :param player: str: the Splatnet ID of the chosen player
 
     """
-    try:
-        os.mkdir(path + data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(path + data[0:-6] + "/notPlayerId/")
-    except FileExistsError:
-        pass
-    with jsonlines.open(path + data, "r") as reader:
-        if hasJobs(path, data):
-            with jsonlines.open(
-                path + data[0:-6] + "/notPlayerId/" + player + ".jsonl", "w"
-            ) as writer:
-                for var in reader:
-                    if not (
-                        var["teammates"][0]["splatnet_id"] == player
-                        or (
-                            len(var["teammates"]) > 1
-                            and var["teammates"][1]["splatnet_id"] == player
-                        )
-                        or (
-                            len(var["teammates"]) > 2
-                            and var["teammates"][2]["splatnet_id"] == player
-                        )
-                    ):
-                        writer.write(var)
-        return (path + data[0:-6] + "/notPlayerId/", player + ".jsonl")
+    if not os.path.exists(path + data[0:-6] + "/notPlayerId/" + player + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/notPlayerId/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, "r") as reader:
+            if hasJobs(path, data):
+                with jsonlines.open(
+                    path + data[0:-6] + "/notPlayerId/" + player + ".jsonl", "w"
+                ) as writer:
+                    for var in reader:
+                        if not (
+                            var["teammates"][0]["splatnet_id"] == player
+                            or (
+                                len(var["teammates"]) > 1
+                                and var["teammates"][1]["splatnet_id"] == player
+                            )
+                            or (
+                                len(var["teammates"]) > 2
+                                and var["teammates"][2]["splatnet_id"] == player
+                            )
+                        ):
+                            writer.write(var)
+    return (path + data[0:-6] + "/notPlayerId/", player + ".jsonl")
 
 
 def hasPlayerByName(path: str, data: str, player: str) -> Tuple[str, str]:
@@ -236,33 +238,34 @@ def hasPlayerByName(path: str, data: str, player: str) -> Tuple[str, str]:
     :param player: str: the name of the chosen player
 
     """
-    try:
-        os.mkdir(path + data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(path + data[0:-6] + "/player/")
-    except FileExistsError:
-        pass
-    with jsonlines.open(path + data, "r") as reader:
-        if hasJobs(path, data):
-            with jsonlines.open(
-                path + data[0:-6] + "/player/" + player + ".jsonl", "w"
-            ) as writer:
-                for var in reader:
-                    if (
-                        var["teammates"][0]["name"] == player
-                        or (
-                            len(var["teammates"]) > 1
-                            and var["teammates"][1]["name"] == player
-                        )
-                        or (
-                            len(var["teammates"]) > 2
-                            and var["teammates"][2]["name"] == player
-                        )
-                    ):
-                        writer.write(var)
-        return (path + data[0:-6] + "/player/", player + ".jsonl")
+    if not os.path.exists(path + data[0:-6] + "/player/" + player + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/player/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, "r") as reader:
+            if hasJobs(path, data):
+                with jsonlines.open(
+                    path + data[0:-6] + "/player/" + player + ".jsonl", "w"
+                ) as writer:
+                    for var in reader:
+                        if (
+                            var["teammates"][0]["name"] == player
+                            or (
+                                len(var["teammates"]) > 1
+                                and var["teammates"][1]["name"] == player
+                            )
+                            or (
+                                len(var["teammates"]) > 2
+                                and var["teammates"][2]["name"] == player
+                            )
+                        ):
+                            writer.write(var)
+    return (path + data[0:-6] + "/player/", player + ".jsonl")
 
 
 def findRotationByWeaponsAndStage(
@@ -447,136 +450,145 @@ def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: The path and filename of the output data file
 
     """
-    try:
-        os.mkdir(path + data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(path + data[0:-6] + "/weapon/")
-    except FileExistsError:
-        pass
-    with jsonlines.open(path + data, "r") as reader:
-        with jsonlines.open(
-            path + data[0:-6] + "/weapon/" + weapon + ".jsonl", "w"
-        ) as writer:
-            for var in reader:
-                if (
-                    var["my_data"]["weapons"][0]["key"] == weapon
-                    or (
-                        len(var["my_data"]["weapons"]) > 1
-                        and var["my_data"]["weapons"][1]["key"] == weapon
-                    )
-                    or (
-                        len(var["my_data"]["weapons"]) > 2
-                        and var["my_data"]["weapons"][2]["key"] == weapon
-                    )
-                    or (
-                        len(var["teammates"]) > 0
-                        and var["teammates"][0]["weapons"] is not None
-                        and (
-                            var["teammates"][0]["weapons"][0]["key"] == weapon
-                            or (
-                                len(var["teammates"][0]["weapons"]) > 1
-                                and var["teammates"][0]["weapons"][1]["key"] == weapon
-                            )
-                            or (
-                                len(var["teammates"][0]["weapons"]) > 2
-                                and var["teammates"][0]["weapons"][2]["key"] == weapon
+    if not os.path.exists(path + data[0:-6] + "/weapon/" + weapon + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/weapon/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, "r") as reader:
+            with jsonlines.open(
+                path + data[0:-6] + "/weapon/" + weapon + ".jsonl", "w"
+            ) as writer:
+                for var in reader:
+                    if (
+                        var["my_data"]["weapons"][0]["key"] == weapon
+                        or (
+                            len(var["my_data"]["weapons"]) > 1
+                            and var["my_data"]["weapons"][1]["key"] == weapon
+                        )
+                        or (
+                            len(var["my_data"]["weapons"]) > 2
+                            and var["my_data"]["weapons"][2]["key"] == weapon
+                        )
+                        or (
+                            var["teammates"] is not None and (
+                                (
+                                    len(var["teammates"]) > 0
+                                    and var["teammates"][0]["weapons"] is not None
+                                    and (
+                                        var["teammates"][0]["weapons"][0]["key"] == weapon
+                                        or (
+                                            len(var["teammates"][0]["weapons"]) > 1
+                                            and var["teammates"][0]["weapons"][1]["key"] == weapon
+                                        )
+                                        or (
+                                            len(var["teammates"][0]["weapons"]) > 2
+                                            and var["teammates"][0]["weapons"][2]["key"] == weapon
+                                        )
+                                    )
+                                )
+                                or (
+                                    len(var["teammates"]) > 1
+                                    and var["teammates"][1]["weapons"] is not None
+                                    and (
+                                        var["teammates"][1]["weapons"][0]["key"] == weapon
+                                        or (
+                                            len(var["teammates"][1]["weapons"]) > 1
+                                            and var["teammates"][1]["weapons"][1]["key"] == weapon
+                                        )
+                                        or (
+                                            len(var["teammates"][1]["weapons"]) > 2
+                                            and var["teammates"][1]["weapons"][2]["key"] == weapon
+                                        )
+                                    )
+                                )
+                                or (
+                                    len(var["teammates"]) > 2
+                                    and var["teammates"][2]["weapons"] is not None
+                                    and (
+                                        var["teammates"][2]["weapons"][0]["key"] == weapon
+                                        or (
+                                            len(var["teammates"][2]["weapons"]) > 1
+                                            and var["teammates"][2]["weapons"][1]["key"] == weapon
+                                        )
+                                        or (
+                                            len(var["teammates"][2]["weapons"]) > 2
+                                            and var["teammates"][2]["weapons"][2]["key"] == weapon
+                                        )
+                                    )
+                                )
                             )
                         )
-                    )
-                    or (
-                        len(var["teammates"]) > 1
-                        and var["teammates"][1]["weapons"] is not None
-                        and (
-                            var["teammates"][1]["weapons"][0]["key"] == weapon
-                            or (
-                                len(var["teammates"][1]["weapons"]) > 1
-                                and var["teammates"][1]["weapons"][1]["key"] == weapon
-                            )
-                            or (
-                                len(var["teammates"][1]["weapons"]) > 2
-                                and var["teammates"][1]["weapons"][2]["key"] == weapon
+                        or (var["my_data"]["weapons"][0]["name"][locale] == weapon)
+                        or (
+                            len(var["my_data"]["weapons"]) > 1
+                            and var["my_data"]["weapons"][1]["name"][locale] == weapon
+                        )
+                        or (
+                            len(var["my_data"]["weapons"]) > 2
+                            and var["my_data"]["weapons"][2]["name"][locale] == weapon
+                        )
+                        or (
+                            var["teammates"] is not None and (
+                                (
+                                    len(var["teammates"]) > 0
+                                    and var["teammates"][0]["weapons"] is not None
+                                    and (
+                                        var["teammates"][0]["weapons"][0]["name"][locale] == weapon
+                                        or (
+                                            len(var["teammates"][0]["weapons"]) > 1
+                                            and var["teammates"][0]["weapons"][1]["name"][locale]
+                                            == weapon
+                                        )
+                                        or (
+                                            len(var["teammates"][0]["weapons"]) > 2
+                                            and var["teammates"][0]["weapons"][2]["name"][locale]
+                                            == weapon
+                                        )
+                                    )
+                                )
+                                or (
+                                    len(var["teammates"]) > 1
+                                    and var["teammates"][1]["weapons"] is not None
+                                    and (
+                                        var["teammates"][1]["weapons"][0]["name"][locale] == weapon
+                                        or (
+                                            len(var["teammates"][1]["weapons"]) > 1
+                                            and var["teammates"][1]["weapons"][1]["name"][locale]
+                                            == weapon
+                                        )
+                                        or (
+                                            len(var["teammates"][1]["weapons"]) > 2
+                                            and var["teammates"][1]["weapons"][2]["name"][locale]
+                                            == weapon
+                                        )
+                                    )
+                                )
+                                or (
+                                    len(var["teammates"]) > 2
+                                    and var["teammates"][2]["weapons"] is not None
+                                    and (
+                                        var["teammates"][2]["weapons"][0]["name"][locale] == weapon
+                                        or (
+                                            len(var["teammates"][2]["weapons"]) > 1
+                                            and var["teammates"][2]["weapons"][1]["name"][locale]
+                                            == weapon
+                                        )
+                                        or (
+                                            len(var["teammates"][2]["weapons"]) > 2
+                                            and var["teammates"][2]["weapons"][2]["name"][locale]
+                                            == weapon
+                                        )
+                                    )
+                                )
                             )
                         )
-                    )
-                    or (
-                        len(var["teammates"]) > 2
-                        and var["teammates"][2]["weapons"] is not None
-                        and (
-                            var["teammates"][2]["weapons"][0]["key"] == weapon
-                            or (
-                                len(var["teammates"][2]["weapons"]) > 1
-                                and var["teammates"][2]["weapons"][1]["key"] == weapon
-                            )
-                            or (
-                                len(var["teammates"][2]["weapons"]) > 2
-                                and var["teammates"][2]["weapons"][2]["key"] == weapon
-                            )
-                        )
-                    )
-                    or (var["my_data"]["weapons"][0]["name"][locale] == weapon)
-                    or (
-                        len(var["my_data"]["weapons"]) > 1
-                        and var["my_data"]["weapons"][1]["name"][locale] == weapon
-                    )
-                    or (
-                        len(var["my_data"]["weapons"]) > 2
-                        and var["my_data"]["weapons"][2]["name"][locale] == weapon
-                    )
-                    or (
-                        len(var["teammates"]) > 0
-                        and var["teammates"][0]["weapons"] is not None
-                        and (
-                            var["teammates"][0]["weapons"][0]["name"][locale] == weapon
-                            or (
-                                len(var["teammates"][0]["weapons"]) > 1
-                                and var["teammates"][0]["weapons"][1]["name"][locale]
-                                == weapon
-                            )
-                            or (
-                                len(var["teammates"][0]["weapons"]) > 2
-                                and var["teammates"][0]["weapons"][2]["name"][locale]
-                                == weapon
-                            )
-                        )
-                    )
-                    or (
-                        len(var["teammates"]) > 1
-                        and var["teammates"][1]["weapons"] is not None
-                        and (
-                            var["teammates"][1]["weapons"][0]["name"][locale] == weapon
-                            or (
-                                len(var["teammates"][1]["weapons"]) > 1
-                                and var["teammates"][1]["weapons"][1]["name"][locale]
-                                == weapon
-                            )
-                            or (
-                                len(var["teammates"][1]["weapons"]) > 2
-                                and var["teammates"][1]["weapons"][2]["name"][locale]
-                                == weapon
-                            )
-                        )
-                    )
-                    or (
-                        len(var["teammates"]) > 2
-                        and var["teammates"][2]["weapons"] is not None
-                        and (
-                            var["teammates"][2]["weapons"][0]["name"][locale] == weapon
-                            or (
-                                len(var["teammates"][2]["weapons"]) > 1
-                                and var["teammates"][2]["weapons"][1]["name"][locale]
-                                == weapon
-                            )
-                            or (
-                                len(var["teammates"][2]["weapons"]) > 2
-                                and var["teammates"][2]["weapons"][2]["name"][locale]
-                                == weapon
-                            )
-                        )
-                    )
-                ):
-                    writer.write(var)
+                    ):
+                        writer.write(var)
     return (path + data[0:-6] + "/weapon/", weapon + ".jsonl")
 
 
@@ -590,136 +602,145 @@ def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: The path and filename of the output data file
 
     """
-    try:
-        os.mkdir(path + data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(path + data[0:-6] + "/notWeapon/")
-    except FileExistsError:
-        pass
-    with jsonlines.open(path + data, "r") as reader:
-        with jsonlines.open(
-            path + data[0:-6] + "/notWeapon/" + weapon + ".jsonl", "w"
-        ) as writer:
-            for var in reader:
-                if not (
-                    var["my_data"]["weapons"][0]["key"] == weapon
-                    or (
-                        len(var["my_data"]["weapons"]) > 1
-                        and var["my_data"]["weapons"][1]["key"] == weapon
-                    )
-                    or (
-                        len(var["my_data"]["weapons"]) > 2
-                        and var["my_data"]["weapons"][2]["key"] == weapon
-                    )
-                    or (
-                        len(var["teammates"]) > 0
-                        and var["teammates"][0]["weapons"] is not None
-                        and (
-                            var["teammates"][0]["weapons"][0]["key"] == weapon
-                            or (
-                                len(var["teammates"][0]["weapons"]) > 1
-                                and var["teammates"][0]["weapons"][1]["key"] == weapon
-                            )
-                            or (
-                                len(var["teammates"][0]["weapons"]) > 2
-                                and var["teammates"][0]["weapons"][2]["key"] == weapon
+    if not os.path.exists(path + data[0:-6] + "/notWeapon/" + weapon + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/notWeapon/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, "r") as reader:
+            with jsonlines.open(
+                path + data[0:-6] + "/notWeapon/" + weapon + ".jsonl", "w"
+            ) as writer:
+                for var in reader:
+                    if not (
+                        var["my_data"]["weapons"][0]["key"] == weapon
+                        or (
+                            len(var["my_data"]["weapons"]) > 1
+                            and var["my_data"]["weapons"][1]["key"] == weapon
+                        )
+                        or (
+                            len(var["my_data"]["weapons"]) > 2
+                            and var["my_data"]["weapons"][2]["key"] == weapon
+                        )
+                        or (
+                            var["teammates"] is not None and (
+                                (
+                                    len(var["teammates"]) > 0
+                                    and var["teammates"][0]["weapons"] is not None
+                                    and (
+                                        var["teammates"][0]["weapons"][0]["key"] == weapon
+                                        or (
+                                            len(var["teammates"][0]["weapons"]) > 1
+                                            and var["teammates"][0]["weapons"][1]["key"] == weapon
+                                        )
+                                        or (
+                                            len(var["teammates"][0]["weapons"]) > 2
+                                            and var["teammates"][0]["weapons"][2]["key"] == weapon
+                                        )
+                                    )
+                                )
+                                or (
+                                    len(var["teammates"]) > 1
+                                    and var["teammates"][1]["weapons"] is not None
+                                    and (
+                                        var["teammates"][1]["weapons"][0]["key"] == weapon
+                                        or (
+                                            len(var["teammates"][1]["weapons"]) > 1
+                                            and var["teammates"][1]["weapons"][1]["key"] == weapon
+                                        )
+                                        or (
+                                            len(var["teammates"][1]["weapons"]) > 2
+                                            and var["teammates"][1]["weapons"][2]["key"] == weapon
+                                        )
+                                    )
+                                )
+                                or (
+                                    len(var["teammates"]) > 2
+                                    and var["teammates"][2]["weapons"] is not None
+                                    and (
+                                        var["teammates"][2]["weapons"][0]["key"] == weapon
+                                        or (
+                                            len(var["teammates"][2]["weapons"]) > 1
+                                            and var["teammates"][2]["weapons"][1]["key"] == weapon
+                                        )
+                                        or (
+                                            len(var["teammates"][2]["weapons"]) > 2
+                                            and var["teammates"][2]["weapons"][2]["key"] == weapon
+                                        )
+                                    )
+                                )
                             )
                         )
-                    )
-                    or (
-                        len(var["teammates"]) > 1
-                        and var["teammates"][1]["weapons"] is not None
-                        and (
-                            var["teammates"][1]["weapons"][0]["key"] == weapon
-                            or (
-                                len(var["teammates"][1]["weapons"]) > 1
-                                and var["teammates"][1]["weapons"][1]["key"] == weapon
-                            )
-                            or (
-                                len(var["teammates"][1]["weapons"]) > 2
-                                and var["teammates"][1]["weapons"][2]["key"] == weapon
+                        or (var["my_data"]["weapons"][0]["name"][locale] == weapon)
+                        or (
+                            len(var["my_data"]["weapons"]) > 1
+                            and var["my_data"]["weapons"][1]["name"][locale] == weapon
+                        )
+                        or (
+                            len(var["my_data"]["weapons"]) > 2
+                            and var["my_data"]["weapons"][2]["name"][locale] == weapon
+                        )
+                        or (
+                            var["teammates"] is not None and (
+                                (
+                                    len(var["teammates"]) > 0
+                                    and var["teammates"][0]["weapons"] is not None
+                                    and (
+                                        var["teammates"][0]["weapons"][0]["name"][locale] == weapon
+                                        or (
+                                            len(var["teammates"][0]["weapons"]) > 1
+                                            and var["teammates"][0]["weapons"][1]["name"][locale]
+                                            == weapon
+                                        )
+                                        or (
+                                            len(var["teammates"][0]["weapons"]) > 2
+                                            and var["teammates"][0]["weapons"][2]["name"][locale]
+                                            == weapon
+                                        )
+                                    )
+                                )
+                                or (
+                                    len(var["teammates"]) > 1
+                                    and var["teammates"][1]["weapons"] is not None
+                                    and (
+                                        var["teammates"][1]["weapons"][0]["name"][locale] == weapon
+                                        or (
+                                            len(var["teammates"][1]["weapons"]) > 1
+                                            and var["teammates"][1]["weapons"][1]["name"][locale]
+                                            == weapon
+                                        )
+                                        or (
+                                            len(var["teammates"][1]["weapons"]) > 2
+                                            and var["teammates"][1]["weapons"][2]["name"][locale]
+                                            == weapon
+                                        )
+                                    )
+                                )
+                                or (
+                                    len(var["teammates"]) > 2
+                                    and var["teammates"][2]["weapons"] is not None
+                                    and (
+                                        var["teammates"][2]["weapons"][0]["name"][locale] == weapon
+                                        or (
+                                            len(var["teammates"][2]["weapons"]) > 1
+                                            and var["teammates"][2]["weapons"][1]["name"][locale]
+                                            == weapon
+                                        )
+                                        or (
+                                            len(var["teammates"][2]["weapons"]) > 2
+                                            and var["teammates"][2]["weapons"][2]["name"][locale]
+                                            == weapon
+                                        )
+                                    )
+                                )
                             )
                         )
-                    )
-                    or (
-                        len(var["teammates"]) > 2
-                        and var["teammates"][2]["weapons"] is not None
-                        and (
-                            var["teammates"][2]["weapons"][0]["key"] == weapon
-                            or (
-                                len(var["teammates"][2]["weapons"]) > 1
-                                and var["teammates"][2]["weapons"][1]["key"] == weapon
-                            )
-                            or (
-                                len(var["teammates"][2]["weapons"]) > 2
-                                and var["teammates"][2]["weapons"][2]["key"] == weapon
-                            )
-                        )
-                    )
-                    or (var["my_data"]["weapons"][0]["name"][locale] == weapon)
-                    or (
-                        len(var["my_data"]["weapons"]) > 1
-                        and var["my_data"]["weapons"][1]["name"][locale] == weapon
-                    )
-                    or (
-                        len(var["my_data"]["weapons"]) > 2
-                        and var["my_data"]["weapons"][2]["name"][locale] == weapon
-                    )
-                    or (
-                        len(var["teammates"]) > 0
-                        and var["teammates"][0]["weapons"] is not None
-                        and (
-                            var["teammates"][0]["weapons"][0]["name"][locale] == weapon
-                            or (
-                                len(var["teammates"][0]["weapons"]) > 1
-                                and var["teammates"][0]["weapons"][1]["name"][locale]
-                                == weapon
-                            )
-                            or (
-                                len(var["teammates"][0]["weapons"]) > 2
-                                and var["teammates"][0]["weapons"][2]["name"][locale]
-                                == weapon
-                            )
-                        )
-                    )
-                    or (
-                        len(var["teammates"]) > 1
-                        and var["teammates"][1]["weapons"] is not None
-                        and (
-                            var["teammates"][1]["weapons"][0]["name"][locale] == weapon
-                            or (
-                                len(var["teammates"][1]["weapons"]) > 1
-                                and var["teammates"][1]["weapons"][1]["name"][locale]
-                                == weapon
-                            )
-                            or (
-                                len(var["teammates"][1]["weapons"]) > 2
-                                and var["teammates"][1]["weapons"][2]["name"][locale]
-                                == weapon
-                            )
-                        )
-                    )
-                    or (
-                        len(var["teammates"]) > 2
-                        and var["teammates"][2]["weapons"] is not None
-                        and (
-                            var["teammates"][2]["weapons"][0]["name"][locale] == weapon
-                            or (
-                                len(var["teammates"][2]["weapons"]) > 1
-                                and var["teammates"][2]["weapons"][1]["name"][locale]
-                                == weapon
-                            )
-                            or (
-                                len(var["teammates"][2]["weapons"]) > 2
-                                and var["teammates"][2]["weapons"][2]["name"][locale]
-                                == weapon
-                            )
-                        )
-                    )
-                ):
-                    writer.write(var)
+                    ):
+                        writer.write(var)
     return (path + data[0:-6] + "/notWeapon/", weapon + ".jsonl")
 
 
@@ -733,38 +754,39 @@ def usesWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: The path and filename of the output data file
 
     """
-    try:
-        os.mkdir(path + data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(path + data[0:-6] + "/usesWeapon/")
-    except FileExistsError:
-        pass
-    with jsonlines.open(path + data, "r") as reader:
-        with jsonlines.open(path + data[0:-6] + "/usesWeapon/" + weapon + ".jsonl", "w") as writer:
-            for var in reader:
-                if (
-                    var["my_data"]["weapons"][0]["key"] == weapon
-                    or (
-                        len(var["my_data"]["weapons"]) > 1
-                        and var["my_data"]["weapons"][1]["key"] == weapon
-                    )
-                    or (
-                        len(var["my_data"]["weapons"]) > 2
-                        and var["my_data"]["weapons"][2]["key"] == weapon
-                    )
-                    or var["my_data"]["weapons"][0]["name"][locale] == weapon
-                    or (
-                        len(var["my_data"]["weapons"]) > 1
-                        and var["my_data"]["weapons"][1]["name"][locale] == weapon
-                    )
-                    or (
-                        len(var["my_data"]["weapons"]) > 2
-                        and var["my_data"]["weapons"][2]["name"][locale] == weapon
-                    )
-                ):
-                    writer.write(var)
+    if not os.path.exists(path + data[0:-6] + "/usesWeapon/" + weapon + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/usesWeapon/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, "r") as reader:
+            with jsonlines.open(path + data[0:-6] + "/usesWeapon/" + weapon + ".jsonl", "w") as writer:
+                for var in reader:
+                    if (
+                        var["my_data"]["weapons"][0]["key"] == weapon
+                        or (
+                            len(var["my_data"]["weapons"]) > 1
+                            and var["my_data"]["weapons"][1]["key"] == weapon
+                        )
+                        or (
+                            len(var["my_data"]["weapons"]) > 2
+                            and var["my_data"]["weapons"][2]["key"] == weapon
+                        )
+                        or var["my_data"]["weapons"][0]["name"][locale] == weapon
+                        or (
+                            len(var["my_data"]["weapons"]) > 1
+                            and var["my_data"]["weapons"][1]["name"][locale] == weapon
+                        )
+                        or (
+                            len(var["my_data"]["weapons"]) > 2
+                            and var["my_data"]["weapons"][2]["name"][locale] == weapon
+                        )
+                    ):
+                        writer.write(var)
     return (path + data[0:-6] + "/usesWeapon/", weapon + ".jsonl")
 
 
@@ -778,38 +800,39 @@ def doesntUseWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: The path and filename of the output data file
 
     """
-    try:
-        os.mkdir(path + data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(path + data[0:-6] + "/notUsesWeapon/")
-    except FileExistsError:
-        pass
-    with jsonlines.open(path + data, "r") as reader:
-        with jsonlines.open(path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jsonl", "w") as writer:
-            for var in reader:
-                if not (
-                    var["my_data"]["weapons"][0]["key"] == weapon
-                    or (
-                        len(var["my_data"]["weapons"]) > 1
-                        and var["my_data"]["weapons"][1]["key"] == weapon
-                    )
-                    or (
-                        len(var["my_data"]["weapons"]) > 2
-                        and var["my_data"]["weapons"][2]["key"] == weapon
-                    )
-                    or var["my_data"]["weapons"][0]["name"][locale] == weapon
-                    or (
-                        len(var["my_data"]["weapons"]) > 1
-                        and var["my_data"]["weapons"][1]["name"][locale] == weapon
-                    )
-                    or (
-                        len(var["my_data"]["weapons"]) > 2
-                        and var["my_data"]["weapons"][2]["name"][locale] == weapon
-                    )
-                ):
-                    writer.write(var)
+    if not os.path.exists(path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/notUsesWeapon/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, "r") as reader:
+            with jsonlines.open(path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jsonl", "w") as writer:
+                for var in reader:
+                    if not (
+                        var["my_data"]["weapons"][0]["key"] == weapon
+                        or (
+                            len(var["my_data"]["weapons"]) > 1
+                            and var["my_data"]["weapons"][1]["key"] == weapon
+                        )
+                        or (
+                            len(var["my_data"]["weapons"]) > 2
+                            and var["my_data"]["weapons"][2]["key"] == weapon
+                        )
+                        or var["my_data"]["weapons"][0]["name"][locale] == weapon
+                        or (
+                            len(var["my_data"]["weapons"]) > 1
+                            and var["my_data"]["weapons"][1]["name"][locale] == weapon
+                        )
+                        or (
+                            len(var["my_data"]["weapons"]) > 2
+                            and var["my_data"]["weapons"][2]["name"][locale] == weapon
+                        )
+                    ):
+                        writer.write(var)
     return (path + data[0:-6] + "/notUsesWeapon/", weapon + ".jsonl")
 
 
@@ -842,25 +865,26 @@ def onStage(path: str, data: str, stage: str) -> Tuple[str, str]:
 
     :param path: str: the directory path of the data file
     :param data: str: the file name of the data file
-    :param stage: str: The name or ID of the chosen stage
-    :returns Tuple[str, str]: The path and filename of the output data file
+    :param stage: str: the name or ID of the chosen stage
+    :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    try:
-        os.mkdir(path + data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(path + data[0:-6] + "/stage/")
-    except FileExistsError:
-        pass
-    with jsonlines.open(path + data, "r") as reader:
-        with jsonlines.open(
-            path + data[0:-6] + "/stage/" + stage + ".jsonl", "w"
-        ) as writer:
-            for var in reader:
-                if stage in (var["stage"]["key"], var["stage"]["name"][locale]):
-                    writer.write(var)
+    if not os.path.exists(path + data[0:-6] + "/stage/" + stage + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/stage/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, "r") as reader:
+            with jsonlines.open(
+                path + data[0:-6] + "/stage/" + stage + ".jsonl", "w"
+            ) as writer:
+                for var in reader:
+                    if stage in (var["stage"]["key"], var["stage"]["name"][locale]):
+                        writer.write(var)
     return (path + data[0:-6] + "/stage/", stage + ".jsonl")
 
 
@@ -870,25 +894,26 @@ def notOnStage(path: str, data: str, stage: str) -> Tuple[str, str]:
 
     :param path: str: the directory path of the data file
     :param data: str: the file name of the data file
-    :param stage: str: The name or ID of the chosen stage
-    :returns Tuple[str, str]: The path and filename of the output data file
+    :param stage: str: the name or ID of the chosen stage
+    :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    try:
-        os.mkdir(path + data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(path + data[0:-6] + "/notStage/")
-    except FileExistsError:
-        pass
-    with jsonlines.open(path + data, "r") as reader:
-        with jsonlines.open(
-            path + data[0:-6] + "/notStage/" + stage + ".jsonl", "w"
-        ) as writer:
-            for var in reader:
-                if not (stage in (var["stage"]["key"], var["stage"]["name"][locale])):
-                    writer.write(var)
+    if not os.path.exists(path + data[0:-6] + "/notStage/" + stage + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/notStage/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, "r") as reader:
+            with jsonlines.open(
+                path + data[0:-6] + "/notStage/" + stage + ".jsonl", "w"
+            ) as writer:
+                for var in reader:
+                    if not (stage in (var["stage"]["key"], var["stage"]["name"][locale])):
+                        writer.write(var)
     return (path + data[0:-6] + "/notStage/", stage + ".jsonl")
 
 
@@ -898,28 +923,29 @@ def withSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
 
     :param path: str: the directory path of the data file
     :param data: str: the file name of the data file
-    :param special: str: The name or ID of the chosen special
-    :returns Tuple[str, str]: The path and filename of the output data file
+    :param special: str: the name or ID of the chosen special
+    :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    try:
-        os.mkdir(path + data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(path + data[0:-6] + "/special/")
-    except FileExistsError:
-        pass
-    with jsonlines.open(path + data, "r") as reader:
-        with jsonlines.open(
-            path + data[0:-6] + "/special/" + special + ".jsonl", "w"
-        ) as writer:
-            for var in reader:
-                if special in (
-                    var["my_data"]["special"]["key"],
-                    var["my_data"]["special"]["name"][locale],
-                ):
-                    writer.write(var)
+    if not os.path.exists(path + data[0:-6] + "/special/" + special + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/special/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, "r") as reader:
+            with jsonlines.open(
+                path + data[0:-6] + "/special/" + special + ".jsonl", "w"
+            ) as writer:
+                for var in reader:
+                    if special in (
+                        var["my_data"]["special"]["key"],
+                        var["my_data"]["special"]["name"][locale],
+                    ):
+                        writer.write(var)
     return (path + data[0:-6] + "/special/", special + ".jsonl")
 
 
@@ -929,226 +955,442 @@ def withoutSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
 
     :param path: str: the directory path of the data file
     :param data: str: the file name of the data file
-    :param special: str: The name or ID of the chosen special
-    :returns Tuple[str, str]: The path and filename of the output data file
+    :param special: str: the name or ID of the chosen special
+    :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    try:
-        os.mkdir(path + data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(path + data[0:-6] + "/notSpecial/")
-    except FileExistsError:
-        pass
-    with jsonlines.open(path + data, "r") as reader:
-        with jsonlines.open(
-            path + data[0:-6] + "/notSpecial/" + special + ".jsonl", "w"
-        ) as writer:
-            for var in reader:
-                if not (
-                    special
-                    in (
-                        var["my_data"]["special"]["key"],
-                        var["my_data"]["special"]["name"][locale],
-                    )
-                ):
-                    writer.write(var)
+    if not os.path.exists(path + data[0:-6] + "/notSpecial/" + special + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/notSpecial/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, "r") as reader:
+            with jsonlines.open(
+                path + data[0:-6] + "/notSpecial/" + special + ".jsonl", "w"
+            ) as writer:
+                for var in reader:
+                    if not (
+                        special
+                        in (
+                            var["my_data"]["special"]["key"],
+                            var["my_data"]["special"]["name"][locale],
+                        )
+                    ):
+                        writer.write(var)
     return (path + data[0:-6] + "/notSpecial/", special + ".jsonl")
 
 
-def failReason(reason: str) -> bool:
+def failReason(path: str, data: str, reason: str) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs where the fail reason was the chosen reason.
 
-    :param reason: str:
-
-    """
-    return lambda var: var["fail_reason"] == reason
-
-
-def notFailReason(reason: str) -> bool:
-    """
-
-    :param reason: str:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param reason: str: the chosen reason
+    :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    return lambda var: not (var["fail_reason"] == reason)
+    if not os.path.exists(path + data[0:-6] + "/failReason/" + reason + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/failReason/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, "r") as reader:
+            with jsonlines.open(path + data[0:-6] + "/failReason/" + reason + ".jsonl", "w") as writer:
+                for var in reader:
+                    if var["fail_reason"] == reason:
+                        writer.write(var)
+    return (path + data[0:-6] + "/failReason/", reason + ".jsonl")
+
+
+def notFailReason(path: str, data: str, reason: str) -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs where the fail reason was not the chosen reason.
+
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param reason: str: the chosen reason
+    :returns Tuple[str, str]: the path and filename of the output data file
+
+    """
+    if not os.path.exists(path + data[0:-6] + "/notFailReason/" + reason + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/notFailReason/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, "r") as reader:
+            with jsonlines.open(path + data[0:-6] + "/notFailReason/" + reason + ".jsonl", "w") as writer:
+                for var in reader:
+                    if not var["fail_reason"] == reason:
+                        writer.write(var)
+    return (path + data[0:-6] + "/notFailReason/", reason + ".jsonl")
 
 
 def duringRotationInt(path: str, data: str, rotation: int) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs where the rotation was the chosen rotation.
 
-    :param path: str:
-    :param data: str:
-    :param rotation: int:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param rotation: int: the ID of the chosen rotation
+    :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    try:
-        os.mkdir(path + data[0:-6])
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(path + data[0:-6] + "/rotation/")
-    except FileExistsError:
-        pass
-    with jsonlines.open(path + data, mode="r") as reader:
-        with jsonlines.open(
-            path + data[0:-6] + "/rotation/" + str(rotation) + ".jsonl", "w"
-        ) as writer:
-            for job in reader:
-                if job["shift_start_at"]["time"] == rotation:
-                    writer.write(job)
+    if not os.path.exists(path + data[0:-6] + "/rotation/" + str(rotation) + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6])
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/rotation/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, mode="r") as reader:
+            with jsonlines.open(
+                path + data[0:-6] + "/rotation/" + str(rotation) + ".jsonl", "w"
+            ) as writer:
+                for job in reader:
+                    if job["shift_start_at"]["time"] == rotation:
+                        writer.write(job)
     return (path + data[0:-6] + "/rotation/", str(rotation) + ".jsonl")
-
-
-def duringRotationStr(rotation: str) -> bool:
-    """
-
-    :param rotation: str:
-
-    """
-    return lambda var: var["shift_start_at"]["iso8601"] == rotation
 
 
 def notDuringRotationInt(path: str, data: str, rotation: int) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs where the rotation was not the chosen rotation.
 
-    :param path: str:
-    :param data: str:
-    :param rotation: int:
-
-    """
-    try:
-        os.mkdir(path + data[0:-6])
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(path + data[0:-6] + "/notRotations/")
-    except FileExistsError:
-        pass
-    with jsonlines.open(path + data, mode="r") as reader:
-        with jsonlines.open(
-            path + data[0:-6] + "/notRotations/" + str(rotation) + ".jsonl", "w"
-        ) as writer:
-            for job in reader:
-                if not job["shift_start_at"]["time"] == rotation:
-                    writer.write(job)
-    return (path + data[0:-6] + "/notRotations/", str(rotation) + ".jsonl")
-
-
-def notDuringRotationStr(rotation: str) -> bool:
-    """
-
-    :param rotation: str:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param rotation: int: the ID of the chosen rotation
+    :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    return lambda var: not (var["shift_start_at"]["iso8601"] == rotation)
+    if not os.path.exists(path + data[0:-6] + "/notRotation/" + str(rotation) + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/notRotation/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, mode="r") as reader:
+            with jsonlines.open(
+                path + data[0:-6] + "/notRotation/" + str(rotation) + ".jsonl", mode="w"
+            ) as writer:
+                for job in reader:
+                    if not job["shift_start_at"]["time"] == rotation:
+                        writer.write(job)
+    return (path + data[0:-6] + "/notRotation/", str(rotation) + ".jsonl")
 
 
-def clearWave(wave: int) -> bool:
+def clearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs where the clear wave was the chosen clear wave.
 
-    :param wave: int:
-
-    """
-    return lambda var: var["clear_waves"] == wave
-
-
-def notClearWave(wave: int) -> bool:
-    """
-
-    :param wave: int:
-
-    """
-    return lambda var: not (var["clear_waves"] == wave)
-
-
-def greaterThanClearWave(wave: int) -> bool:
-    """
-
-    :param wave: int:
-
-    """
-    return lambda var: var["clear_waves"] > wave
-
-
-def notGreaterThanClearWave(wave: int) -> bool:
-    """
-
-    :param wave: int:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param wave: int: the chosen clear wave
+    :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    return lambda var: not (var["clear_waves"] > wave)
+    if not os.path.exists(path + data[0:-6] + "/clearWaves/equal/" + str(wave) + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/clearWaves/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/clearWaves/equal/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, mode="r") as reader:
+            with jsonlines.open(path + data[0:-6] + "clearWaves/equal/" + str(wave) + ".jsonl", mode="w") as writer:
+                for job in reader:
+                    if job["clear_waves"] == wave:
+                        writer.write(job)
+    return (path + data[0:-6] + "/clearWaves/equal/", str(wave) + ".jsonl")
 
 
-def lessThanClearWave(wave: int) -> bool:
+def notClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs where the clear wave was not the chosen clear wave.
 
-    :param wave: int:
-
-    """
-    return lambda var: var["clear_waves"] < wave
-
-
-def notLessThanClearWave(wave: int) -> bool:
-    """
-
-    :param wave: int:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param wave: int: the chosen clear wave
+    :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    return lambda var: not (var["clear_waves"] < wave)
+    if not os.path.exists(path + data[0:-6] + "/clearWaves/notEqual/" + str(wave) + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/clearWaves/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/clearWaves/notEqual/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, mode="r") as reader:
+            with jsonlines.open(path + data[0:-6] + "clearWaves/notEqual/" + str(wave) + ".jsonl", mode="w") as writer:
+                for job in reader:
+                    if not job["clear_waves"] == wave:
+                        writer.write(job)
+    return (path + data[0:-6] + "/clearWaves/notEqual/", str(wave) + ".jsonl")
+
+
+def greaterThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs where the clear wave was greater than the chosen clear wave.
+
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param wave: int: the chosen clear wave
+    :returns Tuple[str, str]: the path and filename of the output data file
+
+    """
+    if not os.path.exists(path + data[0:-6] + "/clearWaves/greaterThan/" + str(wave) + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/clearWaves/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/clearWaves/greaterThan/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, mode="r") as reader:
+            with jsonlines.open(path + data[0:-6] + "clearWaves/greaterThan/" + str(wave) + ".jsonl", mode="w") as writer:
+                for job in reader:
+                    if job["clear_waves"] > wave:
+                        writer.write(job)
+    return (path + data[0:-6] + "/clearWaves/greaterThan/", str(wave) + ".jsonl")
+
+
+def notGreaterThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs where the clear wave was not greater than the chosen clear wave.
+
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param wave: int: the chosen clear wave
+    :returns Tuple[str, str]: the path and filename of the output data file
+
+    """
+    if not os.path.exists(path + data[0:-6] + "/clearWaves/notGreaterThan/" + str(wave) + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/clearWaves/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/clearWaves/notGreaterThan/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, mode="r") as reader:
+            with jsonlines.open(path + data[0:-6] + "clearWaves/notGreaterThan/" + str(wave) + ".jsonl", mode="w") as writer:
+                for job in reader:
+                    if not job["clear_waves"] > wave:
+                        writer.write(job)
+    return (path + data[0:-6] + "/clearWaves/notGreaterThan/", str(wave) + ".jsonl")
+
+
+def lessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs where the clear wave was less than the chosen clear wave.
+
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param wave: int: the chosen clear wave
+    :returns Tuple[str, str]: the path and filename of the output data file
+
+    """
+    if not os.path.exists(path + data[0:-6] + "/clearWaves/lessThan/" + str(wave) + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/clearWaves/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/clearWaves/lessThan/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, mode="r") as reader:
+            with jsonlines.open(path + data[0:-6] + "clearWaves/lessThan/" + str(wave) + ".jsonl", mode="w") as writer:
+                for job in reader:
+                    if job["clear_waves"] < wave:
+                        writer.write(job)
+    return (path + data[0:-6] + "/clearWaves/lessThan/", str(wave) + ".jsonl")
+
+
+def notLessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs where the clear wave was not less than the chosen clear wave.
+
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param wave: int: the chosen clear wave
+    :returns Tuple[str, str]: the path and filename of the output data file
+
+    """
+    if not os.path.exists(path + data[0:-6] + "/clearWaves/notLessThan/" + str(wave) + ".jsonl"):
+        try:
+            os.mkdir(path + data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/clearWaves/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/clearWaves/notLessThan/")
+        except FileExistsError:
+            pass
+        with jsonlines.open(path + data, mode="r") as reader:
+            with jsonlines.open(path + data[0:-6] + "clearWaves/notLessThan/" + str(wave) + ".jsonl", mode="w") as writer:
+                for job in reader:
+                    if job["clear_waves"] < wave:
+                        writer.write(job)
+    return (path + data[0:-6] + "/clearWaves/notLessThan/", str(wave) + ".jsonl")
 
 
 def dangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs where the danger rate was the chosen danger rate.
 
-    :param path: str:
-    :param data: str:
-    :param rate: str:
-
-    """
-    if not os.path.exists(path + data[0:-6]):
-        os.mkdir(path + data[0:-6])
-    if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
-        os.mkdir(path + data[0:-6] + "/dangerRate/")
-    with jsonlines.open(path + data, mode="r") as reader:
-        with jsonlines.open(
-            path + data[0:-6] + "/dangerRate/" + rate + ".jsonl", "w"
-        ) as writer:
-            for job in reader:
-                if job["danger_rate"] == rate:
-                    writer.write(job)
-    return path + data[0:-6] + "/dangerRate/", rate + ".jsonl"
-
-
-def notDangerRate(rate: int) -> bool:
-    """
-
-    :param rate: int:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param rate: int: the chosen danger rate
+    :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    return lambda var: not (var["danger_rate"] == rate)
+    if not os.path.exists(path + data[0:-6] + "/dangerRate/equal/" + rate + ".jsonl"):
+        if not os.path.exists(path + data[0:-6]):
+            os.mkdir(path + data[0:-6])
+        if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
+            os.mkdir(path + data[0:-6] + "/dangerRate/")
+        if not os.path.exists(path + data[0:-6] + "/dangerRate/equals/"):
+            os.mkdir(path + data[0:-6] + "/dangerRate/equals/")
+        with jsonlines.open(path + data, mode="r") as reader:
+            with jsonlines.open(
+                path + data[0:-6] + "/dangerRate/equals/" + rate + ".jsonl", "w"
+            ) as writer:
+                for job in reader:
+                    if job["danger_rate"] == rate:
+                        writer.write(job)
+    return (path + data[0:-6] + "/dangerRate/equals/", rate + ".jsonl")
 
 
-def greaterThanDangerRate(rate: int) -> bool:
+def notDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs where the danger rate was not the chosen danger rate.
 
-    :param rate: int:
-
-    """
-    return lambda var: var["danger_rate"] > rate
-
-
-def notGreaterThanDangerRate(rate: int) -> bool:
-    """
-
-    :param rate: int:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param rate: int: the chosen danger rate
+    :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    return lambda var: not (var["danger_rate"] > rate)
+    if not os.path.exists(path + data[0:-6] + "/dangerRate/notEqual/" + rate + ".jsonl"):
+        if not os.path.exists(path + data[0:-6]):
+            os.mkdir(path + data[0:-6])
+        if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
+            os.mkdir(path + data[0:-6] + "/dangerRate/")
+        if not os.path.exists(path + data[0:-6] + "/dangerRate/notEquals/"):
+            os.mkdir(path + data[0:-6] + "/dangerRate/notEquals/")
+        with jsonlines.open(path + data, mode="r") as reader:
+            with jsonlines.open(
+                path + data[0:-6] + "/dangerRate/notEquals/" + rate + ".jsonl", "w"
+            ) as writer:
+                for job in reader:
+                    if job["danger_rate"] == rate:
+                        writer.write(job)
+    return (path + data[0:-6] + "/dangerRate/notEquals/", rate + ".jsonl")
 
 
-def lessThanDangerRate(rate: int) -> bool:
+def greaterThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs where the danger rate was greater than the chosen danger rate.
+
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param rate: int: the chosen danger rate
+    :returns Tuple[str, str]: the path and filename of the output data file
+
+    """
+    if not os.path.exists(path + data[0:-6] + "/dangerRate/greaterThan/" + rate + ".jsonl"):
+        if not os.path.exists(path + data[0:-6]):
+            os.mkdir(path + data[0:-6])
+        if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
+            os.mkdir(path + data[0:-6] + "/dangerRate/")
+        if not os.path.exists(path + data[0:-6] + "/dangerRate/greaterThan/"):
+            os.mkdir(path + data[0:-6] + "/dangerRate/greaterThan/")
+        with jsonlines.open(path + data, mode="r") as reader:
+            with jsonlines.open(
+                path + data[0:-6] + "/dangerRate/greaterThan/" + rate + ".jsonl", "w"
+            ) as writer:
+                for job in reader:
+                    if float(job["danger_rate"]) > float(rate):
+                        writer.write(job)
+    return (path + data[0:-6] + "/dangerRate/greaterThan/", rate + ".jsonl")
+
+
+def notGreaterThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs where the danger rate was not greater than the chosen danger rate.
+
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param rate: int: the chosen danger rate
+    :returns Tuple[str, str]: the path and filename of the output data file
+
+    """
+    if not os.path.exists(path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jsonl"):
+        if not os.path.exists(path + data[0:-6]):
+            os.mkdir(path + data[0:-6])
+        if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
+            os.mkdir(path + data[0:-6] + "/dangerRate/")
+        if not os.path.exists(path + data[0:-6] + "/dangerRate/notGreaterThan/"):
+            os.mkdir(path + data[0:-6] + "/dangerRate/notGreaterThan/")
+        with jsonlines.open(path + data, mode="r") as reader:
+            with jsonlines.open(
+                path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jsonl", "w"
+            ) as writer:
+                for job in reader:
+                    if not float(job["danger_rate"]) > float(rate):
+                        writer.write(job)
+    return (path + data[0:-6] + "/dangerRate/notGreaterThan/", rate + ".jsonl")
+
+
+def lessThanDangerRate(rate: int):
     """
 
     :param rate: int:
@@ -1157,7 +1399,7 @@ def lessThanDangerRate(rate: int) -> bool:
     return lambda var: var["danger_rate"] < rate
 
 
-def notLessThandDangerRate(rate: int) -> bool:
+def notLessThandDangerRate(rate: int):
     """
 
     :param rate: int:
@@ -1166,7 +1408,7 @@ def notLessThandDangerRate(rate: int) -> bool:
     return lambda var: not (var["danger_rate"] < rate)
 
 
-def splatnet_number(num: int) -> bool:
+def splatnet_number(num: int):
     """
 
     :param num: int:
@@ -1777,7 +2019,7 @@ def getArrayOfStat2D(data: str, firstD: str, secondD: Union[str, int]) -> list:
         return results
 
 
-def initAll() -> None:
+def initAll() -> Tuple[str, str]:
     """ """
     if os.path.exists("data/salmonAll.jsonl"):
         recentId = 0
@@ -1793,9 +2035,10 @@ def initAll() -> None:
         fetchNewAll(recentId)
     else:
         fetchAll()
+    return ("data/", "salmonAll.jsonl")
 
 
-def initUser(api_key: str) -> None:
+def initUser(api_key: str) -> Tuple[str, str]:
     """
 
     :param api_key: str:
@@ -1809,11 +2052,14 @@ def initUser(api_key: str) -> None:
         fetchNewUser(api_key, recentId)
     else:
         fetchAllUser(api_key)
+    return ("data/", "salmon.jsonl")
 
 
 if __name__ == "__main__":
     user_key: str = json.load(open("keys.json", "r"))["statink_key"]
     initAll()
+    paths: List[str] = []
+    dataFiles: List[str] = []
     dataFile: str = "salmonAll.jsonl"
     rotations: List[int] = findRotationByWeaponsAndStage(
         "data/" + dataFile,
@@ -1822,10 +2068,16 @@ if __name__ == "__main__":
     )
     print(rotations)
     jobs = duringRotationInt("data/", dataFile, rotations[1])
+    paths.append(jobs[0])
+    dataFiles.append(jobs[1])
     jobs = dangerRate(jobs[0], jobs[1], "200.0")
+    paths.append(jobs[0])
+    dataFiles.append(jobs[1])
     printOverview(jobs[0], jobs[1])
     print()
-    with jsonlines.open(jobs[0] + jobs[1], "r") as readerFile:
+    for i in range(0, len(paths)):
+        os.remove(paths[i] + dataFiles[i])
+    # with jsonlines.open(jobs[0] + jobs[1], "r") as readerFile:
         """for job in reader:
         printGeneral(job)
         print()
