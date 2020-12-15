@@ -148,7 +148,7 @@ def printAllJobs(path: str, dataFile: str):
 def printJobs(paths: List[str], dataFile: List[str]):
     which = input("Would you like to print from a SpecificList or AllLists: ")
     if which == "AllLists":
-        for a in range(0, len(paths)):
+        for i in range(0, len(paths)):
             salmontracker.printOverview(paths[i], dataFile[i])
 
 
@@ -175,13 +175,13 @@ scope: str = input("Pick an analysis scope: ")
 path: str = ""
 data: str = ""
 if scope == "All":
-    dataFile = initAll()
-    path = dataFile[0]
-    data = dataFile[1]
+    dataFileStart = initAll()
+    path = dataFileStart[0]
+    data = dataFileStart[1]
 elif scope == "User":
-    dataFile = initUser(json.load(open("keys.json", "r"))["statink_key"])
-    path = dataFile[0]
-    data = dataFile[1]
+    dataFileStart = initUser(json.load(open("keys.json", "r"))["statink_key"])
+    path = dataFileStart[0]
+    data = dataFileStart[1]
 else:
     sys.exit()
 currentPaths: List[str] = []
@@ -207,5 +207,5 @@ while input("Add a filter (Y/N): ") == "Y":
             allFiles.append(f[1])
 processData(currentPaths, dataFiles)
 if input("Clean (Y/N): ") == "Y":
-    for i in range(0, len(allPaths)):
-        os.remove(allPaths[i] + allFiles[i])
+    for a in range(0, len(allPaths)):
+        os.remove(allPaths[a] + allFiles[a])
