@@ -1501,31 +1501,62 @@ def notGreaterThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]
     return (path + data[0:-6] + "/dangerRate/notGreaterThan/", rate + ".jsonl")
 
 
-def lessThanDangerRate(rate: int):
+def lessThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs where the danger rate was less than the chosen danger rate.
 
-    :param rate: int:
-
-    """
-    return lambda var: var["danger_rate"] < rate
-
-
-def notLessThandDangerRate(rate: int):
-    """
-
-    :param rate: int:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param rate: int: the chosen danger rate
+    :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    return lambda var: not (var["danger_rate"] < rate)
+    if not os.path.exists(
+        path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jsonl"
+    ):
+        if not os.path.exists(path + data[0:-6]):
+            os.mkdir(path + data[0:-6])
+        if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
+            os.mkdir(path + data[0:-6] + "/dangerRate/")
+        if not os.path.exists(path + data[0:-6] + "/dangerRate/lessThan/"):
+            os.mkdir(path + data[0:-6] + "/dangerRate/lessThan/")
+        with jsonlines.open(path + data, mode="r") as reader:
+            with jsonlines.open(
+                path + data[0:-6] + "/dangerRate/lessThan/" + rate + ".jsonl", "w"
+            ) as writer:
+                for job in reader:
+                    if float(job["danger_rate"]) < float(rate):
+                        writer.write(job)
+    return (path + data[0:-6] + "/dangerRate/lessThan/", rate + ".jsonl")
 
 
-def splatnet_number(num: int):
+def notLessThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs where the danger rate was not less than the chosen danger rate.
 
-    :param num: int:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param rate: int: the chosen danger rate
+    :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    return lambda var: var["splatnet_number"] == num
+    if not os.path.exists(
+        path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jsonl"
+    ):
+        if not os.path.exists(path + data[0:-6]):
+            os.mkdir(path + data[0:-6])
+        if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
+            os.mkdir(path + data[0:-6] + "/dangerRate/")
+        if not os.path.exists(path + data[0:-6] + "/dangerRate/lessThan/"):
+            os.mkdir(path + data[0:-6] + "/dangerRate/lessThan/")
+        with jsonlines.open(path + data, mode="r") as reader:
+            with jsonlines.open(
+                path + data[0:-6] + "/dangerRate/lessThan/" + rate + ".jsonl", "w"
+            ) as writer:
+                for job in reader:
+                    if float(job["danger_rate"]) >= float(rate):
+                        writer.write(job)
+    return (path + data[0:-6] + "/dangerRate/lessThan/", rate + ".jsonl")
 
 
 def jobsCount(data: str) -> int:

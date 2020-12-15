@@ -14,6 +14,20 @@ from salmontracker import (
     notOnStage,
     usesWeapon,
     doesntUseWeapon,
+    dangerRate,
+    notDangerRate,
+    greaterThanDangerRate,
+    notGreaterThanDangerRate,
+    lessThanDangerRate,
+    notLessThanDangerRate,
+    clearWave,
+    notClearWave,
+    greaterThanClearWave,
+    notGreaterThanClearWave,
+    lessThanClearWave,
+    notLessThanClearWave,
+    withSpecial,
+    withoutSpecial
 )
 import json
 from typing import List, Tuple
@@ -30,15 +44,15 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
     print("Has Weapon")
     print("Uses Weapon")
     print("Stage")
+    print("Danger Rate")
     print()
-    mode: str = ""
     stat: str = input("Choose a stat to run analysis on: ")
     if stat == "Player":
         playerName = input("Enter a player name to run analysis on: ")
         playerId: List[str] = findPlayerIdByName(paths[0], dataFile[0], playerName)
         print(playerId)
         val: str = playerId[int(input("Pick the player id by index: "))]
-        mode = input("Choose whether you want With, Without, or Both: ")
+        mode: str = input("Choose whether you want With, Without, or Both: ")
         for i in range(0, len(paths)):
             if mode == "With":
                 filters.append(hasPlayer(paths[i], dataFile[i], val))
@@ -107,6 +121,93 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
             elif mode == "Both":
                 filters.append(onStage(paths[i], dataFile[i], val))
                 filters.append(notOnStage(paths[i], dataFile[i], val))
+            else:
+                sys.exit()
+    elif stat == "Danger Rate":
+        comparison: str = input("Choose whether you want =, >, or <: ")
+        val = input("Enter the danger rate: ")
+        mode = input("Choose whether you want With, Without, or Both: ")
+        for i in range(0, len(paths)):
+            if mode == "With":
+                if comparison == "=":
+                    filters.append(dangerRate(paths[i], dataFile[i], val))
+                elif comparison == ">":
+                    filters.append(greaterThanDangerRate(paths[i], dataFile[i], val))
+                elif comparison == "<":
+                    filters.append(lessThanDangerRate(paths[i], dataFile[i], val))
+                else:
+                    sys.exit()
+            elif mode == "Without":
+                if comparison == "=":
+                    filters.append(notDangerRate(paths[i], dataFile[i], val))
+                elif comparison == ">":
+                    filters.append(notGreaterThanDangerRate(paths[i], dataFile[i], val))
+                elif comparison == "<":
+                    filters.append(notLessThanDangerRate(paths[i], dataFile[i], val))
+                else:
+                    sys.exit()
+            elif mode == "Both":
+                if comparison == "=":
+                    filters.append(dangerRate(paths[i], dataFile[i], val))
+                    filters.append(notDangerRate(paths[i], dataFile[i], val))
+                elif comparison == ">":
+                    filters.append(greaterThanDangerRate(paths[i], dataFile[i], val))
+                    filters.append(notGreaterThanDangerRate(paths[i], dataFile[i], val))
+                elif comparison == "<":
+                    filters.append(lessThanDangerRate(paths[i], dataFile[i], val))
+                    filters.append(notLessThanDangerRate(paths[i], dataFile[i], val))
+                else:
+                    sys.exit()
+            else:
+                sys.exit()
+    elif stat == "Clear Wave":
+        comparison = input("Choose whether you want =, >, or <: ")
+        wave: int = int(input("Enter the clear wave: "))
+        mode = input("Choose whether you want With, Without, or Both: ")
+        for i in range(0, len(paths)):
+            if mode == "With":
+                if comparison == "=":
+                    filters.append(clearWave(paths[i], dataFile[i], wave))
+                elif comparison == ">":
+                    filters.append(greaterThanClearWave(paths[i], dataFile[i], wave))
+                elif comparison == "<":
+                    filters.append(lessThanClearWave(paths[i], dataFile[i], wave))
+                else:
+                    sys.exit()
+            elif mode == "Without":
+                if comparison == "=":
+                    filters.append(notClearWave(paths[i], dataFile[i], wave))
+                elif comparison == ">":
+                    filters.append(notGreaterThanClearWave(paths[i], dataFile[i], wave))
+                elif comparison == "<":
+                    filters.append(notLessThanClearWave(paths[i], dataFile[i], wave))
+                else:
+                    sys.exit()
+            elif mode == "Both":
+                if comparison == "=":
+                    filters.append(clearWave(paths[i], dataFile[i], wave))
+                    filters.append(notClearWave(paths[i], dataFile[i], wave))
+                elif comparison == ">":
+                    filters.append(greaterThanClearWave(paths[i], dataFile[i], wave))
+                    filters.append(notGreaterThanClearWave(paths[i], dataFile[i], wave))
+                elif comparison == "<":
+                    filters.append(lessThanClearWave(paths[i], dataFile[i], wave))
+                    filters.append(notLessThanClearWave(paths[i], dataFile[i], wave))
+                else:
+                    sys.exit()
+            else:
+                sys.exit()
+    elif stat == "special":
+        val = input("Enter the danger rate: ")
+        mode = input("Choose whether you want With, Without, or Both: ")
+        for i in range(0, len(paths)):
+            if mode == "With":
+                filters.append(withSpecial(paths[i], dataFile[i], val))
+            elif mode == "Without":
+                filters.append(withoutSpecial(paths[i], dataFile[i], val))
+            elif mode == "Both":
+                filters.append(withSpecial(paths[i], dataFile[i], val))
+                filters.append(withoutSpecial(paths[i], dataFile[i], val))
             else:
                 sys.exit()
     else:
