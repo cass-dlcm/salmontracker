@@ -259,7 +259,9 @@ def hasPlayerByName(path: str, data: str, player: str) -> Tuple[str, str]:
         return (path + data[0:-6] + "/player/", player + ".jsonl")
 
 
-def findRotationByWeaponsAndStage(data: str, weapons: Union[Tuple[str, str, str, str], List[str]], stage: str) -> List[int]:
+def findRotationByWeaponsAndStage(
+    data: str, weapons: Union[Tuple[str, str, str, str], List[str]], stage: str
+) -> List[int]:
     """
 
     :param data: str: the full path of the data file
@@ -271,9 +273,9 @@ def findRotationByWeaponsAndStage(data: str, weapons: Union[Tuple[str, str, str,
     foundRotations = []
     with jsonlines.open(data, mode="r") as reader:
         for job in reader:
-            found = (
-                job["stage"] is not None
-                and stage in (job["stage"]["key"], job["stage"]["name"][locale])
+            found = job["stage"] is not None and stage in (
+                job["stage"]["key"],
+                job["stage"]["name"][locale],
             )
             for weapon in weapons:
                 found = found and (
@@ -285,8 +287,10 @@ def findRotationByWeaponsAndStage(data: str, weapons: Union[Tuple[str, str, str,
                     or (
                         len(job["my_data"]["weapons"]) > 2
                         and job["my_data"]["weapons"][2]["key"] == weapon
-                    ) or (
-                        job["teammates"] is not None and (
+                    )
+                    or (
+                        job["teammates"] is not None
+                        and (
                             (
                                 len(job["teammates"]) > 0
                                 and job["teammates"][0]["weapons"] is not None
@@ -294,11 +298,13 @@ def findRotationByWeaponsAndStage(data: str, weapons: Union[Tuple[str, str, str,
                                     job["teammates"][0]["weapons"][0]["key"] == weapon
                                     or (
                                         len(job["teammates"][0]["weapons"]) > 1
-                                        and job["teammates"][0]["weapons"][1]["key"] == weapon
+                                        and job["teammates"][0]["weapons"][1]["key"]
+                                        == weapon
                                     )
                                     or (
                                         len(job["teammates"][0]["weapons"]) > 2
-                                        and job["teammates"][0]["weapons"][2]["key"] == weapon
+                                        and job["teammates"][0]["weapons"][2]["key"]
+                                        == weapon
                                     )
                                 )
                             )
@@ -309,11 +315,13 @@ def findRotationByWeaponsAndStage(data: str, weapons: Union[Tuple[str, str, str,
                                     job["teammates"][1]["weapons"][0]["key"] == weapon
                                     or (
                                         len(job["teammates"][1]["weapons"]) > 1
-                                        and job["teammates"][1]["weapons"][1]["key"] == weapon
+                                        and job["teammates"][1]["weapons"][1]["key"]
+                                        == weapon
                                     )
                                     or (
                                         len(job["teammates"][1]["weapons"]) > 2
-                                        and job["teammates"][1]["weapons"][2]["key"] == weapon
+                                        and job["teammates"][1]["weapons"][2]["key"]
+                                        == weapon
                                     )
                                 )
                             )
@@ -324,11 +332,13 @@ def findRotationByWeaponsAndStage(data: str, weapons: Union[Tuple[str, str, str,
                                     job["teammates"][2]["weapons"][0]["key"] == weapon
                                     or (
                                         len(job["teammates"][2]["weapons"]) > 1
-                                        and job["teammates"][2]["weapons"][1]["key"] == weapon
+                                        and job["teammates"][2]["weapons"][1]["key"]
+                                        == weapon
                                     )
                                     or (
                                         len(job["teammates"][2]["weapons"]) > 2
-                                        and job["teammates"][2]["weapons"][2]["key"] == weapon
+                                        and job["teammates"][2]["weapons"][2]["key"]
+                                        == weapon
                                     )
                                 )
                             )
@@ -344,20 +354,26 @@ def findRotationByWeaponsAndStage(data: str, weapons: Union[Tuple[str, str, str,
                         and job["my_data"]["weapons"][2]["name"][locale] == weapon
                     )
                     or (
-                        job["teammates"] is not None and (
+                        job["teammates"] is not None
+                        and (
                             (
                                 len(job["teammates"]) > 0
                                 and job["teammates"][0]["weapons"] is not None
                                 and (
-                                    job["teammates"][0]["weapons"][0]["name"][locale] == weapon
+                                    job["teammates"][0]["weapons"][0]["name"][locale]
+                                    == weapon
                                     or (
                                         len(job["teammates"][0]["weapons"]) > 1
-                                        and job["teammates"][0]["weapons"][1]["name"][locale]
+                                        and job["teammates"][0]["weapons"][1]["name"][
+                                            locale
+                                        ]
                                         == weapon
                                     )
                                     or (
                                         len(job["teammates"][0]["weapons"]) > 2
-                                        and job["teammates"][0]["weapons"][2]["name"][locale]
+                                        and job["teammates"][0]["weapons"][2]["name"][
+                                            locale
+                                        ]
                                         == weapon
                                     )
                                 )
@@ -366,15 +382,20 @@ def findRotationByWeaponsAndStage(data: str, weapons: Union[Tuple[str, str, str,
                                 len(job["teammates"]) > 1
                                 and job["teammates"][1]["weapons"] is not None
                                 and (
-                                    job["teammates"][1]["weapons"][0]["name"][locale] == weapon
+                                    job["teammates"][1]["weapons"][0]["name"][locale]
+                                    == weapon
                                     or (
                                         len(job["teammates"][1]["weapons"]) > 1
-                                        and job["teammates"][1]["weapons"][1]["name"][locale]
+                                        and job["teammates"][1]["weapons"][1]["name"][
+                                            locale
+                                        ]
                                         == weapon
                                     )
                                     or (
                                         len(job["teammates"][1]["weapons"]) > 2
-                                        and job["teammates"][1]["weapons"][2]["name"][locale]
+                                        and job["teammates"][1]["weapons"][2]["name"][
+                                            locale
+                                        ]
                                         == weapon
                                     )
                                 )
@@ -383,15 +404,20 @@ def findRotationByWeaponsAndStage(data: str, weapons: Union[Tuple[str, str, str,
                                 len(job["teammates"]) > 2
                                 and job["teammates"][2]["weapons"] is not None
                                 and (
-                                    job["teammates"][2]["weapons"][0]["name"][locale] == weapon
+                                    job["teammates"][2]["weapons"][0]["name"][locale]
+                                    == weapon
                                     or (
                                         len(job["teammates"][2]["weapons"]) > 1
-                                        and job["teammates"][2]["weapons"][1]["name"][locale]
+                                        and job["teammates"][2]["weapons"][1]["name"][
+                                            locale
+                                        ]
                                         == weapon
                                     )
                                     or (
                                         len(job["teammates"][2]["weapons"]) > 2
-                                        and job["teammates"][2]["weapons"][2]["name"][locale]
+                                        and job["teammates"][2]["weapons"][2]["name"][
+                                            locale
+                                        ]
                                         == weapon
                                     )
                                 )
@@ -1060,7 +1086,7 @@ def splatnet_number(num: int) -> bool:
 def jobsCount(data: str) -> int:
     """
 
-    :param data: str: 
+    :param data: str:
 
     """
     with jsonlines.open(data, mode="r") as reader:
@@ -1306,10 +1332,10 @@ def getPlayersAttribute(data: dict, attr: str) -> str:
 
 def getPlayersAttribute2D(data: dict, firstD: str, secondD: Union[int, str]) -> str:
     """
-s
-    :param data: dict: 
-    :param firstD: str: 
-    :param secondD: Union[int, str]: 
+    s
+        :param data: dict:
+        :param firstD: str:
+        :param secondD: Union[int, str]:
 
     """
     attrs = "{:<16}\t".format(data["my_data"][firstD][secondD] or 0)
@@ -1321,10 +1347,10 @@ s
 def getPlayersAttribute3D(data: dict, firstD: str, secondD: str, thirdD: str) -> str:
     """
 
-    :param data: dict: 
-    :param firstD: str: 
-    :param secondD: str: 
-    :param thirdD: str: 
+    :param data: dict:
+    :param firstD: str:
+    :param secondD: str:
+    :param thirdD: str:
 
     """
     attrs = "{:<16}\t".format(data["my_data"][firstD][secondD][thirdD] or 0)
@@ -1338,11 +1364,11 @@ def getPlayersAttribute4D(
 ) -> str:
     """
 
-    :param data: dict: 
-    :param firstD: str: 
-    :param secondD: int: 
-    :param thirdD: str: 
-    :param fourthD: str: 
+    :param data: dict:
+    :param firstD: str:
+    :param secondD: int:
+    :param thirdD: str:
+    :param fourthD: str:
 
     """
     attrs = "{:<16}\t".format(data["my_data"][firstD][secondD][thirdD][fourthD] or 0)
@@ -1357,8 +1383,8 @@ def getPlayersAttribute4D(
 def getWavesAttribute(data: dict, attr: str) -> str:
     """
 
-    :param data: dict: 
-    :param attr: str: 
+    :param data: dict:
+    :param attr: str:
 
     """
     attrs = ""
@@ -1373,9 +1399,9 @@ def getWavesAttribute(data: dict, attr: str) -> str:
 def getWavesAttribute3D(data: dict, firstD: str, secondD: str, thirdD: str) -> str:
     """
 
-    :param data: dict: 
+    :param data: dict:
     :param firstD: str:
-    :param secondD: str: 
+    :param secondD: str:
     :param thirdD: str:
 
     """
@@ -1391,22 +1417,22 @@ def getWavesAttribute3D(data: dict, firstD: str, secondD: str, thirdD: str) -> s
 def getBossDataStr(data: dict, boss: str) -> str:
     """
 
-    :param data: dict: 
-    :param boss: str: 
+    :param data: dict:
+    :param boss: str:
 
     """
     return "{:<16}\t{:}".format(
         data[boss + "_appearances"] or 0,
-        getPlayersAttribute2D(data, "kills", boss + "_")
+        getPlayersAttribute2D(data, "kills", boss + "_"),
     )
 
 
 def getTotalBosses(data: list, bosses: list, player: str) -> int:
     """
 
-    :param data: list: 
-    :param bosses: list: 
-    :param player: str: 
+    :param data: list:
+    :param bosses: list:
+    :param player: str:
 
     """
     return sum(
@@ -1417,8 +1443,8 @@ def getTotalBosses(data: list, bosses: list, player: str) -> int:
 def printOverview(path: str, data: str) -> None:
     """
 
-    :param path: str: 
-    :param data: str: 
+    :param path: str:
+    :param data: str:
 
     """
     print("Jobs: " + str(jobsCount(path + data)))
@@ -1436,7 +1462,7 @@ def printOverview(path: str, data: str) -> None:
 def printGeneral(data: dict) -> None:
     """
 
-    :param data: dict: 
+    :param data: dict:
 
     """
     print("Stat.ink Link: " + data["url"])
@@ -1458,7 +1484,7 @@ def printGeneral(data: dict) -> None:
 def printWaves(data: dict) -> None:
     """
 
-    :param data: dict: 
+    :param data: dict:
 
     """
     print(
@@ -1509,7 +1535,7 @@ def printWaves(data: dict) -> None:
 def printWeapons(data: dict) -> None:
     """
 
-    :param data: dict: 
+    :param data: dict:
 
     """
     for i in range(0, len(data["my_data"]["weapons"])):
@@ -1524,7 +1550,7 @@ def printWeapons(data: dict) -> None:
 def printSpecials(data: dict) -> None:
     """
 
-    :param data: dict: 
+    :param data: dict:
 
     """
     for i in range(0, len(data["my_data"]["special_uses"])):
@@ -1539,7 +1565,7 @@ def printSpecials(data: dict) -> None:
 def printPlayers(data: dict) -> None:
     """
 
-    :param data: dict: 
+    :param data: dict:
 
     """
     print("{:16}\t{:}".format("ID", getPlayersAttribute(data, "splatnet_id")))
@@ -1568,7 +1594,7 @@ def printPlayers(data: dict) -> None:
 def getBosses(data: dict) -> list:
     """
 
-    :param data: dict: 
+    :param data: dict:
 
     """
     results = []
@@ -1606,7 +1632,7 @@ def getBosses(data: dict) -> list:
 def printBosses(data: dict) -> None:
     """
 
-    :param data: dict: 
+    :param data: dict:
 
     """
     print(
@@ -1633,8 +1659,8 @@ def printBosses(data: dict) -> None:
 def getArrayOfStat(data: str, stat: str) -> list:
     """
 
-    :param data: str: 
-    :param stat: str: 
+    :param data: str:
+    :param stat: str:
 
     """
     with jsonlines.open(data, "r") as reader:
@@ -1647,9 +1673,9 @@ def getArrayOfStat(data: str, stat: str) -> list:
 def getArrayOfStat2D(data: str, firstD: str, secondD: Union[str, int]) -> list:
     """
 
-    :param data: str: 
-    :param firstD: str: 
-    :param secondD: Union[str, int]: 
+    :param data: str:
+    :param firstD: str:
+    :param secondD: Union[str, int]:
 
     """
     with jsonlines.open(data, "r") as reader:
@@ -1666,12 +1692,12 @@ def initAll() -> None:
         try:
             with jsonlines.open("data/salmonAll.jsonl", mode="r") as reader:
                 with jsonlines.open("data/salmonAllTemp.jsonl", mode="w") as writer:
-                        for line in reader:
-                            writer.write(line)
-                            recentId = line["id"]
+                    for line in reader:
+                        writer.write(line)
+                        recentId = line["id"]
                 os.remove("data/salmonAllTemp.jsonl")
         except jsonlines.jsonlines.InvalidLineError:
-            os.replace(r'data/salmonAllTemp.jsonl', r'data/salmonAll.jsonl')
+            os.replace(r"data/salmonAllTemp.jsonl", r"data/salmonAll.jsonl")
         fetchNewAll(recentId)
     else:
         fetchAll()
@@ -1680,7 +1706,7 @@ def initAll() -> None:
 def initUser(api_key: str) -> None:
     """
 
-    :param api_key: str: 
+    :param api_key: str:
 
     """
     if os.path.exists("data/salmon.jsonl"):
