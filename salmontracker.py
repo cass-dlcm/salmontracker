@@ -841,28 +841,62 @@ def notOnStage(path: str, data: str, stage: str) -> Tuple[str, str]:
     return (path + data[0:-6] + "/notStage/", stage + ".jsonl")
 
 
-def withSpecial(special: str) -> bool:
+def withSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
     """
 
+    :param path: str:
+    :param data: str:
     :param special: str:
 
     """
-    return lambda var: (
-        var["my_data"]["special"]["key"] == special
-        or var["my_data"]["special"]["name"][locale] == special
-    )
+    try:
+        os.mkdir(path + data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(path + data[0:-6] + "/special/")
+    except FileExistsError:
+        pass
+    with jsonlines.open(path + data, "r") as reader:
+        with jsonlines.open(
+            path + data[0:-6] + "/special/" + special + ".jsonl", "w"
+        ) as writer:
+            for var in reader:
+                if (
+                    var["my_data"]["special"]["key"] == special
+                    or var["my_data"]["special"]["name"][locale] == special
+                ):
+                    writer.write(var)
+    return (path + data[0:-6] + "/special/", special + ".jsonl")
 
 
-def withoutSpecial(special: str) -> bool:
+def withoutSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
     """
 
+    :param path: str:
+    :param data: str:
     :param special: str:
 
     """
-    return lambda var: not (
-        var["my_data"]["special"]["key"] == special
-        or var["my_data"]["special"]["name"][locale] == special
-    )
+    try:
+        os.mkdir(path + data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(path + data[0:-6] + "/notSpecial/")
+    except FileExistsError:
+        pass
+    with jsonlines.open(path + data, "r") as reader:
+        with jsonlines.open(
+            path + data[0:-6] + "/notSpecial/" + special + ".jsonl", "w"
+        ) as writer:
+            for var in reader:
+                if not (
+                    var["my_data"]["special"]["key"] == special
+                    or var["my_data"]["special"]["name"][locale] == special
+                ):
+                    writer.write(var)
+    return (path + data[0:-6] + "/notSpecial/", special + ".jsonl")
 
 
 def failReason(reason: str) -> bool:
@@ -1091,7 +1125,7 @@ def jobsCount(data: str) -> int:
     """
     with jsonlines.open(data, mode="r") as reader:
         count = 0
-        for job in reader:
+        for _unused in reader:
             count += 1
         return count
 
