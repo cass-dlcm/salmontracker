@@ -880,39 +880,39 @@ def avgStat2D(data: str, firstD: str, secondD: str) -> float:
 
 
 def maxStat(data: str, stat: str) -> float:
-    max = 0
+    maxVal = 0
     with jsonlines.open(data, "r") as reader:
         for job in reader:
-            if max < float(job[stat]):
-                max = float(job[stat])
-    return max
+            if maxVal < float(job[stat]):
+                maxVal = float(job[stat])
+    return maxVal
 
 
 def maxStat2D(data: str, firstD: str, secondD: str) -> float:
-    max = 0
+    maxVal = 0
     with jsonlines.open(data, "r") as reader:
         for job in reader:
-            if max < job[firstD][secondD]:
-                max = job[firstD][secondD]
-    return max
+            if maxVal < job[firstD][secondD]:
+                maxVal = job[firstD][secondD]
+    return maxVal
 
 
 def minStat(data: str, stat: str) -> float:
     with jsonlines.open(data, "r") as reader:
-        min = sys.maxsize
+        minVal = sys.maxsize
         for job in reader:
-            if min > float(job[stat]):
-                min = float(job[stat])
-    return min
+            if minVal > float(job[stat]):
+                minVal = float(job[stat])
+    return minVal
 
 
 def minStat2D(data: list, firstD: str, secondD: str) -> float:
     with jsonlines.open(data, "r") as reader:
-        min = sys.maxsize
+        minVal = sys.maxsize
         for job in reader:
-            if min > job[firstD][secondD]:
-                min = job[firstD][secondD]
-    return min
+            if minVal > job[firstD][secondD]:
+                minVal = job[firstD][secondD]
+    return minVal
 
 
 def medianStat(data: str, stat: str) -> float:
@@ -1049,7 +1049,8 @@ def getWavesAttribute3D(data: dict, firstD: str, secondD, thirdD) -> str:
 
 def getBossDataStr(data: dict, boss: str) -> str:
     return "{:<16}\t{:}".format(
-        data[boss + "_appearances"] or 0, getPlayersAttribute(data, "kills", boss + "_")
+        data[boss + "_appearances"] or 0,
+        getPlayersAttribute(data, "kills", boss + "_")
     )
 
 
