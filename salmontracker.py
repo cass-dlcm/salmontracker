@@ -1034,8 +1034,7 @@ def getWavesAttribute3D(data: dict, firstD: str, secondD, thirdD) -> str:
 
 def getBossDataStr(data: dict, boss: str) -> str:
     return "{:<16}\t{:}".format(
-        data[boss + "_appearances"] or 0,
-        getPlayersAttribute(data, "kills", boss + "_")
+        data[boss + "_appearances"] or 0, getPlayersAttribute(data, "kills", boss + "_")
     )
 
 
