@@ -27,7 +27,7 @@ from salmontracker import (
     lessThanClearWave,
     notLessThanClearWave,
     withSpecial,
-    withoutSpecial
+    withoutSpecial,
 )
 import json
 from typing import List, Tuple
@@ -45,7 +45,8 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
     print("Uses Weapon")
     print("Stage")
     print("Danger Rate")
-    print()
+    print("Clear Wave")
+    print("Special")
     stat: str = input("Choose a stat to run analysis on: ")
     if stat == "Player":
         playerName = input("Enter a player name to run analysis on: ")
@@ -230,7 +231,7 @@ def printOverview(paths: List[str], dataFile: List[str]):
         sys.exit()
 
 
-def printAllJobs(path: str, dataFile: str):
+def printAllJobs(dataFile: str):
     with jsonlines.open(path + dataFile, mode="r") as reader:
         for job in reader:
             salmontracker.printGeneral(job)
@@ -248,7 +249,7 @@ def printJobs(paths: List[str], dataFile: List[str]):
     which = input("Would you like to print from a SpecificList or AllLists: ")
     if which == "AllLists":
         for i in range(0, len(paths)):
-            salmontracker.printOverview(paths[i], dataFile[i])
+            printAllJobs(paths[i] + dataFile[i])
 
 
 def processData(paths: List[str], dataFile: List[str]):
