@@ -2,6 +2,7 @@ from salmontracker import initUser, findPlayerIdByName, hasPlayer, withoutPlayer
 from scipy.stats import ttest_ind
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 
 initUser()
 path = "data/"
@@ -39,7 +40,7 @@ elif stat == "Stage":
     withVal = onStage(path, data, val)
     withoutVal = notOnStage(path, data, val)
 else:
-    exit()
+    sys.exit()
 withValClearWaves = getArrayOfStat(withVal[0] + withVal[1], "clear_waves")
 withoutValClearWaves = getArrayOfStat(withoutVal[0] + withoutVal[1], "clear_waves")
 t, p = ttest_ind(withValClearWaves, withoutValClearWaves, equal_var=False)
