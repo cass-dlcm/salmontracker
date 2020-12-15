@@ -17,7 +17,7 @@ grizzcoWeapons = (
 
 
 def fetchAllUser(api_key: str) -> None:
-    """Fetches all Salmon Run results for the authenticated user and stores it in the "data/salmon.jsonl" file.
+    """Fetch all Salmon Run results for the authenticated user and store it in the "data/salmon.jsonl" file.
 
     :param api_key: str: the stat.ink API key for the user
 
@@ -48,7 +48,7 @@ def fetchAllUser(api_key: str) -> None:
 
 
 def fetchAll() -> None:
-    """Fetches all Salmon Run results for all users and stores it in the "data/salmonAll.jsonl" file."""
+    """Fetch all Salmon Run results for all users and store it in the "data/salmonAll.jsonl" file."""
     lastId = 0
     prevLastId = 0
     params = {"order": "asc"}
@@ -72,6 +72,7 @@ def fetchAll() -> None:
 
 def fetchNewUser(api_key: str, recentId: int) -> None:
     """
+    Fetch new Salmon Run results for authenticated user and store it in the "data/salmon.jsonl" file.
 
     :param api_key: str: the stat.ink API key for the user
     :param recentId: int: the ID of the most recently retrieved job
@@ -106,6 +107,7 @@ def fetchNewUser(api_key: str, recentId: int) -> None:
 
 def fetchNewAll(recentId: int) -> None:
     """
+    Fetch new Salmon Run results for all users and store it in the "data/salmonAll.jsonl" file.
 
     :param recentId: int: the ID of the most recently retrieved jobs
 
@@ -135,6 +137,7 @@ def fetchNewAll(recentId: int) -> None:
 
 def hasJobs(path: str, data: str) -> bool:
     """
+    Check if a given data file has data.
 
     :param path: str: the directory path of the data file
     :param data: str: the file name of the data file
@@ -150,6 +153,7 @@ def hasJobs(path: str, data: str) -> bool:
 
 def hasPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
     """
+    Filter the jobs in the given data file to only jobs that contain the chosen player.
 
     :param path: str: the directory path of the data file
     :param data: str: the file name of the data file
@@ -187,6 +191,7 @@ def hasPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
 
 def withoutPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
     """
+    Filter the jobs in the given data file to only jobs that do not contain the chosen player.
 
     :param path: str: the directory path of the data file
     :param data: str: the file name of the data file
@@ -224,6 +229,7 @@ def withoutPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
 
 def hasPlayerByName(path: str, data: str, player: str) -> Tuple[str, str]:
     """
+    Filter the jobs in the given data file to only jobs that contain the chosen player.
 
     :param path: str: the directory path of the data file
     :param data: str: the file name of the data file
@@ -263,6 +269,7 @@ def findRotationByWeaponsAndStage(
     data: str, weapons: Union[Tuple[str, str, str, str], List[str]], stage: str
 ) -> List[int]:
     """
+    Find the rotation IDs for a rotation of the given weapons and stage in the given data file.
 
     :param data: str: the full path of the data file
     :param weapons: Union[Tuple[str, str, str, str], List[str]: the chosen weapons
