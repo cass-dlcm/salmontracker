@@ -2075,8 +2075,8 @@ if __name__ == "__main__":
     dataFiles.append(jobs[1])
     printOverview(jobs[0], jobs[1])
     print()
-    for i in range(0, len(paths)):
-        os.remove(paths[i] + dataFiles[i])
+    for a in range(0, len(paths)):
+        os.remove(paths[a] + dataFiles[a])
     # with jsonlines.open(jobs[0] + jobs[1], "r") as readerFile:
         """for job in reader:
         printGeneral(job)

@@ -1,3 +1,4 @@
+import salmontracker
 from salmontracker import (
     initAll,
     initUser,
@@ -11,7 +12,6 @@ from salmontracker import (
     doesntHaveWeapon,
     onStage,
     notOnStage,
-    printOverview,
     usesWeapon,
     doesntUseWeapon
 )
@@ -19,6 +19,7 @@ import json
 from typing import List, Tuple
 import sys
 import os
+import jsonlines
 
 
 def filterBy(paths: List[str], data: List[str]) -> List[Tuple[str, str]]:
@@ -115,9 +116,62 @@ def filterBy(paths: List[str], data: List[str]) -> List[Tuple[str, str]]:
     return filters
 
 
+def printOverview(paths: List[str], dataFile: List[str]):
+    which = input("Would you like to print a SpecificList or AllLists: ")
+    if which == "AllLists":
+        for i in range(0, len(paths)):
+            salmontracker.printOverview(paths[i], dataFile[i])
+    elif which == "SpecificList":
+        for i in range(0, len(paths)):
+            print(paths[i] + dataFile[i])
+        chosenList = int(input("Which list (by index): "))
+        salmontracker.printOverview(paths[chosenList], dataFile[chosenList])
+        print()
+    else:
+        sys.exit()
+
+
+def printAllJobs(path: str, dataFile: str):
+    with jsonlines.open(path + dataFile, mode="r") as reader:
+        for job in reader:
+            salmontracker.printGeneral(job)
+            print()
+            salmontracker.printWaves(job)
+            print()
+            salmontracker.printPlayers(job)
+            print()
+            salmontracker.printBosses(job)
+            print()
+            print()
+
+
+def printJobs(paths: List[str], dataFile: List[str]):
+    which = input("Would you like to print from a SpecificList or AllLists: ")
+    if which == "AllLists":
+        for a in range(0, len(paths)):
+            salmontracker.printOverview(paths[i], dataFile[i])
+
+
+def processData(paths: List[str], dataFile: List[str]):
+    print()
+    print("PrintOverview")
+    print("PrintJobs")
+    print("HypothesisTesting")
+    print("Quit")
+    mode: str = input("What would you like to do?")
+    while mode != "Quit":
+        if mode == "PrintOverview":
+            printOverview(paths, dataFile)
+        elif mode == "PrintJobs":
+            printJobs(paths, dataFile)
+        else:
+            sys.exit()
+        mode = input("What would you like to do?")
+
+
 print("All")
 print("User")
-scope = input("Pick an analysis scope: ")
+scope: str = input("Pick an analysis scope: ")
 path: str = ""
 data: str = ""
 if scope == "All":
@@ -136,27 +190,22 @@ dataFiles: List[str] = []
 allFiles: List[str] = []
 while input("Add a filter (Y/N): ") == "Y":
     if currentPaths == []:
-        filters = filterBy([path], [data])
-        for f in filters:
+        filtered: List[Tuple[str, str]] = filterBy([path], [data])
+        for f in filtered:
             currentPaths.append(f[0])
             dataFiles.append(f[1])
-            if f[0] not in allPaths:
-                allPaths.append(f[0])
-            if f[1] not in allFiles:
-                allFiles.append(f[1])
+            allPaths.append(f[0])
+            allFiles.append(f[1])
     else:
-        filters = filterBy(currentPaths, dataFiles)
+        filtered = filterBy(currentPaths, dataFiles)
         currentPaths = []
         dataFiles = []
-        for f in filters:
+        for f in filtered:
             currentPaths.append(f[0])
             dataFiles.append(f[1])
-            if f[0] not in allPaths:
-                allPaths.append(f[0])
-            if f[1] not in allFiles:
-                allFiles.append(f[1])
-for i in range(0, len(currentPaths)):
-    printOverview(currentPaths[i], dataFiles[i])
+            allPaths.append(f[0])
+            allFiles.append(f[1])
+processData(currentPaths, dataFiles)
 if input("Clean (Y/N): ") == "Y":
     for i in range(0, len(allPaths)):
         os.remove(allPaths[i] + allFiles[i])
