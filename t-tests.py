@@ -1,4 +1,18 @@
-from salmontracker import initUser, findPlayerIdByName, hasPlayer, withoutPlayer, findRotationByWeaponsAndStage, duringRotationInt, notDuringRotationInt, hasWeapon, doesntHaveWeapon, onStage, notOnStage, getArrayOfStat, getArrayOfStat2D
+from salmontracker import (
+    initUser,
+    findPlayerIdByName,
+    hasPlayer,
+    withoutPlayer,
+    findRotationByWeaponsAndStage,
+    duringRotationInt,
+    notDuringRotationInt,
+    hasWeapon,
+    doesntHaveWeapon,
+    onStage,
+    notOnStage,
+    getArrayOfStat,
+    getArrayOfStat2D,
+)
 from scipy.stats import ttest_ind
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,7 +30,9 @@ val = ""
 withVal = []
 withoutVal = []
 if stat == "Player":
-    playerId = findPlayerIdByName(path, data, input("Enter a player name to run analysis on: "))
+    playerId = findPlayerIdByName(
+        path, data, input("Enter a player name to run analysis on: ")
+    )
     print(playerId)
     val = playerId[int(input("Pick the player id by index: "))]
     withVal = hasPlayer(path, data, val)
@@ -54,44 +70,52 @@ t, p = ttest_ind(withValDangerRate, withoutValDangerRate, equal_var=False)
 plt.figure(1)
 plt.subplot(121)
 plt.hist(withValDangerRate, density=True)
-plt.xlabel('Danger Rate')
-plt.ylabel('Probability')
+plt.xlabel("Danger Rate")
+plt.ylabel("Probability")
 plt.subplot(122)
 plt.hist(withoutValDangerRate, density=True)
-plt.xlabel('Danger Rate')
-plt.ylabel('Probability')
+plt.xlabel("Danger Rate")
+plt.ylabel("Probability")
 print("a - b = " + str(np.mean(withValDangerRate) - np.mean(withoutValDangerRate)))
 print("t = " + str(t))
 print("p = " + str(p))
 print()
-withValGoldenTotal = getArrayOfStat2D(withVal[0] + withVal[1], "my_data", "golden_egg_delivered")
-withoutValGoldenTotal = getArrayOfStat2D(withoutVal[0] + withoutVal[1], "my_data", "golden_egg_delivered")
+withValGoldenTotal = getArrayOfStat2D(
+    withVal[0] + withVal[1], "my_data", "golden_egg_delivered"
+)
+withoutValGoldenTotal = getArrayOfStat2D(
+    withoutVal[0] + withoutVal[1], "my_data", "golden_egg_delivered"
+)
 t, p = ttest_ind(withValGoldenTotal, withoutValGoldenTotal, equal_var=False)
 plt.figure(2)
 plt.subplot(121)
 plt.hist(withValGoldenTotal, density=True)
-plt.xlabel('Golden Eggs')
-plt.ylabel('Probability')
+plt.xlabel("Golden Eggs")
+plt.ylabel("Probability")
 plt.subplot(122)
 plt.hist(withoutValGoldenTotal, density=True)
-plt.xlabel('Golden Eggs')
-plt.ylabel('Probability')
+plt.xlabel("Golden Eggs")
+plt.ylabel("Probability")
 print("a - b = " + str(np.mean(withValGoldenTotal) - np.mean(withoutValGoldenTotal)))
 print("t = " + str(t))
 print("p = " + str(p))
 print()
-withValPowerTotal = getArrayOfStat2D(withVal[0] + withVal[1], "my_data", "power_egg_collected")
-withoutValPowerTotal = getArrayOfStat2D(withoutVal[0] + withoutVal[1], "my_data", "power_egg_collected")
+withValPowerTotal = getArrayOfStat2D(
+    withVal[0] + withVal[1], "my_data", "power_egg_collected"
+)
+withoutValPowerTotal = getArrayOfStat2D(
+    withoutVal[0] + withoutVal[1], "my_data", "power_egg_collected"
+)
 t, p = ttest_ind(withValPowerTotal, withoutValPowerTotal, equal_var=False)
 plt.figure(3)
 plt.subplot(121)
 plt.hist(withValPowerTotal, density=True)
-plt.xlabel('Power Eggs')
-plt.ylabel('Probability')
+plt.xlabel("Power Eggs")
+plt.ylabel("Probability")
 plt.subplot(122)
 plt.hist(withoutValPowerTotal, density=True)
-plt.xlabel('Power Eggs')
-plt.ylabel('Probability')
+plt.xlabel("Power Eggs")
+plt.ylabel("Probability")
 print("a - b = " + str(np.mean(withValPowerTotal) - np.mean(withoutValPowerTotal)))
 print("t = " + str(t))
 print("p = " + str(p))
