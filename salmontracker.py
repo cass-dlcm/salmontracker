@@ -1694,20 +1694,20 @@ def initUser(api_key: str) -> None:
 
 
 if __name__ == "__main__":
-    user_key = json.load(open("keys.json", "r"))["statink_key"]
+    user_key: str = json.load(open("keys.json", "r"))["statink_key"]
     initAll()
-    data = "salmonAll.jsonl"
-    rotations = findRotationByWeaponsAndStage(
-        "data/" + data,
+    dataFile: str = "salmonAll.jsonl"
+    rotations: List[int] = findRotationByWeaponsAndStage(
+        "data/" + dataFile,
         ("Grizzco Charger", "Grizzco Brella", "Grizzco Blaster", "Grizzco Slosher"),
         "Ruins of Ark Polaris",
     )
     print(rotations)
-    jobs = duringRotationInt("data/", data, rotations[1])
+    jobs = duringRotationInt("data/", dataFile, rotations[1])
     jobs = dangerRate(jobs[0], jobs[1], "200.0")
     printOverview(jobs[0], jobs[1])
     print()
-    with jsonlines.open(jobs[0] + jobs[1], "r") as reader:
+    with jsonlines.open(jobs[0] + jobs[1], "r") as readerFile:
         """for job in reader:
         printGeneral(job)
         print()
