@@ -439,10 +439,12 @@ def findRotationByWeaponsAndStage(
 
 def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs that contain the chosen weapon.
 
-    :param path: str:
-    :param data: str:
-    :param weapon: str:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param weapon: str: The name or ID of the chosen weapon
+    :returns Tuple[str, str]: The path and filename of the output data file
 
     """
     try:
@@ -580,10 +582,12 @@ def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
 
 def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs that do not contain the chosen weapon.
 
-    :param path: str:
-    :param data: str:
-    :param weapon: str:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param weapon: str: The name or ID of the chosen weapon
+    :returns Tuple[str, str]: The path and filename of the output data file
 
     """
     try:
@@ -719,68 +723,104 @@ def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     return (path + data[0:-6] + "/notWeapon/", weapon + ".jsonl")
 
 
-def usesWeapon(weapon: str) -> bool:
+def usesWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs where the player uses the chosen weapon.
 
-    :param weapon: str:
-
-    """
-    return lambda var: (
-        var["my_data"]["weapons"][0]["key"] == weapon
-        or (
-            len(var["my_data"]["weapons"]) > 1
-            and var["my_data"]["weapons"][1]["key"] == weapon
-        )
-        or (
-            len(var["my_data"]["weapons"]) > 2
-            and var["my_data"]["weapons"][2]["key"] == weapon
-        )
-        or var["my_data"]["weapons"][0]["name"][locale] == weapon
-        or (
-            len(var["my_data"]["weapons"]) > 1
-            and var["my_data"]["weapons"][1]["name"][locale] == weapon
-        )
-        or (
-            len(var["my_data"]["weapons"]) > 2
-            and var["my_data"]["weapons"][2]["name"][locale] == weapon
-        )
-    )
-
-
-def doesntUseWeapon(weapon: str) -> bool:
-    """
-
-    :param weapon: str:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param weapon: str: The name or ID of the chosen weapon
+    :returns Tuple[str, str]: The path and filename of the output data file
 
     """
-    return lambda var: not (
-        var["my_data"]["weapons"][0]["key"] == weapon
-        or (
-            len(var["my_data"]["weapons"]) > 1
-            and var["my_data"]["weapons"][1]["key"] == weapon
-        )
-        or (
-            len(var["my_data"]["weapons"]) > 2
-            and var["my_data"]["weapons"][2]["key"] == weapon
-        )
-        or var["my_data"]["weapons"][0]["name"][locale] == weapon
-        or (
-            len(var["my_data"]["weapons"]) > 1
-            and var["my_data"]["weapons"][1]["name"][locale] == weapon
-        )
-        or (
-            len(var["my_data"]["weapons"]) > 2
-            and var["my_data"]["weapons"][2]["name"][locale] == weapon
-        )
-    )
+    try:
+        os.mkdir(path + data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(path + data[0:-6] + "/usesWeapon/")
+    except FileExistsError:
+        pass
+    with jsonlines.open(path + data, "r") as reader:
+        with jsonlines.open(path + data[0:-6] + "/usesWeapon/" + weapon + ".jsonl", "w") as writer:
+            for var in reader:
+                if (
+                    var["my_data"]["weapons"][0]["key"] == weapon
+                    or (
+                        len(var["my_data"]["weapons"]) > 1
+                        and var["my_data"]["weapons"][1]["key"] == weapon
+                    )
+                    or (
+                        len(var["my_data"]["weapons"]) > 2
+                        and var["my_data"]["weapons"][2]["key"] == weapon
+                    )
+                    or var["my_data"]["weapons"][0]["name"][locale] == weapon
+                    or (
+                        len(var["my_data"]["weapons"]) > 1
+                        and var["my_data"]["weapons"][1]["name"][locale] == weapon
+                    )
+                    or (
+                        len(var["my_data"]["weapons"]) > 2
+                        and var["my_data"]["weapons"][2]["name"][locale] == weapon
+                    )
+                ):
+                    writer.write(var)
+    return (path + data[0:-6] + "/usesWeapon/", weapon + ".jsonl")
+
+
+def doesntUseWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs where the player doesn't use the chosen weapon.
+
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param weapon: str: The name or ID of the chosen weapon
+    :returns Tuple[str, str]: The path and filename of the output data file
+
+    """
+    try:
+        os.mkdir(path + data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(path + data[0:-6] + "/notUsesWeapon/")
+    except FileExistsError:
+        pass
+    with jsonlines.open(path + data, "r") as reader:
+        with jsonlines.open(path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jsonl", "w") as writer:
+            for var in reader:
+                if not (
+                    var["my_data"]["weapons"][0]["key"] == weapon
+                    or (
+                        len(var["my_data"]["weapons"]) > 1
+                        and var["my_data"]["weapons"][1]["key"] == weapon
+                    )
+                    or (
+                        len(var["my_data"]["weapons"]) > 2
+                        and var["my_data"]["weapons"][2]["key"] == weapon
+                    )
+                    or var["my_data"]["weapons"][0]["name"][locale] == weapon
+                    or (
+                        len(var["my_data"]["weapons"]) > 1
+                        and var["my_data"]["weapons"][1]["name"][locale] == weapon
+                    )
+                    or (
+                        len(var["my_data"]["weapons"]) > 2
+                        and var["my_data"]["weapons"][2]["name"][locale] == weapon
+                    )
+                ):
+                    writer.write(var)
+    return (path + data[0:-6] + "/notUsesWeapon/", weapon + ".jsonl")
 
 
 def findPlayerIdByName(path: str, data: str, player: str) -> List[str]:
     """
+    Find all the recorded player IDs for a given player name.
 
-    :param path: str:
-    :param data: str:
-    :param player: str:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param player: str: the player name to find
+    :returns List[str]: the list of found player IDs
 
     """
     foundIds: List[str] = []
@@ -798,10 +838,12 @@ def findPlayerIdByName(path: str, data: str, player: str) -> List[str]:
 
 def onStage(path: str, data: str, stage: str) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs on the chosen stage.
 
-    :param path: str:
-    :param data: str:
-    :param stage: str:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param stage: str: The name or ID of the chosen stage
+    :returns Tuple[str, str]: The path and filename of the output data file
 
     """
     try:
@@ -824,10 +866,12 @@ def onStage(path: str, data: str, stage: str) -> Tuple[str, str]:
 
 def notOnStage(path: str, data: str, stage: str) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs not on the chosen stage.
 
-    :param path: str:
-    :param data: str:
-    :param stage: str:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param stage: str: The name or ID of the chosen stage
+    :returns Tuple[str, str]: The path and filename of the output data file
 
     """
     try:
@@ -850,10 +894,12 @@ def notOnStage(path: str, data: str, stage: str) -> Tuple[str, str]:
 
 def withSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs where the player had the chosen special.
 
-    :param path: str:
-    :param data: str:
-    :param special: str:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param special: str: The name or ID of the chosen special
+    :returns Tuple[str, str]: The path and filename of the output data file
 
     """
     try:
@@ -879,10 +925,12 @@ def withSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
 
 def withoutSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
     """
+    Filter the data file to only jobs where the player didn't have the chosen special.
 
-    :param path: str:
-    :param data: str:
-    :param special: str:
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param special: str: The name or ID of the chosen special
+    :returns Tuple[str, str]: The path and filename of the output data file
 
     """
     try:
