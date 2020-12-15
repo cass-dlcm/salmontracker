@@ -27,7 +27,7 @@ from salmontracker import (
     lessThanClearWave,
     notLessThanClearWave,
     withSpecial,
-    withoutSpecial
+    withoutSpecial,
 )
 import json
 from typing import List, Tuple
