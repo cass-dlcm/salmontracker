@@ -17,24 +17,25 @@ from scipy.stats import ttest_ind
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
+import json
+from typing import List, Union, Tuple
 
-initUser()
+initUser(json.load(open("keys.json", "r"))["statink_key"])
 path = "data/"
 data = "salmon.jsonl"
 print("Rotation")
 print("Player")
 print("Weapon")
 print("Stage")
-stat = input("Choose a stat to run analysis on: ")
-val = ""
-withVal = []
-withoutVal = []
+stat: str = input("Choose a stat to run analysis on: ")
+withVal: Union[List[str], Tuple[str, str]] = []
+withoutVal: Union[List[str], Tuple[str, str]] = []
 if stat == "Player":
-    playerId = findPlayerIdByName(
+    playerId: List[str] = findPlayerIdByName(
         path, data, input("Enter a player name to run analysis on: ")
     )
     print(playerId)
-    val = playerId[int(input("Pick the player id by index: "))]
+    val: str = playerId[int(input("Pick the player id by index: "))]
     withVal = hasPlayer(path, data, val)
     withoutVal = withoutPlayer(path, data, val)
 elif stat == "Rotation":
@@ -42,11 +43,11 @@ elif stat == "Rotation":
     for i in range(0, 4):
         weapons.append(input("Enter a weapon: "))
     stageChoice = input("Enter the stage: ")
-    rotations = findRotationByWeaponsAndStage(path + data, weapons, stageChoice)
+    rotations: List[int] = findRotationByWeaponsAndStage(path + data, weapons, stageChoice)
     print(rotations)
-    val = rotations[int(input("Pick the rotation id by index: "))]
-    withVal = duringRotationInt(path, data, val)
-    withoutVal = notDuringRotationInt(path, data, val)
+    rot: int = rotations[int(input("Pick the rotation id by index: "))]
+    withVal = duringRotationInt(path, data, rot)
+    withoutVal = notDuringRotationInt(path, data, rot)
 elif stat == "Weapon":
     val = input("Enter a weapon: ")
     withVal = hasWeapon(path, data, val)
