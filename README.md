@@ -3,8 +3,9 @@
 ## Setup
 ```
 git clone https://github.com:cassdelacruzmunoz/salmontracker.git
+cd salmontracker
 git checkout latest
-pip install requests jsonlines numpy matplotlib
+pip install -r requirements.txt
 ```
 
 ## Release History
