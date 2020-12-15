@@ -742,7 +742,9 @@ def usesWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     except FileExistsError:
         pass
     with jsonlines.open(path + data, "r") as reader:
-        with jsonlines.open(path + data[0:-6] + "/usesWeapon/" + weapon + ".jsonl", "w") as writer:
+        with jsonlines.open(
+            path + data[0:-6] + "/usesWeapon/" + weapon + ".jsonl", "w"
+        ) as writer:
             for var in reader:
                 if (
                     var["my_data"]["weapons"][0]["key"] == weapon
@@ -787,7 +789,9 @@ def doesntUseWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     except FileExistsError:
         pass
     with jsonlines.open(path + data, "r") as reader:
-        with jsonlines.open(path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jsonl", "w") as writer:
+        with jsonlines.open(
+            path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jsonl", "w"
+        ) as writer:
             for var in reader:
                 if not (
                     var["my_data"]["weapons"][0]["key"] == weapon
