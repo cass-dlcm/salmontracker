@@ -116,40 +116,82 @@ def hasJobs(path: str, data: str) -> bool:
             return False
 
 
-def hasPlayer(player: str) -> bool:
-    return lambda var: (
-        var["teammates"][0]["splatnet_id"] == player or (
-            len(var["teammates"]) > 1 and
-            var["teammates"][1]["splatnet_id"] == player
-        ) or (
-            len(var["teammates"]) > 2 and
-            var["teammates"][2]["splatnet_id"] == player
-        )
-    )
+def hasPlayer(path: str, data: str, player: str) -> bool:
+    try:
+        os.mkdir(path + data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(path + data[0:-6] + "/playerId/")
+    except FileExistsError:
+        pass
+    with jsonlines.open(path + data, "r") as reader:
+        if hasJobs(path, data):
+            with jsonlines.open(path + data[0:-6] + "/playerId/" + player + ".jsonl", "w") as writer:
+                for var in reader:
+                    if (
+                        var["teammates"][0]["splatnet_id"] == player or (
+                            len(var["teammates"]) > 1 and
+                            var["teammates"][1]["splatnet_id"] == player
+                        ) or (
+                            len(var["teammates"]) > 2 and
+                            var["teammates"][2]["splatnet_id"] == player
+                        )
+                    ):
+                        writer.write(var)
+            return (path + data[0:-6] + "/playerId/", player + ".jsonl")
 
 
-def withoutPlayer(player: str) -> bool:
-    return lambda var: not (
-        var["teammates"][0]["splatnet_id"] == player or (
-            len(var["teammates"]) > 1 and
-            var["teammates"][1]["splatnet_id"] == player
-        ) or (
-            len(var["teammates"]) > 2 and
-            var["teammates"][2]["splatnet_id"] == player
-        )
-    )
+def withoutPlayer(path: str, data: str, player: str) -> bool:
+    try:
+        os.mkdir(path + data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(path + data[0:-6] + "/notPlayerId/")
+    except FileExistsError:
+        pass
+    with jsonlines.open(path + data, "r") as reader:
+        if hasJobs(path, data):
+            with jsonlines.open(path + data[0:-6] + "/notPlayerId/" + player + ".jsonl", "w") as writer:
+                for var in reader:
+                    if not (
+                        var["teammates"][0]["splatnet_id"] == player or (
+                            len(var["teammates"]) > 1 and
+                            var["teammates"][1]["splatnet_id"] == player
+                        ) or (
+                            len(var["teammates"]) > 2 and
+                            var["teammates"][2]["splatnet_id"] == player
+                        )
+                    ):
+                        writer.write(var)
+            return (path + data[0:-6] + "/notPlayerId/", player + ".jsonl")
 
 
-def hasPlayerByName(player: str) -> bool:
-    return lambda var: (
-        var["teammates"][0]["name"] == player or (
-            len(var["teammates"]) > 1 and
-            var["teammates"][1]["name"] == player
-        ) or (
-            len(var["teammates"]) > 2 and
-            var["teammates"][2]["name"] == player
-        )
-    )
+def hasPlayerByName(path: str, data: str, player: str) -> bool:
+    try:
+        os.mkdir(path + data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(path + data[0:-6] + "/player/")
+    except FileExistsError:
+        pass
+    with jsonlines.open(path + data, "r") as reader:
+        if hasJobs(path, data):
+            with jsonlines.open(path + data[0:-6] + "/player/" + player + ".jsonl", "w") as writer:
+                for var in reader:
+                    if (
+                        var["teammates"][0]["name"] == player or (
+                            len(var["teammates"]) > 1 and
+                            var["teammates"][1]["name"] == player
+                        ) or (
+                            len(var["teammates"]) > 2 and
+                            var["teammates"][2]["name"] == player
+                        )
+                    ):
+                        writer.write(var)
+        return (path + data[0:-6] + "/player/", player + ".jsonl")
 
 
 def findRotationByWeaponsAndStage(data: str, weapons: list, stage: str) -> list:
@@ -492,31 +534,58 @@ def doesntUseWeapon(weapon: str) -> bool:
     )
 
 
-def findPlayerIdByName(data: list, player: str) -> list:
+def findPlayerIdByName(path: str, data: str, player: str) -> list:
     foundIds: list = []
-    matches = list(filter(hasPlayerByName(player), data))
-    for match in matches:
-        for teammate in match["teammates"]:
-            if (
-                teammate["name"] == player and
-                teammate["splatnet_id"] not in foundIds
-            ):
-                foundIds.append(teammate["splatnet_id"])
-    return foundIds
+    matches = hasPlayerByName(path, data, player)
+    with jsonlines.open(matches[0] + matches[1], "r") as reader:
+        for job in reader:
+            for teammate in job["teammates"]:
+                if (
+                    teammate["name"] == player and
+                    teammate["splatnet_id"] not in foundIds
+                ):
+                    foundIds.append(teammate["splatnet_id"])
+        return foundIds
 
 
-def onStage(stage: str) -> bool:
-    return lambda var: (
-        var["stage"]["key"] == stage or
-        var["stage"]["name"][locale] == stage
-    )
+def onStage(path: str, data: str, stage: str) -> bool:
+    try:
+        os.mkdir(path + data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(path + data[0:-6] + "/stage/")
+    except FileExistsError:
+        pass
+    with jsonlines.open(path + data, "r") as reader:
+        with jsonlines.open(path + data[0:-6] + "/stage/" + stage + ".jsonl", "w") as writer:
+            for var in reader:
+                if (
+                    var["stage"]["key"] == stage or
+                    var["stage"]["name"][locale] == stage
+                ):
+                    writer.write(var)
+    return (path + data[0:-6] + "/stage/", stage + ".jsonl")
 
 
-def notOnStage(stage: str) -> bool:
-    return lambda var: not (
-        var["stage"]["key"] == stage or
-        var["stage"]["name"][locale] == stage
-    )
+def notOnStage(path: str, data: str, stage: str) -> bool:
+    try:
+        os.mkdir(path + data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(path + data[0:-6] + "/notStage/")
+    except FileExistsError:
+        pass
+    with jsonlines.open(path + data, "r") as reader:
+        with jsonlines.open(path + data[0:-6] + "/notStage/" + stage + ".jsonl", "w") as writer:
+            for var in reader:
+                if not (
+                    var["stage"]["key"] == stage or
+                    var["stage"]["name"][locale] == stage
+                ):
+                    writer.write(var)
+    return (path + data[0:-6] + "/notStage/", stage + ".jsonl")
 
 
 def withSpecial(special: str) -> bool:
@@ -542,24 +611,41 @@ def notFailReason(reason: str) -> bool:
 
 
 def duringRotationInt(path: str, data: str, rotation: int) -> str:
-    if not os.path.exists(path + data[0:-6]):
+    try:
         os.mkdir(path + data[0:-6])
-    if not os.path.exists(path + data[0:-6] + "/rotations/"):
-        os.mkdir(path + data[0:-6] + "/rotations/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(path + data[0:-6] + "/rotation/")
+    except FileExistsError:
+        pass
     with jsonlines.open(path + data, mode="r") as reader:
-        with jsonlines.open(path + data[0:-6] + "/rotations/" + str(rotation) + ".jsonl", "w") as writer:
+        with jsonlines.open(path + data[0:-6] + "/rotation/" + str(rotation) + ".jsonl", "w") as writer:
             for job in reader:
                 if job["shift_start_at"]["time"] == rotation:
                     writer.write(job)
-    return (path + data[0:-6] + "/rotations/", str(rotation) + ".jsonl")
+    return (path + data[0:-6] + "/rotation/", str(rotation) + ".jsonl")
 
 
 def duringRotationStr(rotation: str) -> bool:
     return lambda var: var["shift_start_at"]["iso8601"] == rotation
 
 
-def notDuringRotationInt(rotation: int) -> bool:
-    return lambda var: not (var["shift_start_at"]["time"] == rotation)
+def notDuringRotationInt(path: str, data: str, rotation: int) -> bool:
+    try:
+        os.mkdir(path + data[0:-6])
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(path + data[0:-6] + "/notRotations/")
+    except FileExistsError:
+        pass
+    with jsonlines.open(path + data, mode="r") as reader:
+        with jsonlines.open(path + data[0:-6] + "/notRotations/" + str(rotation) + ".jsonl", "w") as writer:
+            for job in reader:
+                if not job["shift_start_at"]["time"] == rotation:
+                    writer.write(job)
+    return (path + data[0:-6] + "/notRotations/", str(rotation) + ".jsonl")
 
 
 def notDuringRotationStr(rotation: str) -> bool:
