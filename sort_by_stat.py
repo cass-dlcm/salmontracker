@@ -11,23 +11,34 @@ from salmontracker import (
 import jsonlines
 import requests
 import pprint
+from typing import Tuple, List, Dict, Union
+import json
 
 
 def sortWeapons(path: str, data: str, stat: str) -> None:
-    weaponsList = requests.get("https://stat.ink/api/v2/weapon").json()
-    for weapon in grizzcoWeapons:
-        new = {"name": {locale: weapon[0]}, "key": weapon[1]}
+    """
+
+    :param path: str:
+    :param data: str:
+    :param stat: str:
+
+    """
+    weaponsList: List[dict] = requests.get("https://stat.ink/api/v2/weapon").json()
+    for grizzWeapon in grizzcoWeapons:
+        new = {"name": {locale: grizzWeapon[0]}, "key": grizzWeapon[1]}
         weaponsList.append(new)
-    results = []
+    results: List[Dict[str, Union[str, float]]] = []
     for weapon in weaponsList:
-        result = {}
-        withVal = hasWeapon(path, data, weapon["name"][locale])
-        withoutVal = doesntHaveWeapon(path, data, weapon["name"][locale])
+        result: Dict[str, Union[str, float]] = {}
+        withVal: Tuple[str, str] = hasWeapon(path, data, weapon["name"][locale])
+        withoutVal: Tuple[str, str] = doesntHaveWeapon(path, data, weapon["name"][locale])
         if (hasJobs(withVal[0], withVal[1])) and (
             hasJobs(withoutVal[0], withoutVal[1])
         ):
             result["name"] = weapon["name"][locale]
-            result["value"] = avgStat(withVal[0] + withVal[1], stat) - avgStat(
+            result["value"] = avgStat(
+                withVal[0] + withVal[1], stat
+            ) - avgStat(
                 withoutVal[0] + withoutVal[1], stat
             )
             results.append(result)
@@ -35,6 +46,13 @@ def sortWeapons(path: str, data: str, stat: str) -> None:
 
 
 def sortStages(path: str, data: str, stat: str) -> None:
+    """
+
+    :param path: str:
+    :param data: str:
+    :param stat: str:
+
+    """
     stageDict = {}
     stageList = []
     with jsonlines.open(path + data, "r") as reader:
@@ -54,7 +72,7 @@ def sortStages(path: str, data: str, stat: str) -> None:
         pprint.pprint(sorted(stageList, key=lambda val: val["value"]))
 
 
-initUser()
+initUser(json.load(open("keys.json", "r"))["statink_key"])
 path = "data/"
 data = "salmon.jsonl"
 sortStages(path, data, "clear_waves")
