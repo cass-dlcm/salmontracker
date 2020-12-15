@@ -4,6 +4,7 @@ import numpy as np
 import requests
 import jsonlines
 import sys
+from typing import Tuple, List, Union
 
 locale = "en_US"
 
@@ -14,10 +15,13 @@ grizzcoWeapons = (
     ("Grizzco Slosher", "kuma_slosher"),
 )
 
-api_key = json.load(open("keys.json", "r"))["statink_key"]
 
+def fetchAllUser(api_key: str) -> None:
+    """Fetches all Salmon Run results for the authenticated user and stores it in the "data/salmon.jsonl" file.
 
-def fetchAllUser() -> None:
+    :param api_key: str: the stat.ink API key for the user
+
+    """
     headers = {"Authorization": "Bearer {}".format(api_key)}
     lastId = 0
     prevLastId = 0
@@ -30,7 +34,7 @@ def fetchAllUser() -> None:
     with jsonlines.open("data/salmon.jsonl", mode="w") as writer:
         while lastId != prevLastId:
             writer.write_all(temp)
-            params["newer_than"] = lastId
+            params["newer_than"] = str(lastId)
             result = requests.get(
                 "http://stat.ink/api/v2/user-salmon", headers=headers, params=params
             )
@@ -44,6 +48,7 @@ def fetchAllUser() -> None:
 
 
 def fetchAll() -> None:
+    """Fetches all Salmon Run results for all users and stores it in the "data/salmonAll.jsonl" file."""
     lastId = 0
     prevLastId = 0
     params = {"order": "asc"}
@@ -54,7 +59,7 @@ def fetchAll() -> None:
         while lastId != prevLastId:
             writer.write_all(temp)
             print(os.path.getsize("data/salmonAll.jsonl"))
-            params["newer_than"] = lastId
+            params["newer_than"] = str(lastId)
             result = requests.get("http://stat.ink/api/v2/salmon", params=params)
             print(result.url)
             print(result)
@@ -65,12 +70,18 @@ def fetchAll() -> None:
             print(lastId)
 
 
-def fetchNewUser(recentId: int) -> None:
+def fetchNewUser(api_key: str, recentId: int) -> None:
+    """
+
+    :param api_key: str: the stat.ink API key for the user
+    :param recentId: int: the ID of the most recently retrieved job
+
+    """
     headers = {"Authorization": "Bearer {}".format(api_key)}
     lastId = 0
     prevLastId = 0
     params = {"order": "asc"}
-    params["newer_than"] = recentId
+    params["newer_than"] = str(recentId)
     temp = requests.get(
         "http://stat.ink/api/v2/user-salmon", headers=headers, params=params
     ).json()
@@ -80,7 +91,7 @@ def fetchNewUser(recentId: int) -> None:
         with jsonlines.open("data/salmon.jsonl", mode="a") as writer:
             while lastId != prevLastId:
                 writer.write_all(temp)
-                params["newer_than"] = lastId
+                params["newer_than"] = str(lastId)
                 result = requests.get(
                     "http://stat.ink/api/v2/user-salmon", headers=headers, params=params
                 )
@@ -94,10 +105,15 @@ def fetchNewUser(recentId: int) -> None:
 
 
 def fetchNewAll(recentId: int) -> None:
+    """
+
+    :param recentId: int: the ID of the most recently retrieved jobs
+
+    """
     lastId = 0
     prevLastId = 0
     params = {"order": "asc"}
-    params["newer_than"] = recentId
+    params["newer_than"] = str(recentId)
     temp = requests.get("http://stat.ink/api/v2/salmon", params=params).json()
     if len(temp) > 0:
         lastId = temp[-1]["id"]
@@ -106,7 +122,7 @@ def fetchNewAll(recentId: int) -> None:
             while lastId != prevLastId:
                 writer.write_all(temp)
                 print(os.path.getsize("data/salmonAll.jsonl"))
-                params["newer_than"] = lastId
+                params["newer_than"] = str(lastId)
                 result = requests.get("http://stat.ink/api/v2/salmon", params=params)
                 print(result.url)
                 print(result)
@@ -118,6 +134,12 @@ def fetchNewAll(recentId: int) -> None:
 
 
 def hasJobs(path: str, data: str) -> bool:
+    """
+
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+
+    """
     with jsonlines.open(path + data, "r") as reader:
         try:
             reader.read()
@@ -126,7 +148,14 @@ def hasJobs(path: str, data: str) -> bool:
             return False
 
 
-def hasPlayer(path: str, data: str, player: str) -> bool:
+def hasPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
+    """
+
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param player: str: the Splatnet ID of the chosen player
+
+    """
     try:
         os.mkdir(path + data[0:-6] + "/")
     except FileExistsError:
@@ -153,10 +182,17 @@ def hasPlayer(path: str, data: str, player: str) -> bool:
                         )
                     ):
                         writer.write(var)
-            return (path + data[0:-6] + "/playerId/", player + ".jsonl")
+        return (path + data[0:-6] + "/playerId/", player + ".jsonl")
 
 
-def withoutPlayer(path: str, data: str, player: str) -> bool:
+def withoutPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
+    """
+
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param player: str: the Splatnet ID of the chosen player
+
+    """
     try:
         os.mkdir(path + data[0:-6] + "/")
     except FileExistsError:
@@ -183,10 +219,17 @@ def withoutPlayer(path: str, data: str, player: str) -> bool:
                         )
                     ):
                         writer.write(var)
-            return (path + data[0:-6] + "/notPlayerId/", player + ".jsonl")
+        return (path + data[0:-6] + "/notPlayerId/", player + ".jsonl")
 
 
-def hasPlayerByName(path: str, data: str, player: str) -> bool:
+def hasPlayerByName(path: str, data: str, player: str) -> Tuple[str, str]:
+    """
+
+    :param path: str: the directory path of the data file
+    :param data: str: the file name of the data file
+    :param player: str: the name of the chosen player
+
+    """
     try:
         os.mkdir(path + data[0:-6] + "/")
     except FileExistsError:
@@ -216,11 +259,22 @@ def hasPlayerByName(path: str, data: str, player: str) -> bool:
         return (path + data[0:-6] + "/player/", player + ".jsonl")
 
 
-def findRotationByWeaponsAndStage(data: str, weapons: list, stage: str) -> list:
+def findRotationByWeaponsAndStage(data: str, weapons: Union[Tuple[str, str, str, str], List[str]], stage: str) -> List[int]:
+    """
+
+    :param data: str: the full path of the data file
+    :param weapons: Union[Tuple[str, str, str, str], List[str]: the chosen weapons
+    :param stage: str: the chosen stage
+    :returns: List[int]: a list of rotation IDs
+
+    """
     foundRotations = []
     with jsonlines.open(data, mode="r") as reader:
         for job in reader:
-            found = stage in (job["stage"]["key"], job["stage"]["name"][locale])
+            found = (
+                job["stage"] is not None
+                and stage in (job["stage"]["key"], job["stage"]["name"][locale])
+            )
             for weapon in weapons:
                 found = found and (
                     job["my_data"]["weapons"][0]["key"] == weapon
@@ -231,49 +285,52 @@ def findRotationByWeaponsAndStage(data: str, weapons: list, stage: str) -> list:
                     or (
                         len(job["my_data"]["weapons"]) > 2
                         and job["my_data"]["weapons"][2]["key"] == weapon
-                    )
-                    or (
-                        len(job["teammates"]) > 0
-                        and job["teammates"][0]["weapons"] is not None
-                        and (
-                            job["teammates"][0]["weapons"][0]["key"] == weapon
-                            or (
-                                len(job["teammates"][0]["weapons"]) > 1
-                                and job["teammates"][0]["weapons"][1]["key"] == weapon
+                    ) or (
+                        job["teammates"] is not None and (
+                            (
+                                len(job["teammates"]) > 0
+                                and job["teammates"][0]["weapons"] is not None
+                                and (
+                                    job["teammates"][0]["weapons"][0]["key"] == weapon
+                                    or (
+                                        len(job["teammates"][0]["weapons"]) > 1
+                                        and job["teammates"][0]["weapons"][1]["key"] == weapon
+                                    )
+                                    or (
+                                        len(job["teammates"][0]["weapons"]) > 2
+                                        and job["teammates"][0]["weapons"][2]["key"] == weapon
+                                    )
+                                )
                             )
                             or (
-                                len(job["teammates"][0]["weapons"]) > 2
-                                and job["teammates"][0]["weapons"][2]["key"] == weapon
-                            )
-                        )
-                    )
-                    or (
-                        len(job["teammates"]) > 1
-                        and job["teammates"][1]["weapons"] is not None
-                        and (
-                            job["teammates"][1]["weapons"][0]["key"] == weapon
-                            or (
-                                len(job["teammates"][1]["weapons"]) > 1
-                                and job["teammates"][1]["weapons"][1]["key"] == weapon
-                            )
-                            or (
-                                len(job["teammates"][1]["weapons"]) > 2
-                                and job["teammates"][1]["weapons"][2]["key"] == weapon
-                            )
-                        )
-                    )
-                    or (
-                        len(job["teammates"]) > 2
-                        and job["teammates"][2]["weapons"] is not None
-                        and (
-                            job["teammates"][2]["weapons"][0]["key"] == weapon
-                            or (
-                                len(job["teammates"][2]["weapons"]) > 1
-                                and job["teammates"][2]["weapons"][1]["key"] == weapon
+                                len(job["teammates"]) > 1
+                                and job["teammates"][1]["weapons"] is not None
+                                and (
+                                    job["teammates"][1]["weapons"][0]["key"] == weapon
+                                    or (
+                                        len(job["teammates"][1]["weapons"]) > 1
+                                        and job["teammates"][1]["weapons"][1]["key"] == weapon
+                                    )
+                                    or (
+                                        len(job["teammates"][1]["weapons"]) > 2
+                                        and job["teammates"][1]["weapons"][2]["key"] == weapon
+                                    )
+                                )
                             )
                             or (
-                                len(job["teammates"][2]["weapons"]) > 2
-                                and job["teammates"][2]["weapons"][2]["key"] == weapon
+                                len(job["teammates"]) > 2
+                                and job["teammates"][2]["weapons"] is not None
+                                and (
+                                    job["teammates"][2]["weapons"][0]["key"] == weapon
+                                    or (
+                                        len(job["teammates"][2]["weapons"]) > 1
+                                        and job["teammates"][2]["weapons"][1]["key"] == weapon
+                                    )
+                                    or (
+                                        len(job["teammates"][2]["weapons"]) > 2
+                                        and job["teammates"][2]["weapons"][2]["key"] == weapon
+                                    )
+                                )
                             )
                         )
                     )
@@ -287,53 +344,57 @@ def findRotationByWeaponsAndStage(data: str, weapons: list, stage: str) -> list:
                         and job["my_data"]["weapons"][2]["name"][locale] == weapon
                     )
                     or (
-                        len(job["teammates"]) > 0
-                        and job["teammates"][0]["weapons"] is not None
-                        and (
-                            job["teammates"][0]["weapons"][0]["name"][locale] == weapon
-                            or (
-                                len(job["teammates"][0]["weapons"]) > 1
-                                and job["teammates"][0]["weapons"][1]["name"][locale]
-                                == weapon
+                        job["teammates"] is not None and (
+                            (
+                                len(job["teammates"]) > 0
+                                and job["teammates"][0]["weapons"] is not None
+                                and (
+                                    job["teammates"][0]["weapons"][0]["name"][locale] == weapon
+                                    or (
+                                        len(job["teammates"][0]["weapons"]) > 1
+                                        and job["teammates"][0]["weapons"][1]["name"][locale]
+                                        == weapon
+                                    )
+                                    or (
+                                        len(job["teammates"][0]["weapons"]) > 2
+                                        and job["teammates"][0]["weapons"][2]["name"][locale]
+                                        == weapon
+                                    )
+                                )
                             )
                             or (
-                                len(job["teammates"][0]["weapons"]) > 2
-                                and job["teammates"][0]["weapons"][2]["name"][locale]
-                                == weapon
-                            )
-                        )
-                    )
-                    or (
-                        len(job["teammates"]) > 1
-                        and job["teammates"][1]["weapons"] is not None
-                        and (
-                            job["teammates"][1]["weapons"][0]["name"][locale] == weapon
-                            or (
-                                len(job["teammates"][1]["weapons"]) > 1
-                                and job["teammates"][1]["weapons"][1]["name"][locale]
-                                == weapon
-                            )
-                            or (
-                                len(job["teammates"][1]["weapons"]) > 2
-                                and job["teammates"][1]["weapons"][2]["name"][locale]
-                                == weapon
-                            )
-                        )
-                    )
-                    or (
-                        len(job["teammates"]) > 2
-                        and job["teammates"][2]["weapons"] is not None
-                        and (
-                            job["teammates"][2]["weapons"][0]["name"][locale] == weapon
-                            or (
-                                len(job["teammates"][2]["weapons"]) > 1
-                                and job["teammates"][2]["weapons"][1]["name"][locale]
-                                == weapon
+                                len(job["teammates"]) > 1
+                                and job["teammates"][1]["weapons"] is not None
+                                and (
+                                    job["teammates"][1]["weapons"][0]["name"][locale] == weapon
+                                    or (
+                                        len(job["teammates"][1]["weapons"]) > 1
+                                        and job["teammates"][1]["weapons"][1]["name"][locale]
+                                        == weapon
+                                    )
+                                    or (
+                                        len(job["teammates"][1]["weapons"]) > 2
+                                        and job["teammates"][1]["weapons"][2]["name"][locale]
+                                        == weapon
+                                    )
+                                )
                             )
                             or (
-                                len(job["teammates"][2]["weapons"]) > 2
-                                and job["teammates"][2]["weapons"][2]["name"][locale]
-                                == weapon
+                                len(job["teammates"]) > 2
+                                and job["teammates"][2]["weapons"] is not None
+                                and (
+                                    job["teammates"][2]["weapons"][0]["name"][locale] == weapon
+                                    or (
+                                        len(job["teammates"][2]["weapons"]) > 1
+                                        and job["teammates"][2]["weapons"][1]["name"][locale]
+                                        == weapon
+                                    )
+                                    or (
+                                        len(job["teammates"][2]["weapons"]) > 2
+                                        and job["teammates"][2]["weapons"][2]["name"][locale]
+                                        == weapon
+                                    )
+                                )
                             )
                         )
                     )
@@ -343,7 +404,14 @@ def findRotationByWeaponsAndStage(data: str, weapons: list, stage: str) -> list:
     return foundRotations
 
 
-def hasWeapon(path: str, data: str, weapon: str) -> tuple:
+def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
+    """
+
+    :param path: str:
+    :param data: str:
+    :param weapon: str:
+
+    """
     try:
         os.mkdir(path + data[0:-6] + "/")
     except FileExistsError:
@@ -477,7 +545,14 @@ def hasWeapon(path: str, data: str, weapon: str) -> tuple:
     return (path + data[0:-6] + "/weapon/", weapon + ".jsonl")
 
 
-def doesntHaveWeapon(path: str, data: str, weapon: str) -> tuple:
+def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
+    """
+
+    :param path: str:
+    :param data: str:
+    :param weapon: str:
+
+    """
     try:
         os.mkdir(path + data[0:-6] + "/")
     except FileExistsError:
@@ -612,6 +687,11 @@ def doesntHaveWeapon(path: str, data: str, weapon: str) -> tuple:
 
 
 def usesWeapon(weapon: str) -> bool:
+    """
+
+    :param weapon: str:
+
+    """
     return lambda var: (
         var["my_data"]["weapons"][0]["key"] == weapon
         or (
@@ -635,6 +715,11 @@ def usesWeapon(weapon: str) -> bool:
 
 
 def doesntUseWeapon(weapon: str) -> bool:
+    """
+
+    :param weapon: str:
+
+    """
     return lambda var: not (
         var["my_data"]["weapons"][0]["key"] == weapon
         or (
@@ -657,8 +742,15 @@ def doesntUseWeapon(weapon: str) -> bool:
     )
 
 
-def findPlayerIdByName(path: str, data: str, player: str) -> list:
-    foundIds: list = []
+def findPlayerIdByName(path: str, data: str, player: str) -> List[str]:
+    """
+
+    :param path: str:
+    :param data: str:
+    :param player: str:
+
+    """
+    foundIds: List[str] = []
     matches = hasPlayerByName(path, data, player)
     with jsonlines.open(matches[0] + matches[1], "r") as reader:
         for job in reader:
@@ -671,7 +763,14 @@ def findPlayerIdByName(path: str, data: str, player: str) -> list:
         return foundIds
 
 
-def onStage(path: str, data: str, stage: str) -> bool:
+def onStage(path: str, data: str, stage: str) -> Tuple[str, str]:
+    """
+
+    :param path: str:
+    :param data: str:
+    :param stage: str:
+
+    """
     try:
         os.mkdir(path + data[0:-6] + "/")
     except FileExistsError:
@@ -690,7 +789,14 @@ def onStage(path: str, data: str, stage: str) -> bool:
     return (path + data[0:-6] + "/stage/", stage + ".jsonl")
 
 
-def notOnStage(path: str, data: str, stage: str) -> bool:
+def notOnStage(path: str, data: str, stage: str) -> Tuple[str, str]:
+    """
+
+    :param path: str:
+    :param data: str:
+    :param stage: str:
+
+    """
     try:
         os.mkdir(path + data[0:-6] + "/")
     except FileExistsError:
@@ -710,6 +816,11 @@ def notOnStage(path: str, data: str, stage: str) -> bool:
 
 
 def withSpecial(special: str) -> bool:
+    """
+
+    :param special: str:
+
+    """
     return lambda var: (
         var["my_data"]["special"]["key"] == special
         or var["my_data"]["special"]["name"][locale] == special
@@ -717,6 +828,11 @@ def withSpecial(special: str) -> bool:
 
 
 def withoutSpecial(special: str) -> bool:
+    """
+
+    :param special: str:
+
+    """
     return lambda var: not (
         var["my_data"]["special"]["key"] == special
         or var["my_data"]["special"]["name"][locale] == special
@@ -724,14 +840,31 @@ def withoutSpecial(special: str) -> bool:
 
 
 def failReason(reason: str) -> bool:
+    """
+
+    :param reason: str:
+
+    """
     return lambda var: var["fail_reason"] == reason
 
 
 def notFailReason(reason: str) -> bool:
+    """
+
+    :param reason: str:
+
+    """
     return lambda var: not (var["fail_reason"] == reason)
 
 
-def duringRotationInt(path: str, data: str, rotation: int) -> str:
+def duringRotationInt(path: str, data: str, rotation: int) -> Tuple[str, str]:
+    """
+
+    :param path: str:
+    :param data: str:
+    :param rotation: int:
+
+    """
     try:
         os.mkdir(path + data[0:-6])
     except FileExistsError:
@@ -751,10 +884,22 @@ def duringRotationInt(path: str, data: str, rotation: int) -> str:
 
 
 def duringRotationStr(rotation: str) -> bool:
+    """
+
+    :param rotation: str:
+
+    """
     return lambda var: var["shift_start_at"]["iso8601"] == rotation
 
 
-def notDuringRotationInt(path: str, data: str, rotation: int) -> bool:
+def notDuringRotationInt(path: str, data: str, rotation: int) -> Tuple[str, str]:
+    """
+
+    :param path: str:
+    :param data: str:
+    :param rotation: int:
+
+    """
     try:
         os.mkdir(path + data[0:-6])
     except FileExistsError:
@@ -774,34 +919,76 @@ def notDuringRotationInt(path: str, data: str, rotation: int) -> bool:
 
 
 def notDuringRotationStr(rotation: str) -> bool:
+    """
+
+    :param rotation: str:
+
+    """
     return lambda var: not (var["shift_start_at"]["iso8601"] == rotation)
 
 
 def clearWave(wave: int) -> bool:
+    """
+
+    :param wave: int:
+
+    """
     return lambda var: var["clear_waves"] == wave
 
 
 def notClearWave(wave: int) -> bool:
+    """
+
+    :param wave: int:
+
+    """
     return lambda var: not (var["clear_waves"] == wave)
 
 
 def greaterThanClearWave(wave: int) -> bool:
+    """
+
+    :param wave: int:
+
+    """
     return lambda var: var["clear_waves"] > wave
 
 
 def notGreaterThanClearWave(wave: int) -> bool:
+    """
+
+    :param wave: int:
+
+    """
     return lambda var: not (var["clear_waves"] > wave)
 
 
 def lessThanClearWave(wave: int) -> bool:
+    """
+
+    :param wave: int:
+
+    """
     return lambda var: var["clear_waves"] < wave
 
 
 def notLessThanClearWave(wave: int) -> bool:
+    """
+
+    :param wave: int:
+
+    """
     return lambda var: not (var["clear_waves"] < wave)
 
 
-def dangerRate(path: str, data: str, rate: int) -> tuple:
+def dangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
+    """
+
+    :param path: str:
+    :param data: str:
+    :param rate: str:
+
+    """
     if not os.path.exists(path + data[0:-6]):
         os.mkdir(path + data[0:-6])
     if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
@@ -817,34 +1004,79 @@ def dangerRate(path: str, data: str, rate: int) -> tuple:
 
 
 def notDangerRate(rate: int) -> bool:
+    """
+
+    :param rate: int:
+
+    """
     return lambda var: not (var["danger_rate"] == rate)
 
 
 def greaterThanDangerRate(rate: int) -> bool:
+    """
+
+    :param rate: int:
+
+    """
     return lambda var: var["danger_rate"] > rate
 
 
 def notGreaterThanDangerRate(rate: int) -> bool:
+    """
+
+    :param rate: int:
+
+    """
     return lambda var: not (var["danger_rate"] > rate)
 
 
 def lessThanDangerRate(rate: int) -> bool:
+    """
+
+    :param rate: int:
+
+    """
     return lambda var: var["danger_rate"] < rate
 
 
 def notLessThandDangerRate(rate: int) -> bool:
+    """
+
+    :param rate: int:
+
+    """
     return lambda var: not (var["danger_rate"] < rate)
 
 
 def splatnet_number(num: int) -> bool:
+    """
+
+    :param num: int:
+
+    """
     return lambda var: var["splatnet_number"] == num
 
 
-def jobsCount(data: list) -> int:
-    return len(data)
+def jobsCount(data: str) -> int:
+    """
+
+    :param data: str: 
+
+    """
+    with jsonlines.open(data, mode="r") as reader:
+        count = 0
+        for job in reader:
+            count += 1
+        return count
 
 
 def avgStat(data: str, stat: str) -> float:
+    """
+
+    :param data: str:
+    :param stat: str:
+
+    """
     with jsonlines.open(data, mode="r") as reader:
         sumVal = 0.0
         count = 0.0
@@ -855,6 +1087,13 @@ def avgStat(data: str, stat: str) -> float:
 
 
 def avgStat2D(data: str, firstD: str, secondD: str) -> float:
+    """
+
+    :param data: str:
+    :param firstD: str:
+    :param secondD: str:
+
+    """
     with jsonlines.open(data, mode="r") as reader:
         sumVal = 0.0
         count = 0.0
@@ -865,7 +1104,13 @@ def avgStat2D(data: str, firstD: str, secondD: str) -> float:
 
 
 def maxStat(data: str, stat: str) -> float:
-    maxVal = 0
+    """
+
+    :param data: str:
+    :param stat: str:
+
+    """
+    maxVal = 0.0
     with jsonlines.open(data, "r") as reader:
         for job in reader:
             if maxVal < float(job[stat]):
@@ -874,33 +1119,59 @@ def maxStat(data: str, stat: str) -> float:
 
 
 def maxStat2D(data: str, firstD: str, secondD: str) -> float:
-    maxVal = 0
+    """
+
+    :param data: str:
+    :param firstD: str:
+    :param secondD: str:
+
+    """
+    maxVal = 0.0
     with jsonlines.open(data, "r") as reader:
         for job in reader:
-            if maxVal < job[firstD][secondD]:
-                maxVal = job[firstD][secondD]
+            if maxVal < float(job[firstD][secondD]):
+                maxVal = float(job[firstD][secondD])
     return maxVal
 
 
 def minStat(data: str, stat: str) -> float:
+    """
+
+    :param data: str:
+    :param stat: str:
+
+    """
     with jsonlines.open(data, "r") as reader:
-        minVal = sys.maxsize
+        minVal: float = sys.float_info.max
         for job in reader:
             if minVal > float(job[stat]):
                 minVal = float(job[stat])
     return minVal
 
 
-def minStat2D(data: list, firstD: str, secondD: str) -> float:
+def minStat2D(data: str, firstD: str, secondD: str) -> float:
+    """
+
+    :param data: str:
+    :param firstD: str:
+    :param secondD: str:
+
+    """
     with jsonlines.open(data, "r") as reader:
-        minVal = sys.maxsize
+        minVal: float = sys.float_info.max
         for job in reader:
-            if minVal > job[firstD][secondD]:
-                minVal = job[firstD][secondD]
+            if minVal > float(job[firstD][secondD]):
+                minVal = float(job[firstD][secondD])
     return minVal
 
 
 def medianStat(data: str, stat: str) -> float:
+    """
+
+    :param data: str:
+    :param stat: str:
+
+    """
     vals = []
     with jsonlines.open(data, "r") as reader:
         for job in reader:
@@ -909,6 +1180,13 @@ def medianStat(data: str, stat: str) -> float:
 
 
 def medianStat2D(data: str, firstD: str, secondD: str) -> float:
+    """
+
+    :param data: str:
+    :param firstD: str:
+    :param secondD: str:
+
+    """
     vals = []
     with jsonlines.open(data, "r") as reader:
         for job in reader:
@@ -917,6 +1195,11 @@ def medianStat2D(data: str, firstD: str, secondD: str) -> float:
 
 
 def clearPercentage(data: str) -> float:
+    """
+
+    :param data: str:
+
+    """
     with jsonlines.open(data, mode="r") as reader:
         sumVal = 0.0
         count = 0.0
@@ -927,6 +1210,11 @@ def clearPercentage(data: str) -> float:
 
 
 def waveTwoPercentage(data: str) -> float:
+    """
+
+    :param data: str:
+
+    """
     with jsonlines.open(data, mode="r") as reader:
         sumVal = 0.0
         count = 0.0
@@ -937,6 +1225,11 @@ def waveTwoPercentage(data: str) -> float:
 
 
 def waveOnePercentage(data: str) -> float:
+    """
+
+    :param data: str:
+
+    """
     with jsonlines.open(data, mode="r") as reader:
         sumVal = 0.0
         count = 0.0
@@ -947,6 +1240,12 @@ def waveOnePercentage(data: str) -> float:
 
 
 def statSummary(data: str, stat: str) -> str:
+    """
+
+    :param data: str:
+    :param stat: str:
+
+    """
     return (
         str(avgStat(data, stat))
         + " ("
@@ -960,6 +1259,13 @@ def statSummary(data: str, stat: str) -> str:
 
 
 def statSummary2D(data: str, firstD: str, secondD: str) -> str:
+    """
+
+    :param data: str:
+    :param firstD: str:
+    :param secondD: str:
+
+    """
     return (
         str(avgStat2D(data, firstD, secondD))
         + " ("
@@ -973,6 +1279,12 @@ def statSummary2D(data: str, firstD: str, secondD: str) -> str:
 
 
 def sumStatWaves(data: dict, stat: str) -> int:
+    """
+
+    :param data: dict:
+    :param stat: str:
+
+    """
     sumVal = 0
     for w in data["waves"]:
         sumVal += w[stat]
@@ -980,13 +1292,26 @@ def sumStatWaves(data: dict, stat: str) -> int:
 
 
 def getPlayersAttribute(data: dict, attr: str) -> str:
+    """
+
+    :param data: dict:
+    :param attr: str:
+
+    """
     attrs = "{:<16}\t".format(data["my_data"][attr] or 0)
     for p in data["teammates"]:
         attrs += "{:<16}\t".format(p[attr] or 0)
     return attrs
 
 
-def getPlayersAttribute2D(data: dict, firstD: str, secondD: str) -> str:
+def getPlayersAttribute2D(data: dict, firstD: str, secondD: Union[int, str]) -> str:
+    """
+s
+    :param data: dict: 
+    :param firstD: str: 
+    :param secondD: Union[int, str]: 
+
+    """
     attrs = "{:<16}\t".format(data["my_data"][firstD][secondD] or 0)
     for p in data["teammates"]:
         attrs += "{:<16}\t".format(p[firstD][secondD] or 0)
@@ -994,6 +1319,14 @@ def getPlayersAttribute2D(data: dict, firstD: str, secondD: str) -> str:
 
 
 def getPlayersAttribute3D(data: dict, firstD: str, secondD: str, thirdD: str) -> str:
+    """
+
+    :param data: dict: 
+    :param firstD: str: 
+    :param secondD: str: 
+    :param thirdD: str: 
+
+    """
     attrs = "{:<16}\t".format(data["my_data"][firstD][secondD][thirdD] or 0)
     for p in data["teammates"]:
         attrs += "{:<16}\t".format(p[firstD][secondD][thirdD] or 0)
@@ -1001,8 +1334,17 @@ def getPlayersAttribute3D(data: dict, firstD: str, secondD: str, thirdD: str) ->
 
 
 def getPlayersAttribute4D(
-    data: dict, firstD: str, secondD: str, thirdD: str, fourthD: str
+    data: dict, firstD: str, secondD: int, thirdD: str, fourthD: str
 ) -> str:
+    """
+
+    :param data: dict: 
+    :param firstD: str: 
+    :param secondD: int: 
+    :param thirdD: str: 
+    :param fourthD: str: 
+
+    """
     attrs = "{:<16}\t".format(data["my_data"][firstD][secondD][thirdD][fourthD] or 0)
     for p in data["teammates"]:
         if secondD < len(p[firstD]):
@@ -1013,6 +1355,12 @@ def getPlayersAttribute4D(
 
 
 def getWavesAttribute(data: dict, attr: str) -> str:
+    """
+
+    :param data: dict: 
+    :param attr: str: 
+
+    """
     attrs = ""
     for i in range(0, 3):
         if i < len(data["waves"]):
@@ -1022,7 +1370,15 @@ def getWavesAttribute(data: dict, attr: str) -> str:
     return attrs
 
 
-def getWavesAttribute3D(data: dict, firstD: str, secondD, thirdD) -> str:
+def getWavesAttribute3D(data: dict, firstD: str, secondD: str, thirdD: str) -> str:
+    """
+
+    :param data: dict: 
+    :param firstD: str:
+    :param secondD: str: 
+    :param thirdD: str:
+
+    """
     attrs = ""
     for i in range(0, 3):
         if i < len(data["waves"]) and data["waves"][i][firstD]:
@@ -1033,19 +1389,38 @@ def getWavesAttribute3D(data: dict, firstD: str, secondD, thirdD) -> str:
 
 
 def getBossDataStr(data: dict, boss: str) -> str:
+    """
+
+    :param data: dict: 
+    :param boss: str: 
+
+    """
     return "{:<16}\t{:}".format(
         data[boss + "_appearances"] or 0,
-        getPlayersAttribute(data, "kills", boss + "_")
+        getPlayersAttribute2D(data, "kills", boss + "_")
     )
 
 
 def getTotalBosses(data: list, bosses: list, player: str) -> int:
+    """
+
+    :param data: list: 
+    :param bosses: list: 
+    :param player: str: 
+
+    """
     return sum(
         int(data[boss.replace(" ", "_").lower() + "_" + player] or 0) for boss in bosses
     )
 
 
 def printOverview(path: str, data: str) -> None:
+    """
+
+    :param path: str: 
+    :param data: str: 
+
+    """
     print("Jobs: " + str(jobsCount(path + data)))
     print("Average Waves: " + str(avgStat(path + data, "clear_waves")))
     print("Clear %: " + str(clearPercentage(path + data)))
@@ -1059,6 +1434,11 @@ def printOverview(path: str, data: str) -> None:
 
 
 def printGeneral(data: dict) -> None:
+    """
+
+    :param data: dict: 
+
+    """
     print("Stat.ink Link: " + data["url"])
     print("Splatnet #: {:<}".format(data["splatnet_number"]))
     print("Stage: {:}".format(data["stage"]["name"][locale]))
@@ -1076,6 +1456,11 @@ def printGeneral(data: dict) -> None:
 
 
 def printWaves(data: dict) -> None:
+    """
+
+    :param data: dict: 
+
+    """
     print(
         "{:16}\t{:16}\t{:16}\t{:16}\t{:16}".format(
             "", "Wave 1", "Wave 2", "Wave 3", "Total"
@@ -1122,6 +1507,11 @@ def printWaves(data: dict) -> None:
 
 
 def printWeapons(data: dict) -> None:
+    """
+
+    :param data: dict: 
+
+    """
     for i in range(0, len(data["my_data"]["weapons"])):
         print(
             "{:16}\t{:}".format(
@@ -1132,6 +1522,11 @@ def printWeapons(data: dict) -> None:
 
 
 def printSpecials(data: dict) -> None:
+    """
+
+    :param data: dict: 
+
+    """
     for i in range(0, len(data["my_data"]["special_uses"])):
         print(
             "{:16}\t{:}".format(
@@ -1142,6 +1537,11 @@ def printSpecials(data: dict) -> None:
 
 
 def printPlayers(data: dict) -> None:
+    """
+
+    :param data: dict: 
+
+    """
     print("{:16}\t{:}".format("ID", getPlayersAttribute(data, "splatnet_id")))
     print("{:16}\t{:}".format("Name", getPlayersAttribute(data, "name")))
     printWeapons(data)
@@ -1166,6 +1566,11 @@ def printPlayers(data: dict) -> None:
 
 
 def getBosses(data: dict) -> list:
+    """
+
+    :param data: dict: 
+
+    """
     results = []
     names = {}
     appearances = {"": 0}
@@ -1199,6 +1604,11 @@ def getBosses(data: dict) -> list:
 
 
 def printBosses(data: dict) -> None:
+    """
+
+    :param data: dict: 
+
+    """
     print(
         "{:16}\t{:16}\t{:}".format(
             "Boss Salmonid", "Appearances", getPlayersAttribute(data, "name")
@@ -1220,7 +1630,13 @@ def printBosses(data: dict) -> None:
     getBosses(data)
 
 
-def getArrayOfStat(data: str, stat) -> list:
+def getArrayOfStat(data: str, stat: str) -> list:
+    """
+
+    :param data: str: 
+    :param stat: str: 
+
+    """
     with jsonlines.open(data, "r") as reader:
         results = []
         for job in reader:
@@ -1228,7 +1644,14 @@ def getArrayOfStat(data: str, stat) -> list:
         return results
 
 
-def getArrayOfStat2D(data: list, firstD, secondD) -> list:
+def getArrayOfStat2D(data: str, firstD: str, secondD: Union[str, int]) -> list:
+    """
+
+    :param data: str: 
+    :param firstD: str: 
+    :param secondD: Union[str, int]: 
+
+    """
     with jsonlines.open(data, "r") as reader:
         results = []
         for job in reader:
@@ -1236,29 +1659,42 @@ def getArrayOfStat2D(data: list, firstD, secondD) -> list:
         return results
 
 
-def initAll():
+def initAll() -> None:
+    """ """
     if os.path.exists("data/salmonAll.jsonl"):
         recentId = 0
-        with jsonlines.open("data/salmonAll.jsonl", mode="r") as reader:
-            for line in reader:
-                recentId = line["id"]
+        try:
+            with jsonlines.open("data/salmonAll.jsonl", mode="r") as reader:
+                with jsonlines.open("data/salmonAllTemp.jsonl", mode="w") as writer:
+                        for line in reader:
+                            writer.write(line)
+                            recentId = line["id"]
+                os.remove("data/salmonAllTemp.jsonl")
+        except jsonlines.jsonlines.InvalidLineError:
+            os.replace(r'data/salmonAllTemp.jsonl', r'data/salmonAll.jsonl')
         fetchNewAll(recentId)
     else:
         fetchAll()
 
 
-def initUser() -> list:
+def initUser(api_key: str) -> None:
+    """
+
+    :param api_key: str: 
+
+    """
     if os.path.exists("data/salmon.jsonl"):
         recentId = 0
         with jsonlines.open("data/salmon.jsonl", mode="r") as reader:
             for line in reader:
                 recentId = line["id"]
-        fetchNewUser(recentId)
+        fetchNewUser(api_key, recentId)
     else:
-        fetchAllUser()
+        fetchAllUser(api_key)
 
 
 if __name__ == "__main__":
+    user_key = json.load(open("keys.json", "r"))["statink_key"]
     initAll()
     data = "salmonAll.jsonl"
     rotations = findRotationByWeaponsAndStage(
