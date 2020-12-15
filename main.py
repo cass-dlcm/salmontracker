@@ -22,7 +22,7 @@ import os
 import jsonlines
 
 
-def filterBy(paths: List[str], dataFiles: List[str]) -> List[Tuple[str, str]]:
+def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
     filters: List[Tuple[str, str]] = []
     print()
     print("Rotation")
@@ -36,19 +36,19 @@ def filterBy(paths: List[str], dataFiles: List[str]) -> List[Tuple[str, str]]:
     if stat == "Player":
         playerName = input("Enter a player name to run analysis on: ")
         playerId: List[str] = findPlayerIdByName(
-            paths[0], dataFiles[0], playerName
+            paths[0], dataFile[0], playerName
         )
         print(playerId)
         val: str = playerId[int(input("Pick the player id by index: "))]
         mode = input("Choose whether you want With, Without, or Both: ")
         for i in range(0, len(paths)):
             if mode == "With":
-                filters.append(hasPlayer(paths[i], dataFiles[i], val))
+                filters.append(hasPlayer(paths[i], dataFile[i], val))
             elif mode == "Without":
-                filters.append(withoutPlayer(paths[i], dataFiles[i], val))
+                filters.append(withoutPlayer(paths[i], dataFile[i], val))
             elif mode == "Both":
-                filters.append(hasPlayer(paths[i], dataFiles[i], val))
-                filters.append(withoutPlayer(paths[i], dataFiles[i], val))
+                filters.append(hasPlayer(paths[i], dataFile[i], val))
+                filters.append(withoutPlayer(paths[i], dataFile[i], val))
             else:
                 sys.exit()
     elif stat == "Rotation":
@@ -57,19 +57,19 @@ def filterBy(paths: List[str], dataFiles: List[str]) -> List[Tuple[str, str]]:
             weapons.append(input("Enter a weapon: "))
         stageChoice = input("Enter the stage: ")
         rotations: List[int] = findRotationByWeaponsAndStage(
-            paths[0] + dataFiles[0], weapons, stageChoice
+            paths[0] + dataFile[0], weapons, stageChoice
         )
         print(rotations)
         rot: int = rotations[int(input("Pick the rotation id by index: "))]
         mode = input("Choose whether you want With, Without, or Both: ")
         for i in range(0, len(paths)):
             if mode == "With":
-                filters.append(duringRotationInt(paths[i], dataFiles[i], rot))
+                filters.append(duringRotationInt(paths[i], dataFile[i], rot))
             elif mode == "Without":
-                filters.append(notDuringRotationInt(paths[i], dataFiles[i], rot))
+                filters.append(notDuringRotationInt(paths[i], dataFile[i], rot))
             elif mode == "Both":
-                filters.append(duringRotationInt(paths[i], dataFiles[i], rot))
-                filters.append(notDuringRotationInt(paths[i], dataFiles[i], rot))
+                filters.append(duringRotationInt(paths[i], dataFile[i], rot))
+                filters.append(notDuringRotationInt(paths[i], dataFile[i], rot))
             else:
                 sys.exit()
     elif stat == "Has Weapon":
@@ -77,12 +77,12 @@ def filterBy(paths: List[str], dataFiles: List[str]) -> List[Tuple[str, str]]:
         mode = input("Choose whether you want With, Without, or Both: ")
         for i in range(0, len(paths)):
             if mode == "With":
-                filters.append(hasWeapon(paths[i], dataFiles[i], val))
+                filters.append(hasWeapon(paths[i], dataFile[i], val))
             elif mode == "Without":
-                filters.append(doesntHaveWeapon(path[i], dataFiles[i], val))
+                filters.append(doesntHaveWeapon(path[i], dataFile[i], val))
             elif mode == "Both":
-                filters.append(hasWeapon(path[i], dataFiles[i], val))
-                filters.append(doesntHaveWeapon(path, dataFiles[i], val))
+                filters.append(hasWeapon(path[i], dataFile[i], val))
+                filters.append(doesntHaveWeapon(path, dataFile[i], val))
             else:
                 sys.exit()
     elif stat == "Uses Weapon":
@@ -90,12 +90,12 @@ def filterBy(paths: List[str], dataFiles: List[str]) -> List[Tuple[str, str]]:
         mode = input("Choose whether you want With, Without, or Both: ")
         for i in range(0, len(paths)):
             if mode == "With":
-                filters.append(usesWeapon(paths[i], dataFiles[i], val))
+                filters.append(usesWeapon(paths[i], dataFile[i], val))
             elif mode == "Without":
-                filters.append(doesntUseWeapon(path[i], dataFiles[i], val))
+                filters.append(doesntUseWeapon(path[i], dataFile[i], val))
             elif mode == "Both":
-                filters.append(usesWeapon(path[i], dataFiles[i], val))
-                filters.append(doesntUseWeapon(path, dataFiles[i], val))
+                filters.append(usesWeapon(path[i], dataFile[i], val))
+                filters.append(doesntUseWeapon(path, dataFile[i], val))
             else:
                 sys.exit()
     elif stat == "Stage":
@@ -103,12 +103,12 @@ def filterBy(paths: List[str], dataFiles: List[str]) -> List[Tuple[str, str]]:
         mode = input("Choose whether you want With, Without, or Both: ")
         for i in range(0, len(paths)):
             if mode == "With":
-                filters.append(onStage(paths[i], dataFiles[i], val))
+                filters.append(onStage(paths[i], dataFile[i], val))
             elif mode == "Without":
-                filters.append(notOnStage(path[i], dataFiles[i], val))
+                filters.append(notOnStage(path[i], dataFile[i], val))
             elif mode == "Both":
-                filters.append(onStage(paths[i], dataFiles[i], val))
-                filters.append(notOnStage(paths[i], dataFiles[i], val))
+                filters.append(onStage(paths[i], dataFile[i], val))
+                filters.append(notOnStage(paths[i], dataFile[i], val))
             else:
                 sys.exit()
     else:
@@ -116,16 +116,16 @@ def filterBy(paths: List[str], dataFiles: List[str]) -> List[Tuple[str, str]]:
     return filters
 
 
-def printOverview(paths: List[str], dataFiles: List[str]):
+def printOverview(paths: List[str], dataFile: List[str]):
     which = input("Would you like to print a SpecificList or AllLists: ")
     if which == "AllLists":
         for i in range(0, len(paths)):
-            salmontracker.printOverview(paths[i], dataFiles[i])
+            salmontracker.printOverview(paths[i], dataFile[i])
     elif which == "SpecificList":
         for i in range(0, len(paths)):
-            print(paths[i] + dataFiles[i])
+            print(paths[i] + dataFile[i])
         chosenList = int(input("Which list (by index): "))
-        salmontracker.printOverview(paths[chosenList], dataFiles[chosenList])
+        salmontracker.printOverview(paths[chosenList], dataFile[chosenList])
         print()
     else:
         sys.exit()
@@ -145,14 +145,14 @@ def printAllJobs(path: str, dataFile: str):
             print()
 
 
-def printJobs(paths: List[str], dataFiles: List[str]):
+def printJobs(paths: List[str], dataFile: List[str]):
     which = input("Would you like to print from a SpecificList or AllLists: ")
     if which == "AllLists":
         for i in range(0, len(paths)):
-            salmontracker.printOverview(paths[i], dataFiles[i])
+            salmontracker.printOverview(paths[i], dataFile[i])
 
 
-def processData(paths: List[str], dataFiles: List[str]):
+def processData(paths: List[str], dataFile: List[str]):
     print()
     print("PrintOverview")
     print("PrintJobs")
@@ -161,9 +161,9 @@ def processData(paths: List[str], dataFiles: List[str]):
     mode: str = input("What would you like to do?")
     while mode != "Quit":
         if mode == "PrintOverview":
-            printOverview(paths, dataFiles)
+            printOverview(paths, dataFile)
         elif mode == "PrintJobs":
-            printJobs(paths, dataFiles)
+            printJobs(paths, dataFile)
         else:
             sys.exit()
         mode = input("What would you like to do?")
