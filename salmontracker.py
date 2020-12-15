@@ -475,19 +475,23 @@ def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                             and var["my_data"]["weapons"][2]["key"] == weapon
                         )
                         or (
-                            var["teammates"] is not None and (
+                            var["teammates"] is not None
+                            and (
                                 (
                                     len(var["teammates"]) > 0
                                     and var["teammates"][0]["weapons"] is not None
                                     and (
-                                        var["teammates"][0]["weapons"][0]["key"] == weapon
+                                        var["teammates"][0]["weapons"][0]["key"]
+                                        == weapon
                                         or (
                                             len(var["teammates"][0]["weapons"]) > 1
-                                            and var["teammates"][0]["weapons"][1]["key"] == weapon
+                                            and var["teammates"][0]["weapons"][1]["key"]
+                                            == weapon
                                         )
                                         or (
                                             len(var["teammates"][0]["weapons"]) > 2
-                                            and var["teammates"][0]["weapons"][2]["key"] == weapon
+                                            and var["teammates"][0]["weapons"][2]["key"]
+                                            == weapon
                                         )
                                     )
                                 )
@@ -495,14 +499,17 @@ def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                                     len(var["teammates"]) > 1
                                     and var["teammates"][1]["weapons"] is not None
                                     and (
-                                        var["teammates"][1]["weapons"][0]["key"] == weapon
+                                        var["teammates"][1]["weapons"][0]["key"]
+                                        == weapon
                                         or (
                                             len(var["teammates"][1]["weapons"]) > 1
-                                            and var["teammates"][1]["weapons"][1]["key"] == weapon
+                                            and var["teammates"][1]["weapons"][1]["key"]
+                                            == weapon
                                         )
                                         or (
                                             len(var["teammates"][1]["weapons"]) > 2
-                                            and var["teammates"][1]["weapons"][2]["key"] == weapon
+                                            and var["teammates"][1]["weapons"][2]["key"]
+                                            == weapon
                                         )
                                     )
                                 )
@@ -510,14 +517,17 @@ def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                                     len(var["teammates"]) > 2
                                     and var["teammates"][2]["weapons"] is not None
                                     and (
-                                        var["teammates"][2]["weapons"][0]["key"] == weapon
+                                        var["teammates"][2]["weapons"][0]["key"]
+                                        == weapon
                                         or (
                                             len(var["teammates"][2]["weapons"]) > 1
-                                            and var["teammates"][2]["weapons"][1]["key"] == weapon
+                                            and var["teammates"][2]["weapons"][1]["key"]
+                                            == weapon
                                         )
                                         or (
                                             len(var["teammates"][2]["weapons"]) > 2
-                                            and var["teammates"][2]["weapons"][2]["key"] == weapon
+                                            and var["teammates"][2]["weapons"][2]["key"]
+                                            == weapon
                                         )
                                     )
                                 )
@@ -533,20 +543,28 @@ def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                             and var["my_data"]["weapons"][2]["name"][locale] == weapon
                         )
                         or (
-                            var["teammates"] is not None and (
+                            var["teammates"] is not None
+                            and (
                                 (
                                     len(var["teammates"]) > 0
                                     and var["teammates"][0]["weapons"] is not None
                                     and (
-                                        var["teammates"][0]["weapons"][0]["name"][locale] == weapon
+                                        var["teammates"][0]["weapons"][0]["name"][
+                                            locale
+                                        ]
+                                        == weapon
                                         or (
                                             len(var["teammates"][0]["weapons"]) > 1
-                                            and var["teammates"][0]["weapons"][1]["name"][locale]
+                                            and var["teammates"][0]["weapons"][1][
+                                                "name"
+                                            ][locale]
                                             == weapon
                                         )
                                         or (
                                             len(var["teammates"][0]["weapons"]) > 2
-                                            and var["teammates"][0]["weapons"][2]["name"][locale]
+                                            and var["teammates"][0]["weapons"][2][
+                                                "name"
+                                            ][locale]
                                             == weapon
                                         )
                                     )
@@ -555,15 +573,22 @@ def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                                     len(var["teammates"]) > 1
                                     and var["teammates"][1]["weapons"] is not None
                                     and (
-                                        var["teammates"][1]["weapons"][0]["name"][locale] == weapon
+                                        var["teammates"][1]["weapons"][0]["name"][
+                                            locale
+                                        ]
+                                        == weapon
                                         or (
                                             len(var["teammates"][1]["weapons"]) > 1
-                                            and var["teammates"][1]["weapons"][1]["name"][locale]
+                                            and var["teammates"][1]["weapons"][1][
+                                                "name"
+                                            ][locale]
                                             == weapon
                                         )
                                         or (
                                             len(var["teammates"][1]["weapons"]) > 2
-                                            and var["teammates"][1]["weapons"][2]["name"][locale]
+                                            and var["teammates"][1]["weapons"][2][
+                                                "name"
+                                            ][locale]
                                             == weapon
                                         )
                                     )
@@ -572,15 +597,22 @@ def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                                     len(var["teammates"]) > 2
                                     and var["teammates"][2]["weapons"] is not None
                                     and (
-                                        var["teammates"][2]["weapons"][0]["name"][locale] == weapon
+                                        var["teammates"][2]["weapons"][0]["name"][
+                                            locale
+                                        ]
+                                        == weapon
                                         or (
                                             len(var["teammates"][2]["weapons"]) > 1
-                                            and var["teammates"][2]["weapons"][1]["name"][locale]
+                                            and var["teammates"][2]["weapons"][1][
+                                                "name"
+                                            ][locale]
                                             == weapon
                                         )
                                         or (
                                             len(var["teammates"][2]["weapons"]) > 2
-                                            and var["teammates"][2]["weapons"][2]["name"][locale]
+                                            and var["teammates"][2]["weapons"][2][
+                                                "name"
+                                            ][locale]
                                             == weapon
                                         )
                                     )
@@ -627,19 +659,23 @@ def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                             and var["my_data"]["weapons"][2]["key"] == weapon
                         )
                         or (
-                            var["teammates"] is not None and (
+                            var["teammates"] is not None
+                            and (
                                 (
                                     len(var["teammates"]) > 0
                                     and var["teammates"][0]["weapons"] is not None
                                     and (
-                                        var["teammates"][0]["weapons"][0]["key"] == weapon
+                                        var["teammates"][0]["weapons"][0]["key"]
+                                        == weapon
                                         or (
                                             len(var["teammates"][0]["weapons"]) > 1
-                                            and var["teammates"][0]["weapons"][1]["key"] == weapon
+                                            and var["teammates"][0]["weapons"][1]["key"]
+                                            == weapon
                                         )
                                         or (
                                             len(var["teammates"][0]["weapons"]) > 2
-                                            and var["teammates"][0]["weapons"][2]["key"] == weapon
+                                            and var["teammates"][0]["weapons"][2]["key"]
+                                            == weapon
                                         )
                                     )
                                 )
@@ -647,14 +683,17 @@ def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                                     len(var["teammates"]) > 1
                                     and var["teammates"][1]["weapons"] is not None
                                     and (
-                                        var["teammates"][1]["weapons"][0]["key"] == weapon
+                                        var["teammates"][1]["weapons"][0]["key"]
+                                        == weapon
                                         or (
                                             len(var["teammates"][1]["weapons"]) > 1
-                                            and var["teammates"][1]["weapons"][1]["key"] == weapon
+                                            and var["teammates"][1]["weapons"][1]["key"]
+                                            == weapon
                                         )
                                         or (
                                             len(var["teammates"][1]["weapons"]) > 2
-                                            and var["teammates"][1]["weapons"][2]["key"] == weapon
+                                            and var["teammates"][1]["weapons"][2]["key"]
+                                            == weapon
                                         )
                                     )
                                 )
@@ -662,14 +701,17 @@ def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                                     len(var["teammates"]) > 2
                                     and var["teammates"][2]["weapons"] is not None
                                     and (
-                                        var["teammates"][2]["weapons"][0]["key"] == weapon
+                                        var["teammates"][2]["weapons"][0]["key"]
+                                        == weapon
                                         or (
                                             len(var["teammates"][2]["weapons"]) > 1
-                                            and var["teammates"][2]["weapons"][1]["key"] == weapon
+                                            and var["teammates"][2]["weapons"][1]["key"]
+                                            == weapon
                                         )
                                         or (
                                             len(var["teammates"][2]["weapons"]) > 2
-                                            and var["teammates"][2]["weapons"][2]["key"] == weapon
+                                            and var["teammates"][2]["weapons"][2]["key"]
+                                            == weapon
                                         )
                                     )
                                 )
@@ -685,20 +727,28 @@ def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                             and var["my_data"]["weapons"][2]["name"][locale] == weapon
                         )
                         or (
-                            var["teammates"] is not None and (
+                            var["teammates"] is not None
+                            and (
                                 (
                                     len(var["teammates"]) > 0
                                     and var["teammates"][0]["weapons"] is not None
                                     and (
-                                        var["teammates"][0]["weapons"][0]["name"][locale] == weapon
+                                        var["teammates"][0]["weapons"][0]["name"][
+                                            locale
+                                        ]
+                                        == weapon
                                         or (
                                             len(var["teammates"][0]["weapons"]) > 1
-                                            and var["teammates"][0]["weapons"][1]["name"][locale]
+                                            and var["teammates"][0]["weapons"][1][
+                                                "name"
+                                            ][locale]
                                             == weapon
                                         )
                                         or (
                                             len(var["teammates"][0]["weapons"]) > 2
-                                            and var["teammates"][0]["weapons"][2]["name"][locale]
+                                            and var["teammates"][0]["weapons"][2][
+                                                "name"
+                                            ][locale]
                                             == weapon
                                         )
                                     )
@@ -707,15 +757,22 @@ def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                                     len(var["teammates"]) > 1
                                     and var["teammates"][1]["weapons"] is not None
                                     and (
-                                        var["teammates"][1]["weapons"][0]["name"][locale] == weapon
+                                        var["teammates"][1]["weapons"][0]["name"][
+                                            locale
+                                        ]
+                                        == weapon
                                         or (
                                             len(var["teammates"][1]["weapons"]) > 1
-                                            and var["teammates"][1]["weapons"][1]["name"][locale]
+                                            and var["teammates"][1]["weapons"][1][
+                                                "name"
+                                            ][locale]
                                             == weapon
                                         )
                                         or (
                                             len(var["teammates"][1]["weapons"]) > 2
-                                            and var["teammates"][1]["weapons"][2]["name"][locale]
+                                            and var["teammates"][1]["weapons"][2][
+                                                "name"
+                                            ][locale]
                                             == weapon
                                         )
                                     )
@@ -724,15 +781,22 @@ def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                                     len(var["teammates"]) > 2
                                     and var["teammates"][2]["weapons"] is not None
                                     and (
-                                        var["teammates"][2]["weapons"][0]["name"][locale] == weapon
+                                        var["teammates"][2]["weapons"][0]["name"][
+                                            locale
+                                        ]
+                                        == weapon
                                         or (
                                             len(var["teammates"][2]["weapons"]) > 1
-                                            and var["teammates"][2]["weapons"][1]["name"][locale]
+                                            and var["teammates"][2]["weapons"][1][
+                                                "name"
+                                            ][locale]
                                             == weapon
                                         )
                                         or (
                                             len(var["teammates"][2]["weapons"]) > 2
-                                            and var["teammates"][2]["weapons"][2]["name"][locale]
+                                            and var["teammates"][2]["weapons"][2][
+                                                "name"
+                                            ][locale]
                                             == weapon
                                         )
                                     )
@@ -764,7 +828,9 @@ def usesWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
         except FileExistsError:
             pass
         with jsonlines.open(path + data, "r") as reader:
-            with jsonlines.open(path + data[0:-6] + "/usesWeapon/" + weapon + ".jsonl", "w") as writer:
+            with jsonlines.open(
+                path + data[0:-6] + "/usesWeapon/" + weapon + ".jsonl", "w"
+            ) as writer:
                 for var in reader:
                     if (
                         var["my_data"]["weapons"][0]["key"] == weapon
@@ -810,7 +876,9 @@ def doesntUseWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
         except FileExistsError:
             pass
         with jsonlines.open(path + data, "r") as reader:
-            with jsonlines.open(path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jsonl", "w") as writer:
+            with jsonlines.open(
+                path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jsonl", "w"
+            ) as writer:
                 for var in reader:
                     if not (
                         var["my_data"]["weapons"][0]["key"] == weapon
@@ -912,7 +980,9 @@ def notOnStage(path: str, data: str, stage: str) -> Tuple[str, str]:
                 path + data[0:-6] + "/notStage/" + stage + ".jsonl", "w"
             ) as writer:
                 for var in reader:
-                    if not (stage in (var["stage"]["key"], var["stage"]["name"][locale])):
+                    if not (
+                        stage in (var["stage"]["key"], var["stage"]["name"][locale])
+                    ):
                         writer.write(var)
     return (path + data[0:-6] + "/notStage/", stage + ".jsonl")
 
@@ -1004,7 +1074,9 @@ def failReason(path: str, data: str, reason: str) -> Tuple[str, str]:
         except FileExistsError:
             pass
         with jsonlines.open(path + data, "r") as reader:
-            with jsonlines.open(path + data[0:-6] + "/failReason/" + reason + ".jsonl", "w") as writer:
+            with jsonlines.open(
+                path + data[0:-6] + "/failReason/" + reason + ".jsonl", "w"
+            ) as writer:
                 for var in reader:
                     if var["fail_reason"] == reason:
                         writer.write(var)
@@ -1031,7 +1103,9 @@ def notFailReason(path: str, data: str, reason: str) -> Tuple[str, str]:
         except FileExistsError:
             pass
         with jsonlines.open(path + data, "r") as reader:
-            with jsonlines.open(path + data[0:-6] + "/notFailReason/" + reason + ".jsonl", "w") as writer:
+            with jsonlines.open(
+                path + data[0:-6] + "/notFailReason/" + reason + ".jsonl", "w"
+            ) as writer:
                 for var in reader:
                     if not var["fail_reason"] == reason:
                         writer.write(var)
@@ -1077,7 +1151,9 @@ def notDuringRotationInt(path: str, data: str, rotation: int) -> Tuple[str, str]
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/notRotation/" + str(rotation) + ".jsonl"):
+    if not os.path.exists(
+        path + data[0:-6] + "/notRotation/" + str(rotation) + ".jsonl"
+    ):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -1106,7 +1182,9 @@ def clearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/clearWaves/equal/" + str(wave) + ".jsonl"):
+    if not os.path.exists(
+        path + data[0:-6] + "/clearWaves/equal/" + str(wave) + ".jsonl"
+    ):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -1120,7 +1198,9 @@ def clearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
         except FileExistsError:
             pass
         with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(path + data[0:-6] + "clearWaves/equal/" + str(wave) + ".jsonl", mode="w") as writer:
+            with jsonlines.open(
+                path + data[0:-6] + "clearWaves/equal/" + str(wave) + ".jsonl", mode="w"
+            ) as writer:
                 for job in reader:
                     if job["clear_waves"] == wave:
                         writer.write(job)
@@ -1137,7 +1217,9 @@ def notClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/clearWaves/notEqual/" + str(wave) + ".jsonl"):
+    if not os.path.exists(
+        path + data[0:-6] + "/clearWaves/notEqual/" + str(wave) + ".jsonl"
+    ):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -1151,7 +1233,10 @@ def notClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
         except FileExistsError:
             pass
         with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(path + data[0:-6] + "clearWaves/notEqual/" + str(wave) + ".jsonl", mode="w") as writer:
+            with jsonlines.open(
+                path + data[0:-6] + "clearWaves/notEqual/" + str(wave) + ".jsonl",
+                mode="w",
+            ) as writer:
                 for job in reader:
                     if not job["clear_waves"] == wave:
                         writer.write(job)
@@ -1168,7 +1253,9 @@ def greaterThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/clearWaves/greaterThan/" + str(wave) + ".jsonl"):
+    if not os.path.exists(
+        path + data[0:-6] + "/clearWaves/greaterThan/" + str(wave) + ".jsonl"
+    ):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -1182,7 +1269,10 @@ def greaterThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
         except FileExistsError:
             pass
         with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(path + data[0:-6] + "clearWaves/greaterThan/" + str(wave) + ".jsonl", mode="w") as writer:
+            with jsonlines.open(
+                path + data[0:-6] + "clearWaves/greaterThan/" + str(wave) + ".jsonl",
+                mode="w",
+            ) as writer:
                 for job in reader:
                     if job["clear_waves"] > wave:
                         writer.write(job)
@@ -1199,7 +1289,9 @@ def notGreaterThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/clearWaves/notGreaterThan/" + str(wave) + ".jsonl"):
+    if not os.path.exists(
+        path + data[0:-6] + "/clearWaves/notGreaterThan/" + str(wave) + ".jsonl"
+    ):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -1213,7 +1305,10 @@ def notGreaterThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
         except FileExistsError:
             pass
         with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(path + data[0:-6] + "clearWaves/notGreaterThan/" + str(wave) + ".jsonl", mode="w") as writer:
+            with jsonlines.open(
+                path + data[0:-6] + "clearWaves/notGreaterThan/" + str(wave) + ".jsonl",
+                mode="w",
+            ) as writer:
                 for job in reader:
                     if not job["clear_waves"] > wave:
                         writer.write(job)
@@ -1230,7 +1325,9 @@ def lessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/clearWaves/lessThan/" + str(wave) + ".jsonl"):
+    if not os.path.exists(
+        path + data[0:-6] + "/clearWaves/lessThan/" + str(wave) + ".jsonl"
+    ):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -1244,7 +1341,10 @@ def lessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
         except FileExistsError:
             pass
         with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(path + data[0:-6] + "clearWaves/lessThan/" + str(wave) + ".jsonl", mode="w") as writer:
+            with jsonlines.open(
+                path + data[0:-6] + "clearWaves/lessThan/" + str(wave) + ".jsonl",
+                mode="w",
+            ) as writer:
                 for job in reader:
                     if job["clear_waves"] < wave:
                         writer.write(job)
@@ -1261,7 +1361,9 @@ def notLessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/clearWaves/notLessThan/" + str(wave) + ".jsonl"):
+    if not os.path.exists(
+        path + data[0:-6] + "/clearWaves/notLessThan/" + str(wave) + ".jsonl"
+    ):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -1275,7 +1377,10 @@ def notLessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
         except FileExistsError:
             pass
         with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(path + data[0:-6] + "clearWaves/notLessThan/" + str(wave) + ".jsonl", mode="w") as writer:
+            with jsonlines.open(
+                path + data[0:-6] + "clearWaves/notLessThan/" + str(wave) + ".jsonl",
+                mode="w",
+            ) as writer:
                 for job in reader:
                     if job["clear_waves"] < wave:
                         writer.write(job)
@@ -1319,7 +1424,9 @@ def notDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/dangerRate/notEqual/" + rate + ".jsonl"):
+    if not os.path.exists(
+        path + data[0:-6] + "/dangerRate/notEqual/" + rate + ".jsonl"
+    ):
         if not os.path.exists(path + data[0:-6]):
             os.mkdir(path + data[0:-6])
         if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
@@ -1346,7 +1453,9 @@ def greaterThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/dangerRate/greaterThan/" + rate + ".jsonl"):
+    if not os.path.exists(
+        path + data[0:-6] + "/dangerRate/greaterThan/" + rate + ".jsonl"
+    ):
         if not os.path.exists(path + data[0:-6]):
             os.mkdir(path + data[0:-6])
         if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
@@ -1373,7 +1482,9 @@ def notGreaterThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jsonl"):
+    if not os.path.exists(
+        path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jsonl"
+    ):
         if not os.path.exists(path + data[0:-6]):
             os.mkdir(path + data[0:-6])
         if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
@@ -2077,7 +2188,7 @@ if __name__ == "__main__":
     print()
     for i in range(0, len(paths)):
         os.remove(paths[i] + dataFiles[i])
-    # with jsonlines.open(jobs[0] + jobs[1], "r") as readerFile:
+        # with jsonlines.open(jobs[0] + jobs[1], "r") as readerFile:
         """for job in reader:
         printGeneral(job)
         print()

@@ -13,7 +13,7 @@ from salmontracker import (
     notOnStage,
     printOverview,
     usesWeapon,
-    doesntUseWeapon
+    doesntUseWeapon,
 )
 import json
 from typing import List, Tuple
@@ -34,9 +34,7 @@ def filterBy(paths: List[str], data: List[str]) -> List[Tuple[str, str]]:
     stat: str = input("Choose a stat to run analysis on: ")
     if stat == "Player":
         playerName = input("Enter a player name to run analysis on: ")
-        playerId: List[str] = findPlayerIdByName(
-            paths[0], data[0], playerName
-        )
+        playerId: List[str] = findPlayerIdByName(paths[0], data[0], playerName)
         print(playerId)
         val: str = playerId[int(input("Pick the player id by index: "))]
         mode = input("Choose whether you want With, Without, or Both: ")
