@@ -1,16 +1,18 @@
 from salmontracker import initUser, getArrayOfStat, getArrayOfStat2D
 import matplotlib.pyplot as plt
 import numpy
+import json
+from typing import List
 
-initUser()
+initUser(json.load(open("keys.json", "r"))["statink_key"])
 path = "data/"
 data = "salmon.jsonl"
-dangerRates = getArrayOfStat(path + data, "danger_rate")
-quotas = getArrayOfStat2D(path + data, "quota", 2)
+dangerRates: List[float] = getArrayOfStat(path + data, "danger_rate")
+quotas: List[float] = getArrayOfStat2D(path + data, "quota", 2)
 plt.figure(1)
 plt.scatter(quotas, dangerRates)
 m, b = numpy.polyfit(quotas, dangerRates, 1)
-y = []
+y: List[float] = []
 for i in quotas:
     y.append(i * m + b)
 plt.plot(quotas, y)
