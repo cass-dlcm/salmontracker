@@ -14,6 +14,6 @@ y = []
 for i in quotas:
     y.append(i * m + b)
 plt.plot(quotas, y)
-plt.xlabel('Wave 3 Quota')
-plt.ylabel('Hazard Level')
+plt.xlabel("Wave 3 Quota")
+plt.ylabel("Hazard Level")
 plt.show()
