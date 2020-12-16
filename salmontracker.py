@@ -4,7 +4,7 @@ import numpy as np
 import requests
 import jsonlines
 import sys
-from typing import Tuple, List, Union
+from typing import Tuple, List, Union, Dict, cast
 
 locale = "en_US"
 
@@ -1563,6 +1563,7 @@ def jobsCount(data: str) -> int:
     """
 
     :param data: str:
+    :returns int:
 
     """
     with jsonlines.open(data, mode="r") as reader:
@@ -1577,6 +1578,7 @@ def avgStat(data: str, stat: str) -> float:
 
     :param data: str:
     :param stat: str:
+    :returns float:
 
     """
     with jsonlines.open(data, mode="r") as reader:
@@ -1594,6 +1596,7 @@ def avgStat2D(data: str, firstD: str, secondD: str) -> float:
     :param data: str:
     :param firstD: str:
     :param secondD: str:
+    :returns float:
 
     """
     with jsonlines.open(data, mode="r") as reader:
@@ -1610,6 +1613,7 @@ def maxStat(data: str, stat: str) -> float:
 
     :param data: str:
     :param stat: str:
+    :returns float:
 
     """
     maxVal = 0.0
@@ -1626,6 +1630,7 @@ def maxStat2D(data: str, firstD: str, secondD: str) -> float:
     :param data: str:
     :param firstD: str:
     :param secondD: str:
+    :returns float:
 
     """
     maxVal = 0.0
@@ -1641,6 +1646,7 @@ def minStat(data: str, stat: str) -> float:
 
     :param data: str:
     :param stat: str:
+    :returns float:
 
     """
     with jsonlines.open(data, "r") as reader:
@@ -1657,6 +1663,7 @@ def minStat2D(data: str, firstD: str, secondD: str) -> float:
     :param data: str:
     :param firstD: str:
     :param secondD: str:
+    :returns float:
 
     """
     with jsonlines.open(data, "r") as reader:
@@ -1672,6 +1679,7 @@ def medianStat(data: str, stat: str) -> float:
 
     :param data: str:
     :param stat: str:
+    :returns float:
 
     """
     vals = []
@@ -1687,6 +1695,7 @@ def medianStat2D(data: str, firstD: str, secondD: str) -> float:
     :param data: str:
     :param firstD: str:
     :param secondD: str:
+    :returns float:
 
     """
     vals = []
@@ -1696,10 +1705,77 @@ def medianStat2D(data: str, firstD: str, secondD: str) -> float:
     return np.median(vals)
 
 
+def waveClearPercentageWithWeapon(data: str, weapon: str) -> float:
+    """
+
+    :param data: str:
+    :param weapon: str:
+    :returns float:
+
+    """
+    with jsonlines.open(data, mode="r") as reader:
+        sumVal = 0.0
+        count = 0.0
+        for job in reader:
+            sumVal += int(
+                (
+                    weapon
+                    in (
+                        job["my_data"]["weapons"][0]["key"],
+                        job["my_data"]["weapons"][0]["name"][locale],
+                    )
+                    and job["clear_waves"] > 0
+                )
+                or (
+                    len(job["my_data"]["weapons"]) > 1
+                    and weapon
+                    in (
+                        job["my_data"]["weapons"][1]["key"],
+                        job["my_data"]["weapons"][1]["name"][locale],
+                    )
+                    and job["clear_waves"] > 1
+                )
+                or (
+                    len(job["my_data"]["weapons"]) > 2
+                    and weapon
+                    in (
+                        job["my_data"]["weapons"][2]["key"],
+                        job["my_data"]["weapons"][2]["name"][locale],
+                    )
+                    and job["clear_waves"] > 2
+                )
+            )
+            count += int(
+                weapon
+                in (
+                    job["my_data"]["weapons"][0]["key"],
+                    job["my_data"]["weapons"][0]["name"][locale],
+                )
+                or (
+                    len(job["my_data"]["weapons"]) > 1
+                    and weapon
+                    in (
+                        job["my_data"]["weapons"][1]["key"],
+                        job["my_data"]["weapons"][1]["name"][locale],
+                    )
+                )
+                or (
+                    len(job["my_data"]["weapons"]) > 2
+                    and weapon
+                    in (
+                        job["my_data"]["weapons"][2]["key"],
+                        job["my_data"]["weapons"][2]["name"][locale],
+                    )
+                )
+            )
+        return sumVal / count
+
+
 def clearPercentage(data: str) -> float:
     """
 
     :param data: str:
+    :returns float:
 
     """
     with jsonlines.open(data, mode="r") as reader:
@@ -1715,6 +1791,7 @@ def waveTwoPercentage(data: str) -> float:
     """
 
     :param data: str:
+    :returns float:
 
     """
     with jsonlines.open(data, mode="r") as reader:
@@ -1730,6 +1807,7 @@ def waveOnePercentage(data: str) -> float:
     """
 
     :param data: str:
+    :returns float:
 
     """
     with jsonlines.open(data, mode="r") as reader:
@@ -1746,6 +1824,7 @@ def statSummary(data: str, stat: str) -> str:
 
     :param data: str:
     :param stat: str:
+    :returns str:
 
     """
     return (
@@ -1766,6 +1845,7 @@ def statSummary2D(data: str, firstD: str, secondD: str) -> str:
     :param data: str:
     :param firstD: str:
     :param secondD: str:
+    :returns str:
 
     """
     return (
@@ -1785,6 +1865,7 @@ def sumStatWaves(data: dict, stat: str) -> int:
 
     :param data: dict:
     :param stat: str:
+    :returns int:
 
     """
     sumVal = 0
@@ -1798,6 +1879,7 @@ def getPlayersAttribute(data: dict, attr: str) -> str:
 
     :param data: dict:
     :param attr: str:
+    :returns str:
 
     """
     attrs = "{:<16}\t".format(data["my_data"][attr] or 0)
@@ -1812,6 +1894,7 @@ def getPlayersAttribute2D(data: dict, firstD: str, secondD: Union[int, str]) -> 
         :param data: dict:
         :param firstD: str:
         :param secondD: Union[int, str]:
+        :returns str:
 
     """
     attrs = "{:<16}\t".format(data["my_data"][firstD][secondD] or 0)
@@ -1827,6 +1910,7 @@ def getPlayersAttribute3D(data: dict, firstD: str, secondD: str, thirdD: str) ->
     :param firstD: str:
     :param secondD: str:
     :param thirdD: str:
+    :returns str:
 
     """
     attrs = "{:<16}\t".format(data["my_data"][firstD][secondD][thirdD] or 0)
@@ -1845,11 +1929,12 @@ def getPlayersAttribute4D(
     :param secondD: int:
     :param thirdD: str:
     :param fourthD: str:
+    :returns str:
 
     """
     attrs = "{:<16}\t".format(data["my_data"][firstD][secondD][thirdD][fourthD] or 0)
     for p in data["teammates"]:
-        if secondD < len(p[firstD]):
+        if p[firstD] is not None and secondD < len(p[firstD]):
             attrs += "{:<16}\t".format(p[firstD][secondD][thirdD][fourthD] or 0)
         else:
             attrs += "{:<16}\t".format("")
@@ -1861,6 +1946,7 @@ def getWavesAttribute(data: dict, attr: str) -> str:
 
     :param data: dict:
     :param attr: str:
+    :returns str:
 
     """
     attrs = ""
@@ -1879,6 +1965,7 @@ def getWavesAttribute3D(data: dict, firstD: str, secondD: str, thirdD: str) -> s
     :param firstD: str:
     :param secondD: str:
     :param thirdD: str:
+    :returns str:
 
     """
     attrs = ""
@@ -1888,32 +1975,6 @@ def getWavesAttribute3D(data: dict, firstD: str, secondD: str, thirdD: str) -> s
         else:
             attrs += "{:<16}\t".format("")
     return attrs
-
-
-def getBossDataStr(data: dict, boss: str) -> str:
-    """
-
-    :param data: dict:
-    :param boss: str:
-
-    """
-    return "{:<16}\t{:}".format(
-        data[boss + "_appearances"] or 0,
-        getPlayersAttribute2D(data, "kills", boss + "_"),
-    )
-
-
-def getTotalBosses(data: list, bosses: list, player: str) -> int:
-    """
-
-    :param data: list:
-    :param bosses: list:
-    :param player: str:
-
-    """
-    return sum(
-        int(data[boss.replace(" ", "_").lower() + "_" + player] or 0) for boss in bosses
-    )
 
 
 def printOverview(path: str, data: str) -> None:
@@ -2067,40 +2128,50 @@ def printPlayers(data: dict) -> None:
     )
 
 
-def getBosses(data: dict) -> list:
+def getBosses(data: Dict[str, Union[str, int, List[Union[int, dict]], dict]]) -> list:
     """
 
     :param data: dict:
+    :returns list:
 
     """
-    results = []
+    results: List[dict] = []
     names = {}
     appearances = {"": 0}
-    for boss in range(0, len(data["boss_appearances"])):
-        names[data["boss_appearances"][boss]["boss"]["name"][locale]] = data[
-            "boss_appearances"
-        ][boss]["boss"]["name"][locale]
-        appearances[data["boss_appearances"][boss]["boss"]["name"][locale]] = data[
-            "boss_appearances"
-        ][boss]["count"]
+    if data["boss_appearances"] is None:
+        return results
+    for boss in range(0, len(cast(List[dict], data["boss_appearances"]))):
+        names[
+            cast(
+                str,
+                cast(List[dict], data["boss_appearances"])[boss]["boss"]["name"][
+                    locale
+                ],
+            )
+        ] = cast(List[dict], data["boss_appearances"])[boss]["boss"]["name"][locale]
+        appearances[
+            cast(List[dict], data["boss_appearances"])[boss]["boss"]["name"][locale]
+        ] = cast(List[dict], data["boss_appearances"])[boss]["count"]
     results.append(names)
     results.append(appearances)
     my_data = {"": 0}
-    if data["my_data"]["boss_kills"] is not None:
-        for boss in range(0, len(data["my_data"]["boss_kills"])):
-            my_data[data["my_data"]["boss_kills"][boss]["boss"]["name"][locale]] = data[
-                "my_data"
-            ]["boss_kills"][boss]["count"]
+    if cast(dict, data["my_data"])["boss_kills"] is not None:
+        for boss in range(0, len(cast(dict, data["my_data"])["boss_kills"])):
+            my_data[
+                cast(dict, data["my_data"])["boss_kills"][boss]["boss"]["name"][locale]
+            ] = cast(dict, data["my_data"])["boss_kills"][boss]["count"]
     results.append(my_data)
-    for teammate in range(0, len(data["teammates"])):
+    for teammate in range(0, len(cast(list, data["teammates"]))):
         teammate_data = {"": 0}
-        if data["teammates"][teammate]["boss_kills"] is not None:
-            for boss in range(0, len(data["teammates"][teammate]["boss_kills"])):
+        if cast(list, data["teammates"])[teammate]["boss_kills"] is not None:
+            for boss in range(
+                0, len(cast(list, data["teammates"])[teammate]["boss_kills"])
+            ):
                 my_data[
-                    data["teammates"][teammate]["boss_kills"][boss]["boss"]["name"][
-                        locale
-                    ]
-                ] = data["teammates"][teammate]["boss_kills"][boss]["count"]
+                    cast(list, data["teammates"])[teammate]["boss_kills"][boss]["boss"][
+                        "name"
+                    ][locale]
+                ] = cast(list, data["teammates"])[teammate]["boss_kills"][boss]["count"]
         results.append(teammate_data)
     return results
 
@@ -2117,19 +2188,29 @@ def printBosses(data: dict) -> None:
         )
     )
     bosses = getBosses(data)
-    listBosses = list(bosses[0])
-    for boss in range(0, len(bosses[0])):
-        print(
-            "{:16}\t{:<16}\t{:<16}\t{:<16}\t{:<16}\t{:<16}".format(
-                bosses[0][listBosses[boss]],
-                bosses[1][listBosses[boss] if listBosses[boss] in bosses[1] else ""],
-                bosses[2][listBosses[boss] if listBosses[boss] in bosses[2] else ""],
-                bosses[3][listBosses[boss] if listBosses[boss] in bosses[3] else ""],
-                bosses[4][listBosses[boss] if listBosses[boss] in bosses[4] else ""],
-                bosses[5][listBosses[boss] if listBosses[boss] in bosses[5] else ""],
+    if len(bosses) > 0:
+        listBosses = list(bosses[0])
+        for boss in range(0, len(bosses[0])):
+            print(
+                "{:16}\t{:<16}\t{:<16}\t{:<16}\t{:<16}\t{:<16}".format(
+                    bosses[0][listBosses[boss]],
+                    bosses[1][listBosses[boss]]
+                    if listBosses[boss] in bosses[1]
+                    else "0",
+                    bosses[2][listBosses[boss]]
+                    if listBosses[boss] in bosses[2]
+                    else "0",
+                    bosses[3][listBosses[boss]]
+                    if listBosses[boss] in bosses[3]
+                    else "0",
+                    bosses[4][listBosses[boss]]
+                    if (len(bosses) > 4 and listBosses[boss] in bosses[4])
+                    else "0",
+                    bosses[5][listBosses[boss]]
+                    if (len(bosses) > 5 and listBosses[boss] in bosses[5])
+                    else "0",
+                )
             )
-        )
-    getBosses(data)
 
 
 def getArrayOfStat(data: str, stat: str) -> list:
@@ -2137,6 +2218,7 @@ def getArrayOfStat(data: str, stat: str) -> list:
 
     :param data: str:
     :param stat: str:
+    :returns list:
 
     """
     with jsonlines.open(data, "r") as reader:
@@ -2152,6 +2234,7 @@ def getArrayOfStat2D(data: str, firstD: str, secondD: Union[str, int]) -> list:
     :param data: str:
     :param firstD: str:
     :param secondD: Union[str, int]:
+    :returns ;ost:
 
     """
     with jsonlines.open(data, "r") as reader:
@@ -2162,7 +2245,11 @@ def getArrayOfStat2D(data: str, firstD: str, secondD: Union[str, int]) -> list:
 
 
 def initAll() -> Tuple[str, str]:
-    """ """
+    """
+
+    :returns Tuple[str, str]:
+
+    """
     if os.path.exists("data/salmonAll.jsonl"):
         recentId = 0
         try:
@@ -2184,6 +2271,7 @@ def initUser(api_key: str) -> Tuple[str, str]:
     """
 
     :param api_key: str:
+    :returns Tuple[str, str]:
 
     """
     if os.path.exists("data/salmon.jsonl"):
