@@ -34,6 +34,9 @@ from typing import List, Tuple
 import sys
 import os
 import jsonlines
+from scipy.stats import ttest_ind
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
@@ -54,6 +57,7 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
         print(playerId)
         val: str = playerId[int(input("Pick the player id by index: "))]
         mode: str = input("Choose whether you want With, Without, or Both: ")
+        clearAfter: str = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(paths)):
             if mode == "With":
                 filters.append(hasPlayer(paths[i], dataFile[i], val))
@@ -64,6 +68,8 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
                 filters.append(withoutPlayer(paths[i], dataFile[i], val))
             else:
                 sys.exit()
+            if clearAfter == "Y" and paths[i] != "data/":
+                os.remove(paths[i] + dataFile[i])
     elif stat == "Rotation":
         weapons = []
         for i in range(0, 4):
@@ -75,6 +81,7 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
         print(rotations)
         rot: int = rotations[int(input("Pick the rotation id by index: "))]
         mode = input("Choose whether you want With, Without, or Both: ")
+        clearAfter = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(paths)):
             if mode == "With":
                 filters.append(duringRotationInt(paths[i], dataFile[i], rot))
@@ -85,9 +92,12 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
                 filters.append(notDuringRotationInt(paths[i], dataFile[i], rot))
             else:
                 sys.exit()
+            if clearAfter == "Y" and paths[i] != "data/":
+                os.remove(paths[i] + dataFile[i])
     elif stat == "Has Weapon":
         val = input("Enter a weapon: ")
         mode = input("Choose whether you want With, Without, or Both: ")
+        clearAfter = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(paths)):
             if mode == "With":
                 filters.append(hasWeapon(paths[i], dataFile[i], val))
@@ -98,9 +108,12 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
                 filters.append(doesntHaveWeapon(path, dataFile[i], val))
             else:
                 sys.exit()
+            if clearAfter == "Y" and paths[i] != "data/":
+                os.remove(paths[i] + dataFile[i])
     elif stat == "Uses Weapon":
         val = input("Enter a weapon: ")
         mode = input("Choose whether you want With, Without, or Both: ")
+        clearAfter = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(paths)):
             if mode == "With":
                 filters.append(usesWeapon(paths[i], dataFile[i], val))
@@ -111,9 +124,12 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
                 filters.append(doesntUseWeapon(path, dataFile[i], val))
             else:
                 sys.exit()
+            if clearAfter == "Y" and paths[i] != "data/":
+                os.remove(paths[i] + dataFile[i])
     elif stat == "Stage":
         val = input("Enter a stage: ")
         mode = input("Choose whether you want With, Without, or Both: ")
+        clearAfter = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(paths)):
             if mode == "With":
                 filters.append(onStage(paths[i], dataFile[i], val))
@@ -124,10 +140,13 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
                 filters.append(notOnStage(paths[i], dataFile[i], val))
             else:
                 sys.exit()
+            if clearAfter == "Y" and paths[i] != "data/":
+                os.remove(paths[i] + dataFile[i])
     elif stat == "Danger Rate":
         comparison: str = input("Choose whether you want =, >, or <: ")
         val = input("Enter the danger rate: ")
         mode = input("Choose whether you want With, Without, or Both: ")
+        clearAfter = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(paths)):
             if mode == "With":
                 if comparison == "=":
@@ -161,10 +180,13 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
                     sys.exit()
             else:
                 sys.exit()
+            if clearAfter == "Y" and paths[i] != "data/":
+                os.remove(paths[i] + dataFile[i])
     elif stat == "Clear Wave":
         comparison = input("Choose whether you want =, >, or <: ")
         wave: int = int(input("Enter the clear wave: "))
         mode = input("Choose whether you want With, Without, or Both: ")
+        clearAfter = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(paths)):
             if mode == "With":
                 if comparison == "=":
@@ -198,9 +220,12 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
                     sys.exit()
             else:
                 sys.exit()
-    elif stat == "special":
+            if clearAfter == "Y" and paths[i] != "data/":
+                os.remove(paths[i] + dataFile[i])
+    elif stat == "Special":
         val = input("Enter the danger rate: ")
         mode = input("Choose whether you want With, Without, or Both: ")
+        clearAfter = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(paths)):
             if mode == "With":
                 filters.append(withSpecial(paths[i], dataFile[i], val))
@@ -211,6 +236,8 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
                 filters.append(withoutSpecial(paths[i], dataFile[i], val))
             else:
                 sys.exit()
+            if clearAfter == "Y" and paths[i] != "data/":
+                os.remove(paths[i] + dataFile[i])
     else:
         sys.exit()
     return filters
@@ -232,7 +259,7 @@ def printOverview(paths: List[str], dataFile: List[str]):
 
 
 def printAllJobs(dataFile: str):
-    with jsonlines.open(path + dataFile, mode="r") as reader:
+    with jsonlines.open(dataFile, mode="r") as reader:
         for job in reader:
             salmontracker.printGeneral(job)
             print()
@@ -252,26 +279,75 @@ def printJobs(paths: List[str], dataFile: List[str]):
             printAllJobs(paths[i] + dataFile[i])
 
 
+def hypothesisTesting(paths: List[str], dataFile: List[str]):
+    for i in range(0, len(paths)):
+        print(paths[i] + dataFile[i])
+    first = int(input("Which is the first list you'd like to use (by index): "))
+    second = int(input("Which is the first list you'd like to use (by index): "))
+    stat = input("Which stat would you like to test: ")
+    firstStat = salmontracker.getArrayOfStat(paths[first] + dataFile[first], stat)
+    secondStat = salmontracker.getArrayOfStat(paths[second] + dataFile[second], stat)
+    t, p = ttest_ind(firstStat, secondStat, equal_var=False)
+    print("a - b = " + str(np.mean(firstStat) - np.mean(secondStat)))
+    print("t = " + str(t))
+    print("p = " + str(p))
+    plt.subplot(121)
+    plt.hist(firstStat, density=True)
+    plt.xlabel(stat)
+    plt.ylabel("Probability")
+    plt.subplot(122)
+    plt.hist(secondStat, density=True)
+    plt.xlabel(stat)
+    plt.ylabel("Probability")
+    plt.show()
+
+
+def waveClearPercentageWithWeapon(paths: List[str], dataFile: List[str]):
+    which = input("Would you like to print from a SpecificList or AllLists: ")
+    weapon = input("Enter a weapon to test: ")
+    if which == "AllLists":
+        for i in range(0, len(paths)):
+            print(
+                weapon
+                + ": "
+                + str(
+                    salmontracker.waveClearPercentageWithWeapon(
+                        paths[i] + dataFile[i], weapon
+                    )
+                )
+            )
+
+
 def processData(paths: List[str], dataFile: List[str]):
     print()
     print("PrintOverview")
     print("PrintJobs")
     print("HypothesisTesting")
+    print("SortAttributeByStat")
+    print("WaveClearPercentageWithWeapon")
     print("Quit")
-    mode: str = input("What would you like to do?")
+    mode: str = input("What would you like to do: ")
     while mode != "Quit":
         if mode == "PrintOverview":
             printOverview(paths, dataFile)
         elif mode == "PrintJobs":
             printJobs(paths, dataFile)
+        elif mode == "HypothesisTesting":
+            hypothesisTesting(paths, dataFile)
+        elif mode == "SortAttributeByStat":
+            pass
+        elif mode == "WaveClearPercentageWithWeapon":
+            waveClearPercentageWithWeapon(paths, dataFile)
         else:
             sys.exit()
         print()
         print("PrintOverview")
         print("PrintJobs")
         print("HypothesisTesting")
+        print("SortAttributeByStat")
+        print("WaveClearPercentageWithWeapon")
         print("Quit")
-        mode = input("What would you like to do?")
+        mode = input("What would you like to do: ")
 
 
 print("All")
@@ -293,7 +369,7 @@ currentPaths: List[str] = []
 allPaths: List[str] = []
 dataFiles: List[str] = []
 allFiles: List[str] = []
-while input("Add a filter (Y/N): ") == "Y":
+while input("Add a filter [Y/N]: ") == "Y":
     if currentPaths == []:
         filtered: List[Tuple[str, str]] = filterBy([path], [data])
         for f in filtered:
@@ -311,6 +387,6 @@ while input("Add a filter (Y/N): ") == "Y":
             allPaths.append(f[0])
             allFiles.append(f[1])
 processData(currentPaths, dataFiles)
-if input("Clean (Y/N): ") == "Y":
+if input("Clean [Y/N] (only if you didn't use clearAfter): ") == "Y":
     for a in range(0, len(allPaths)):
         os.remove(allPaths[a] + allFiles[a])
