@@ -1,10 +1,11 @@
 import os.path
-import json
+import ujson
 import numpy as np
 import requests
 import jsonlines
 import sys
-from typing import Tuple, List, Union, Dict, cast
+from typing import Tuple, List, Union, Dict, cast, Optional, Any
+import gzip
 
 locale = "en_US"
 
@@ -15,25 +16,76 @@ grizzcoWeapons = (
     ("Grizzco Slosher", "kuma_slosher"),
 )
 
+jobType = Dict[
+    str,
+    Union[
+        int,
+        str,
+        bool,
+        Dict[
+            str,
+            Union[
+                int,
+                str,
+                Dict[str, Union[int, str, Dict[str, Union[int, str]]]],
+                List[
+                    Union[
+                        int,
+                        Dict[
+                            str,
+                            Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]],
+                        ],
+                    ]
+                ],
+            ],
+        ],
+        List[
+            Union[
+                int,
+                Dict[
+                    str,
+                    Union[
+                        str,
+                        int,
+                        Dict[str, Union[int, str, Dict[str, str]]],
+                        List[
+                            Union[
+                                int,
+                                Dict[
+                                    str,
+                                    Union[
+                                        int, str, Dict[str, Union[str, Dict[str, str]]]
+                                    ],
+                                ],
+                            ]
+                        ],
+                    ],
+                ],
+            ]
+        ],
+    ],
+]
+
 
 def fetchAllUser(api_key: str) -> None:
-    """Fetch all Salmon Run results for the authenticated user and store it in the "data/salmon.jsonl" file.
+    """Fetch all Salmon Run results for the authenticated user and store it in the "data/salmon.jl.gz" file.
 
     :param api_key: str: the stat.ink API key for the user
 
     """
-    headers = {"Authorization": "Bearer {}".format(api_key)}
-    lastId = 0
-    prevLastId = 0
-    params = {"order": "asc"}
-    temp = requests.get(
+    headers: Dict[str, str] = {"Authorization": "Bearer {}".format(api_key)}
+    prevLastId: int = 0
+    params: Dict[str, str] = {"order": "asc"}
+    temp: List[jobType] = requests.get(
         "http://stat.ink/api/v2/user-salmon", headers=headers, params=params
     ).json()
-    lastId = temp[-1]["id"]
+    lastId: int = cast(List[Dict[str, int]], temp)[-1]["id"]
     print(lastId)
-    with jsonlines.open("data/salmon.jsonl", mode="w") as writer:
+    with gzip.open("data/salmon.jl.gz", "at", encoding="utf8") as writer:
         while lastId != prevLastId:
-            writer.write_all(temp)
+            for job in temp:
+                ujson.dump(job, writer)
+                writer.write("\n")
             params["newer_than"] = str(lastId)
             result = requests.get(
                 "http://stat.ink/api/v2/user-salmon", headers=headers, params=params
@@ -43,22 +95,25 @@ def fetchAllUser(api_key: str) -> None:
             temp = result.json()
             prevLastId = lastId
             if len(temp) > 0:
-                lastId = temp[-1]["id"]
+                lastId = cast(List[Dict[str, int]], temp)[-1]["id"]
             print(lastId)
 
 
 def fetchAll() -> None:
-    """Fetch all Salmon Run results for all users and store it in the "data/salmonAll.jsonl" file."""
-    lastId = 0
-    prevLastId = 0
-    params = {"order": "asc"}
-    temp = requests.get("http://stat.ink/api/v2/salmon", params=params).json()
-    lastId = temp[-1]["id"]
+    """Fetch all Salmon Run results for all users and store it in the "data/salmonAll.jl.gz" file."""
+    prevLastId: int = 0
+    params: Dict[str, str] = {"order": "asc"}
+    temp: List[jobType] = requests.get(
+        "http://stat.ink/api/v2/salmon", params=params
+    ).json()
+    lastId: int = cast(List[Dict[str, int]], temp)[-1]["id"]
     print(lastId)
-    with jsonlines.open("data/salmonAll.jsonl", mode="w") as writer:
+    with gzip.open("data/salmonAll.jl.gz", "at", encoding="utf8") as writer:
         while lastId != prevLastId:
-            writer.write_all(temp)
-            print(os.path.getsize("data/salmonAll.jsonl"))
+            for job in temp:
+                ujson.dump(job, writer)
+                writer.write("\n")
+            print(os.path.getsize("data/salmonAll.jl.gz"))
             params["newer_than"] = str(lastId)
             result = requests.get("http://stat.ink/api/v2/salmon", params=params)
             print(result.url)
@@ -66,32 +121,32 @@ def fetchAll() -> None:
             temp = result.json()
             prevLastId = lastId
             if len(temp) > 0:
-                lastId = temp[-1]["id"]
+                lastId = cast(List[Dict[str, int]], temp)[-1]["id"]
             print(lastId)
 
 
 def fetchNewUser(api_key: str, recentId: int) -> None:
     """
-    Fetch new Salmon Run results for authenticated user and store it in the "data/salmon.jsonl" file.
+    Fetch new Salmon Run results for authenticated user and store it in the "data/salmon.jl.gz" file.
 
     :param api_key: str: the stat.ink API key for the user
     :param recentId: int: the ID of the most recently retrieved job
 
     """
-    headers = {"Authorization": "Bearer {}".format(api_key)}
-    lastId = 0
-    prevLastId = 0
-    params = {"order": "asc"}
-    params["newer_than"] = str(recentId)
-    temp = requests.get(
+    headers: Dict[str, str] = {"Authorization": "Bearer {}".format(api_key)}
+    prevLastId: int = 0
+    params: Dict[str, str] = {"order": "asc", "newer_than": str(recentId)}
+    temp: List[jobType] = requests.get(
         "http://stat.ink/api/v2/user-salmon", headers=headers, params=params
     ).json()
     if len(temp) > 0:
-        lastId = temp[-1]["id"]
+        lastId: int = cast(List[Dict[str, int]], temp)[-1]["id"]
         print(lastId)
-        with jsonlines.open("data/salmon.jsonl", mode="a") as writer:
+        with gzip.open("data/salmon.jl.gz", "at", encoding="utf8") as writer:
             while lastId != prevLastId:
-                writer.write_all(temp)
+                for job in temp:
+                    ujson.dump(job, writer)
+                    writer.write("\n")
                 params["newer_than"] = str(lastId)
                 result = requests.get(
                     "http://stat.ink/api/v2/user-salmon", headers=headers, params=params
@@ -101,29 +156,31 @@ def fetchNewUser(api_key: str, recentId: int) -> None:
                 temp = result.json()
                 prevLastId = lastId
                 if len(temp) > 0:
-                    lastId = temp[-1]["id"]
+                    lastId = cast(List[Dict[str, int]], temp)[-1]["id"]
                 print(lastId)
 
 
 def fetchNewAll(recentId: int) -> None:
     """
-    Fetch new Salmon Run results for all users and store it in the "data/salmonAll.jsonl" file.
+    Fetch new Salmon Run results for all users and store it in the "data/salmonAll.jl.gz" file.
 
     :param recentId: int: the ID of the most recently retrieved jobs
 
     """
-    lastId = 0
-    prevLastId = 0
-    params = {"order": "asc"}
-    params["newer_than"] = str(recentId)
-    temp = requests.get("http://stat.ink/api/v2/salmon", params=params).json()
+    prevLastId: int = 0
+    params: Dict[str, str] = {"order": "asc", "newer_than": str(recentId)}
+    temp: List[jobType] = requests.get(
+        "http://stat.ink/api/v2/salmon", params=params
+    ).json()
     if len(temp) > 0:
-        lastId = temp[-1]["id"]
+        lastId: int = cast(List[Dict[str, int]], temp)[-1]["id"]
         print(lastId)
-        with jsonlines.open("data/salmonAll.jsonl", mode="a") as writer:
+        with gzip.open("data/salmonAll.jl.gz", "at", encoding="utf8") as writer:
             while lastId != prevLastId:
-                writer.write_all(temp)
-                print(os.path.getsize("data/salmonAll.jsonl"))
+                for job in temp:
+                    ujson.dump(job, writer)
+                    writer.write("\n")
+                print(os.path.getsize("data/salmonAll.jl.gz"))
                 params["newer_than"] = str(lastId)
                 result = requests.get("http://stat.ink/api/v2/salmon", params=params)
                 print(result.url)
@@ -131,7 +188,7 @@ def fetchNewAll(recentId: int) -> None:
                 temp = result.json()
                 prevLastId = lastId
                 if len(temp) > 0:
-                    lastId = temp[-1]["id"]
+                    lastId = cast(List[Dict[str, int]], temp)[-1]["id"]
                 print(lastId)
 
 
@@ -143,9 +200,9 @@ def hasJobs(path: str, data: str) -> bool:
     :param data: str: the file name of the data file
 
     """
-    with jsonlines.open(path + data, "r") as reader:
+    with gzip.open(path + data) as reader:
         try:
-            reader.read()
+            jsonlines.Reader(reader, ujson.loads).read()
             return True
         except EOFError:
             return False
@@ -160,7 +217,7 @@ def hasPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
     :param player: str: the Splatnet ID of the chosen player
 
     """
-    if not os.path.exists(path + data[0:-6] + "/playerId/" + player + ".jsonl"):
+    if not os.path.exists(path + data[0:-6] + "/playerId/" + player + ".jl.gz"):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -169,12 +226,14 @@ def hasPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/playerId/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, "r") as reader:
+        with gzip.open(path + data) as reader:
             if hasJobs(path, data):
-                with jsonlines.open(
-                    path + data[0:-6] + "/playerId/" + player + ".jsonl", "w"
+                with gzip.open(
+                    path + data[0:-6] + "/playerId/" + player + ".jl.gz",
+                    "at",
+                    encoding="utf8",
                 ) as writer:
-                    for var in reader:
+                    for var in jsonlines.Reader(reader, ujson.loads):
                         if (
                             var["teammates"][0]["splatnet_id"] == player
                             or (
@@ -186,8 +245,9 @@ def hasPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
                                 and var["teammates"][2]["splatnet_id"] == player
                             )
                         ):
-                            writer.write(var)
-    return (path + data[0:-6] + "/playerId/", player + ".jsonl")
+                            ujson.dump(var, writer)
+                            writer.write("\n")
+    return (path + data[0:-6] + "/playerId/", player + ".jl.gz")
 
 
 def withoutPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
@@ -199,7 +259,7 @@ def withoutPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
     :param player: str: the Splatnet ID of the chosen player
 
     """
-    if not os.path.exists(path + data[0:-6] + "/notPlayerId/" + player + ".jsonl"):
+    if not os.path.exists(path + data[0:-6] + "/notPlayerId/" + player + ".jl.gz"):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -208,12 +268,14 @@ def withoutPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/notPlayerId/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, "r") as reader:
+        with gzip.open(path + data) as reader:
             if hasJobs(path, data):
-                with jsonlines.open(
-                    path + data[0:-6] + "/notPlayerId/" + player + ".jsonl", "w"
+                with gzip.open(
+                    path + data[0:-6] + "/notPlayerId/" + player + ".jl.gz",
+                    "at",
+                    encoding="utf8",
                 ) as writer:
-                    for var in reader:
+                    for var in jsonlines.Reader(reader, ujson.loads):
                         if not (
                             var["teammates"][0]["splatnet_id"] == player
                             or (
@@ -225,8 +287,9 @@ def withoutPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
                                 and var["teammates"][2]["splatnet_id"] == player
                             )
                         ):
-                            writer.write(var)
-    return (path + data[0:-6] + "/notPlayerId/", player + ".jsonl")
+                            ujson.dump(var, writer)
+                            writer.write("\n")
+    return (path + data[0:-6] + "/notPlayerId/", player + ".jl.gz")
 
 
 def hasPlayerByName(path: str, data: str, player: str) -> Tuple[str, str]:
@@ -238,7 +301,7 @@ def hasPlayerByName(path: str, data: str, player: str) -> Tuple[str, str]:
     :param player: str: the name of the chosen player
 
     """
-    if not os.path.exists(path + data[0:-6] + "/player/" + player + ".jsonl"):
+    if not os.path.exists(path + data[0:-6] + "/player/" + player + ".jl.gz"):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -247,12 +310,14 @@ def hasPlayerByName(path: str, data: str, player: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/player/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, "r") as reader:
+        with gzip.open(path + data) as reader:
             if hasJobs(path, data):
-                with jsonlines.open(
-                    path + data[0:-6] + "/player/" + player + ".jsonl", "w"
+                with gzip.open(
+                    path + data[0:-6] + "/player/" + player + ".jl.gz",
+                    "at",
+                    encoding="utf8",
                 ) as writer:
-                    for var in reader:
+                    for var in jsonlines.Reader(reader, ujson.loads):
                         if (
                             var["teammates"][0]["name"] == player
                             or (
@@ -264,8 +329,9 @@ def hasPlayerByName(path: str, data: str, player: str) -> Tuple[str, str]:
                                 and var["teammates"][2]["name"] == player
                             )
                         ):
-                            writer.write(var)
-    return (path + data[0:-6] + "/player/", player + ".jsonl")
+                            ujson.dump(var, writer)
+                            writer.write("\n")
+    return (path + data[0:-6] + "/player/", player + ".jl.gz")
 
 
 def findRotationByWeaponsAndStage(
@@ -280,9 +346,9 @@ def findRotationByWeaponsAndStage(
     :returns: List[int]: a list of rotation IDs
 
     """
-    foundRotations = []
-    with jsonlines.open(data, mode="r") as reader:
-        for job in reader:
+    foundRotations: List[int] = []
+    with gzip.open(data) as reader:
+        for job in jsonlines.Reader(reader, ujson.loads):
             found = job["stage"] is not None and stage in (
                 job["stage"]["key"],
                 job["stage"]["name"][locale],
@@ -440,6 +506,36 @@ def findRotationByWeaponsAndStage(
     return foundRotations
 
 
+def findWeaponsAndStageByRotation(
+    data: str, rotation: int
+) -> Optional[Dict[str, Union[str, List[str]]]]:
+    result: Dict[str, Union[str, List[str]]] = {}
+    with gzip.open(data) as reader:
+        for job in jsonlines.Reader(reader, ujson.loads):
+            if job["shift_start_at"]["time"] == rotation:
+                result["stage"] = job["stage"]["name"][locale]
+                result["weapons"] = []
+                for i in range(0, len(job["my_data"]["weapons"])):
+                    if (
+                        job["my_data"]["weapons"][i]["name"][locale]
+                        not in result["weapons"]
+                    ):
+                        cast(Dict[str, List[str]], result)["weapons"].append(
+                            job["my_data"]["weapons"][i]["name"][locale]
+                        )
+                for i in range(0, len(job["teammates"])):
+                    for j in range(0, len(job["teammates"][i]["weapons"])):
+                        if (
+                            job["teammates"][i]["weapons"][j]["name"][locale]
+                            not in result["weapons"]
+                        ):
+                            cast(Dict[str, List[str]], result)["weapons"].append(
+                                job["teammates"][i]["weapons"][j]["name"][locale]
+                            )
+                return result
+    return None
+
+
 def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     """
     Filter the data file to only jobs that contain the chosen weapon.
@@ -450,7 +546,7 @@ def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: The path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/weapon/" + weapon + ".jsonl"):
+    if not os.path.exists(path + data[0:-6] + "/weapon/" + weapon + ".jl.gz"):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -459,11 +555,13 @@ def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/weapon/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, "r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/weapon/" + weapon + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/weapon/" + weapon + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for var in reader:
+                for var in jsonlines.Reader(reader, ujson.loads):
                     if (
                         var["my_data"]["weapons"][0]["key"] == weapon
                         or (
@@ -620,8 +718,9 @@ def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                             )
                         )
                     ):
-                        writer.write(var)
-    return (path + data[0:-6] + "/weapon/", weapon + ".jsonl")
+                        ujson.dump(var, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/weapon/", weapon + ".jl.gz")
 
 
 def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
@@ -634,7 +733,7 @@ def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: The path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/notWeapon/" + weapon + ".jsonl"):
+    if not os.path.exists(path + data[0:-6] + "/notWeapon/" + weapon + ".jl.gz"):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -643,11 +742,13 @@ def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/notWeapon/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, "r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/notWeapon/" + weapon + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/notWeapon/" + weapon + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for var in reader:
+                for var in jsonlines.Reader(reader, ujson.loads):
                     if not (
                         var["my_data"]["weapons"][0]["key"] == weapon
                         or (
@@ -804,8 +905,9 @@ def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                             )
                         )
                     ):
-                        writer.write(var)
-    return (path + data[0:-6] + "/notWeapon/", weapon + ".jsonl")
+                        ujson.dump(var, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/notWeapon/", weapon + ".jl.gz")
 
 
 def usesWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
@@ -818,7 +920,7 @@ def usesWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: The path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/usesWeapon/" + weapon + ".jsonl"):
+    if not os.path.exists(path + data[0:-6] + "/usesWeapon/" + weapon + ".jl.gz"):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -827,11 +929,13 @@ def usesWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/usesWeapon/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, "r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/usesWeapon/" + weapon + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/usesWeapon/" + weapon + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for var in reader:
+                for var in jsonlines.Reader(reader, ujson.loads):
                     if (
                         var["my_data"]["weapons"][0]["key"] == weapon
                         or (
@@ -852,8 +956,9 @@ def usesWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                             and var["my_data"]["weapons"][2]["name"][locale] == weapon
                         )
                     ):
-                        writer.write(var)
-    return (path + data[0:-6] + "/usesWeapon/", weapon + ".jsonl")
+                        ujson.dump(var, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/usesWeapon/", weapon + ".jl.gz")
 
 
 def doesntUseWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
@@ -866,7 +971,7 @@ def doesntUseWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: The path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jsonl"):
+    if not os.path.exists(path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jl.gz"):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -875,11 +980,13 @@ def doesntUseWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/notUsesWeapon/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, "r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for var in reader:
+                for var in jsonlines.Reader(reader, ujson.loads):
                     if not (
                         var["my_data"]["weapons"][0]["key"] == weapon
                         or (
@@ -900,8 +1007,9 @@ def doesntUseWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
                             and var["my_data"]["weapons"][2]["name"][locale] == weapon
                         )
                     ):
-                        writer.write(var)
-    return (path + data[0:-6] + "/notUsesWeapon/", weapon + ".jsonl")
+                        ujson.dump(var, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/notUsesWeapon/", weapon + ".jl.gz")
 
 
 def findPlayerIdByName(path: str, data: str, player: str) -> List[str]:
@@ -916,15 +1024,15 @@ def findPlayerIdByName(path: str, data: str, player: str) -> List[str]:
     """
     foundIds: List[str] = []
     matches = hasPlayerByName(path, data, player)
-    with jsonlines.open(matches[0] + matches[1], "r") as reader:
-        for job in reader:
+    with gzip.open(matches[0] + matches[1]) as reader:
+        for job in jsonlines.Reader(reader, ujson.loads):
             for teammate in job["teammates"]:
                 if (
                     teammate["name"] == player
                     and teammate["splatnet_id"] not in foundIds
                 ):
                     foundIds.append(teammate["splatnet_id"])
-        return foundIds
+    return foundIds
 
 
 def onStage(path: str, data: str, stage: str) -> Tuple[str, str]:
@@ -937,7 +1045,7 @@ def onStage(path: str, data: str, stage: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/stage/" + stage + ".jsonl"):
+    if not os.path.exists(path + data[0:-6] + "/stage/" + stage + ".jl.gz"):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -946,14 +1054,15 @@ def onStage(path: str, data: str, stage: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/stage/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, "r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/stage/" + stage + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/stage/" + stage + ".jl.gz", "at", encoding="utf8"
             ) as writer:
-                for var in reader:
+                for var in jsonlines.Reader(reader, ujson.loads):
                     if stage in (var["stage"]["key"], var["stage"]["name"][locale]):
-                        writer.write(var)
-    return (path + data[0:-6] + "/stage/", stage + ".jsonl")
+                        ujson.dump(var, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/stage/", stage + ".jl.gz")
 
 
 def notOnStage(path: str, data: str, stage: str) -> Tuple[str, str]:
@@ -966,7 +1075,7 @@ def notOnStage(path: str, data: str, stage: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/notStage/" + stage + ".jsonl"):
+    if not os.path.exists(path + data[0:-6] + "/notStage/" + stage + ".jl.gz"):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -975,16 +1084,19 @@ def notOnStage(path: str, data: str, stage: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/notStage/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, "r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/notStage/" + stage + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/notStage/" + stage + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for var in reader:
+                for var in jsonlines.Reader(reader, ujson.loads):
                     if not (
                         stage in (var["stage"]["key"], var["stage"]["name"][locale])
                     ):
-                        writer.write(var)
-    return (path + data[0:-6] + "/notStage/", stage + ".jsonl")
+                        ujson.dump(var, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/notStage/", stage + ".jl.gz")
 
 
 def withSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
@@ -997,7 +1109,7 @@ def withSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/special/" + special + ".jsonl"):
+    if not os.path.exists(path + data[0:-6] + "/special/" + special + ".jl.gz"):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -1006,17 +1118,20 @@ def withSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/special/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, "r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/special/" + special + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/special/" + special + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for var in reader:
+                for var in jsonlines.Reader(reader, ujson.loads):
                     if special in (
                         var["my_data"]["special"]["key"],
                         var["my_data"]["special"]["name"][locale],
                     ):
-                        writer.write(var)
-    return (path + data[0:-6] + "/special/", special + ".jsonl")
+                        ujson.dump(var, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/special/", special + ".jl.gz")
 
 
 def withoutSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
@@ -1029,7 +1144,7 @@ def withoutSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/notSpecial/" + special + ".jsonl"):
+    if not os.path.exists(path + data[0:-6] + "/notSpecial/" + special + ".jl.gz"):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -1038,11 +1153,13 @@ def withoutSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/notSpecial/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, "r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/notSpecial/" + special + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/notSpecial/" + special + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for var in reader:
+                for var in jsonlines.Reader(reader, ujson.loads):
                     if not (
                         special
                         in (
@@ -1050,8 +1167,9 @@ def withoutSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
                             var["my_data"]["special"]["name"][locale],
                         )
                     ):
-                        writer.write(var)
-    return (path + data[0:-6] + "/notSpecial/", special + ".jsonl")
+                        ujson.dump(var, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/notSpecial/", special + ".jl.gz")
 
 
 def failReason(path: str, data: str, reason: str) -> Tuple[str, str]:
@@ -1064,7 +1182,7 @@ def failReason(path: str, data: str, reason: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/failReason/" + reason + ".jsonl"):
+    if not os.path.exists(path + data[0:-6] + "/failReason/" + reason + ".jl.gz"):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -1073,14 +1191,17 @@ def failReason(path: str, data: str, reason: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/failReason/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, "r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/failReason/" + reason + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/failReason/" + reason + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for var in reader:
+                for var in jsonlines.Reader(reader, ujson.loads):
                     if var["fail_reason"] == reason:
-                        writer.write(var)
-    return (path + data[0:-6] + "/failReason/", reason + ".jsonl")
+                        ujson.dump(var, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/failReason/", reason + ".jl.gz")
 
 
 def notFailReason(path: str, data: str, reason: str) -> Tuple[str, str]:
@@ -1093,7 +1214,7 @@ def notFailReason(path: str, data: str, reason: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/notFailReason/" + reason + ".jsonl"):
+    if not os.path.exists(path + data[0:-6] + "/notFailReason/" + reason + ".jl.gz"):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -1102,14 +1223,17 @@ def notFailReason(path: str, data: str, reason: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/notFailReason/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, "r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/notFailReason/" + reason + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/notFailReason/" + reason + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for var in reader:
+                for var in jsonlines.Reader(reader, ujson.loads):
                     if not var["fail_reason"] == reason:
-                        writer.write(var)
-    return (path + data[0:-6] + "/notFailReason/", reason + ".jsonl")
+                        ujson.dump(var, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/notFailReason/", reason + ".jl.gz")
 
 
 def duringRotationInt(path: str, data: str, rotation: int) -> Tuple[str, str]:
@@ -1122,7 +1246,7 @@ def duringRotationInt(path: str, data: str, rotation: int) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/rotation/" + str(rotation) + ".jsonl"):
+    if not os.path.exists(path + data[0:-6] + "/rotation/" + str(rotation) + ".jl.gz"):
         try:
             os.mkdir(path + data[0:-6])
         except FileExistsError:
@@ -1131,14 +1255,17 @@ def duringRotationInt(path: str, data: str, rotation: int) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/rotation/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/rotation/" + str(rotation) + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/rotation/" + str(rotation) + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for job in reader:
+                for job in jsonlines.Reader(reader, ujson.loads):
                     if job["shift_start_at"]["time"] == rotation:
-                        writer.write(job)
-    return (path + data[0:-6] + "/rotation/", str(rotation) + ".jsonl")
+                        ujson.dump(job, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/rotation/", str(rotation) + ".jl.gz")
 
 
 def notDuringRotationInt(path: str, data: str, rotation: int) -> Tuple[str, str]:
@@ -1152,7 +1279,7 @@ def notDuringRotationInt(path: str, data: str, rotation: int) -> Tuple[str, str]
 
     """
     if not os.path.exists(
-        path + data[0:-6] + "/notRotation/" + str(rotation) + ".jsonl"
+        path + data[0:-6] + "/notRotation/" + str(rotation) + ".jl.gz"
     ):
         try:
             os.mkdir(path + data[0:-6] + "/")
@@ -1162,14 +1289,17 @@ def notDuringRotationInt(path: str, data: str, rotation: int) -> Tuple[str, str]
             os.mkdir(path + data[0:-6] + "/notRotation/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/notRotation/" + str(rotation) + ".jsonl", mode="w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/notRotation/" + str(rotation) + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for job in reader:
+                for job in jsonlines.Reader(reader, ujson.loads):
                     if not job["shift_start_at"]["time"] == rotation:
-                        writer.write(job)
-    return (path + data[0:-6] + "/notRotation/", str(rotation) + ".jsonl")
+                        ujson.dump(job, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/notRotation/", str(rotation) + ".jl.gz")
 
 
 def clearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
@@ -1183,7 +1313,7 @@ def clearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
 
     """
     if not os.path.exists(
-        path + data[0:-6] + "/clearWaves/equal/" + str(wave) + ".jsonl"
+        path + data[0:-6] + "/clearWaves/equal/" + str(wave) + ".jl.gz"
     ):
         try:
             os.mkdir(path + data[0:-6] + "/")
@@ -1197,14 +1327,17 @@ def clearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/clearWaves/equal/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "clearWaves/equal/" + str(wave) + ".jsonl", mode="w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/clearWaves/equal/" + str(wave) + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for job in reader:
+                for job in jsonlines.Reader(reader, ujson.loads):
                     if job["clear_waves"] == wave:
-                        writer.write(job)
-    return (path + data[0:-6] + "/clearWaves/equal/", str(wave) + ".jsonl")
+                        ujson.dump(job, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/clearWaves/equal/", str(wave) + ".jl.gz")
 
 
 def notClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
@@ -1218,7 +1351,7 @@ def notClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
 
     """
     if not os.path.exists(
-        path + data[0:-6] + "/clearWaves/notEqual/" + str(wave) + ".jsonl"
+        path + data[0:-6] + "/clearWaves/notEqual/" + str(wave) + ".jl.gz"
     ):
         try:
             os.mkdir(path + data[0:-6] + "/")
@@ -1232,15 +1365,17 @@ def notClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/clearWaves/notEqual/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "clearWaves/notEqual/" + str(wave) + ".jsonl",
-                mode="w",
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/clearWaves/notEqual/" + str(wave) + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for job in reader:
-                    if not job["clear_waves"] == wave:
-                        writer.write(job)
-    return (path + data[0:-6] + "/clearWaves/notEqual/", str(wave) + ".jsonl")
+                for job in jsonlines.Reader(reader, ujson.loads):
+                    if job["clear_waves"] != wave:
+                        ujson.dump(job, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/clearWaves/notEqual/", str(wave) + ".jl.gz")
 
 
 def greaterThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
@@ -1254,7 +1389,7 @@ def greaterThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
 
     """
     if not os.path.exists(
-        path + data[0:-6] + "/clearWaves/greaterThan/" + str(wave) + ".jsonl"
+        path + data[0:-6] + "/clearWaves/greaterThan/" + str(wave) + ".jl.gz"
     ):
         try:
             os.mkdir(path + data[0:-6] + "/")
@@ -1268,15 +1403,17 @@ def greaterThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/clearWaves/greaterThan/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "clearWaves/greaterThan/" + str(wave) + ".jsonl",
-                mode="w",
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/clearWaves/greaterThan/" + str(wave) + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for job in reader:
+                for job in jsonlines.Reader(reader, ujson.loads):
                     if job["clear_waves"] > wave:
-                        writer.write(job)
-    return (path + data[0:-6] + "/clearWaves/greaterThan/", str(wave) + ".jsonl")
+                        ujson.dump(job, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/clearWaves/greaterThan/", str(wave) + ".jl.gz")
 
 
 def notGreaterThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
@@ -1290,7 +1427,7 @@ def notGreaterThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
 
     """
     if not os.path.exists(
-        path + data[0:-6] + "/clearWaves/notGreaterThan/" + str(wave) + ".jsonl"
+        path + data[0:-6] + "/clearWaves/notGreaterThan/" + str(wave) + ".jl.gz"
     ):
         try:
             os.mkdir(path + data[0:-6] + "/")
@@ -1304,15 +1441,21 @@ def notGreaterThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/clearWaves/notGreaterThan/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "clearWaves/notGreaterThan/" + str(wave) + ".jsonl",
-                mode="w",
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path
+                + data[0:-6]
+                + "/clearWaves/notGreaterThan/"
+                + str(wave)
+                + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for job in reader:
+                for job in jsonlines.Reader(reader, ujson.loads):
                     if not job["clear_waves"] > wave:
-                        writer.write(job)
-    return (path + data[0:-6] + "/clearWaves/notGreaterThan/", str(wave) + ".jsonl")
+                        ujson.dump(job, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/clearWaves/notGreaterThan/", str(wave) + ".jl.gz")
 
 
 def lessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
@@ -1326,7 +1469,7 @@ def lessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
 
     """
     if not os.path.exists(
-        path + data[0:-6] + "/clearWaves/lessThan/" + str(wave) + ".jsonl"
+        path + data[0:-6] + "/clearWaves/lessThan/" + str(wave) + ".jl.gz"
     ):
         try:
             os.mkdir(path + data[0:-6] + "/")
@@ -1340,15 +1483,17 @@ def lessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/clearWaves/lessThan/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "clearWaves/lessThan/" + str(wave) + ".jsonl",
-                mode="w",
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/clearWaves/lessThan/" + str(wave) + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for job in reader:
+                for job in jsonlines.Reader(reader, ujson.loads):
                     if job["clear_waves"] < wave:
-                        writer.write(job)
-    return (path + data[0:-6] + "/clearWaves/lessThan/", str(wave) + ".jsonl")
+                        ujson.dump(job, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/clearWaves/lessThan/", str(wave) + ".jl.gz")
 
 
 def notLessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
@@ -1362,7 +1507,7 @@ def notLessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
 
     """
     if not os.path.exists(
-        path + data[0:-6] + "/clearWaves/notLessThan/" + str(wave) + ".jsonl"
+        path + data[0:-6] + "/clearWaves/notLessThan/" + str(wave) + ".jl.gz"
     ):
         try:
             os.mkdir(path + data[0:-6] + "/")
@@ -1376,15 +1521,17 @@ def notLessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/clearWaves/notLessThan/")
         except FileExistsError:
             pass
-        with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "clearWaves/notLessThan/" + str(wave) + ".jsonl",
-                mode="w",
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/clearWaves/notLessThan/" + str(wave) + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for job in reader:
-                    if job["clear_waves"] < wave:
-                        writer.write(job)
-    return (path + data[0:-6] + "/clearWaves/notLessThan/", str(wave) + ".jsonl")
+                for job in jsonlines.Reader(reader, ujson.loads):
+                    if not job["clear_waves"] < wave:
+                        ujson.dump(job, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/clearWaves/notLessThan/", str(wave) + ".jl.gz")
 
 
 def dangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
@@ -1397,21 +1544,24 @@ def dangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
     :returns Tuple[str, str]: the path and filename of the output data file
 
     """
-    if not os.path.exists(path + data[0:-6] + "/dangerRate/equal/" + rate + ".jsonl"):
+    if not os.path.exists(path + data[0:-6] + "/dangerRate/equal/" + rate + ".jl.gz"):
         if not os.path.exists(path + data[0:-6]):
             os.mkdir(path + data[0:-6])
         if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
             os.mkdir(path + data[0:-6] + "/dangerRate/")
         if not os.path.exists(path + data[0:-6] + "/dangerRate/equals/"):
             os.mkdir(path + data[0:-6] + "/dangerRate/equals/")
-        with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/dangerRate/equals/" + rate + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/dangerRate/equals/" + rate + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for job in reader:
+                for job in jsonlines.Reader(reader, ujson.loads):
                     if job["danger_rate"] == rate:
-                        writer.write(job)
-    return (path + data[0:-6] + "/dangerRate/equals/", rate + ".jsonl")
+                        ujson.dump(job, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/dangerRate/equals/", rate + ".jl.gz")
 
 
 def notDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
@@ -1425,7 +1575,7 @@ def notDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
 
     """
     if not os.path.exists(
-        path + data[0:-6] + "/dangerRate/notEqual/" + rate + ".jsonl"
+        path + data[0:-6] + "/dangerRate/notEqual/" + rate + ".jl.gz"
     ):
         if not os.path.exists(path + data[0:-6]):
             os.mkdir(path + data[0:-6])
@@ -1433,14 +1583,17 @@ def notDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/dangerRate/")
         if not os.path.exists(path + data[0:-6] + "/dangerRate/notEquals/"):
             os.mkdir(path + data[0:-6] + "/dangerRate/notEquals/")
-        with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/dangerRate/notEquals/" + rate + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/dangerRate/notEquals/" + rate + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for job in reader:
-                    if job["danger_rate"] == rate:
-                        writer.write(job)
-    return (path + data[0:-6] + "/dangerRate/notEquals/", rate + ".jsonl")
+                for job in jsonlines.Reader(reader, ujson.loads):
+                    if not job["danger_rate"] == rate:
+                        ujson.dump(job, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/dangerRate/notEquals/", rate + ".jl.gz")
 
 
 def greaterThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
@@ -1454,7 +1607,7 @@ def greaterThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
 
     """
     if not os.path.exists(
-        path + data[0:-6] + "/dangerRate/greaterThan/" + rate + ".jsonl"
+        path + data[0:-6] + "/dangerRate/greaterThan/" + rate + ".jl.gz"
     ):
         if not os.path.exists(path + data[0:-6]):
             os.mkdir(path + data[0:-6])
@@ -1462,14 +1615,17 @@ def greaterThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/dangerRate/")
         if not os.path.exists(path + data[0:-6] + "/dangerRate/greaterThan/"):
             os.mkdir(path + data[0:-6] + "/dangerRate/greaterThan/")
-        with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/dangerRate/greaterThan/" + rate + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/dangerRate/greaterThan/" + rate + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for job in reader:
+                for job in jsonlines.Reader(reader, ujson.loads):
                     if float(job["danger_rate"]) > float(rate):
-                        writer.write(job)
-    return (path + data[0:-6] + "/dangerRate/greaterThan/", rate + ".jsonl")
+                        ujson.dump(job, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/dangerRate/greaterThan/", rate + ".jl.gz")
 
 
 def notGreaterThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
@@ -1483,7 +1639,7 @@ def notGreaterThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]
 
     """
     if not os.path.exists(
-        path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jsonl"
+        path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jl.gz"
     ):
         if not os.path.exists(path + data[0:-6]):
             os.mkdir(path + data[0:-6])
@@ -1491,14 +1647,17 @@ def notGreaterThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]
             os.mkdir(path + data[0:-6] + "/dangerRate/")
         if not os.path.exists(path + data[0:-6] + "/dangerRate/notGreaterThan/"):
             os.mkdir(path + data[0:-6] + "/dangerRate/notGreaterThan/")
-        with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for job in reader:
-                    if float(job["danger_rate"]) <= float(rate):
-                        writer.write(job)
-    return (path + data[0:-6] + "/dangerRate/notGreaterThan/", rate + ".jsonl")
+                for job in jsonlines.Reader(reader, ujson.loads):
+                    if not float(job["danger_rate"]) > float(rate):
+                        ujson.dump(job, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/dangerRate/notGreaterThan/", rate + ".jl.gz")
 
 
 def lessThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
@@ -1512,7 +1671,7 @@ def lessThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
 
     """
     if not os.path.exists(
-        path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jsonl"
+        path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jl.gz"
     ):
         if not os.path.exists(path + data[0:-6]):
             os.mkdir(path + data[0:-6])
@@ -1520,14 +1679,17 @@ def lessThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/dangerRate/")
         if not os.path.exists(path + data[0:-6] + "/dangerRate/lessThan/"):
             os.mkdir(path + data[0:-6] + "/dangerRate/lessThan/")
-        with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/dangerRate/lessThan/" + rate + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/dangerRate/lessThan/" + rate + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for job in reader:
+                for job in jsonlines.Reader(reader, ujson.loads):
                     if float(job["danger_rate"]) < float(rate):
-                        writer.write(job)
-    return (path + data[0:-6] + "/dangerRate/lessThan/", rate + ".jsonl")
+                        ujson.dump(job, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/dangerRate/lessThan/", rate + ".jl.gz")
 
 
 def notLessThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
@@ -1541,7 +1703,7 @@ def notLessThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
 
     """
     if not os.path.exists(
-        path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jsonl"
+        path + data[0:-6] + "/dangerRate/notLessThan/" + rate + ".jl.gz"
     ):
         if not os.path.exists(path + data[0:-6]):
             os.mkdir(path + data[0:-6])
@@ -1549,14 +1711,17 @@ def notLessThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/dangerRate/")
         if not os.path.exists(path + data[0:-6] + "/dangerRate/lessThan/"):
             os.mkdir(path + data[0:-6] + "/dangerRate/lessThan/")
-        with jsonlines.open(path + data, mode="r") as reader:
-            with jsonlines.open(
-                path + data[0:-6] + "/dangerRate/lessThan/" + rate + ".jsonl", "w"
+        with gzip.open(path + data) as reader:
+            with gzip.open(
+                path + data[0:-6] + "/dangerRate/notLessThan/" + rate + ".jl.gz",
+                "at",
+                encoding="utf8",
             ) as writer:
-                for job in reader:
-                    if float(job["danger_rate"]) >= float(rate):
-                        writer.write(job)
-    return (path + data[0:-6] + "/dangerRate/lessThan/", rate + ".jsonl")
+                for job in jsonlines.Reader(reader, ujson.loads):
+                    if not float(job["danger_rate"]) < float(rate):
+                        ujson.dump(job, writer)
+                        writer.write("\n")
+    return (path + data[0:-6] + "/dangerRate/lessThan/", rate + ".jl.gz")
 
 
 def jobsCount(data: str) -> int:
@@ -1566,9 +1731,9 @@ def jobsCount(data: str) -> int:
     :returns int:
 
     """
-    with jsonlines.open(data, mode="r") as reader:
-        count = 0
-        for _unused in reader:
+    with gzip.open(data) as reader:
+        count: int = 0
+        for _unused in jsonlines.Reader(reader, ujson.loads):
             count += 1
         return count
 
@@ -1581,10 +1746,10 @@ def avgStat(data: str, stat: str) -> float:
     :returns float:
 
     """
-    with jsonlines.open(data, mode="r") as reader:
-        sumVal = 0.0
-        count = 0.0
-        for job in reader:
+    with gzip.open(data) as reader:
+        sumVal: float = 0.0
+        count: float = 0.0
+        for job in jsonlines.Reader(reader, ujson.loads):
             sumVal += float(job[stat])
             count += 1.0
         return sumVal / count
@@ -1599,10 +1764,10 @@ def avgStat2D(data: str, firstD: str, secondD: str) -> float:
     :returns float:
 
     """
-    with jsonlines.open(data, mode="r") as reader:
-        sumVal = 0.0
-        count = 0.0
-        for job in reader:
+    with gzip.open(data) as reader:
+        sumVal: float = 0.0
+        count: float = 0.0
+        for job in jsonlines.Reader(reader, ujson.loads):
             sumVal += float(job[firstD][secondD])
             count += 1.0
         return sumVal / count
@@ -1616,9 +1781,9 @@ def maxStat(data: str, stat: str) -> float:
     :returns float:
 
     """
-    maxVal = 0.0
-    with jsonlines.open(data, "r") as reader:
-        for job in reader:
+    maxVal: float = 0.0
+    with gzip.open(data) as reader:
+        for job in jsonlines.Reader(reader, ujson.loads):
             if maxVal < float(job[stat]):
                 maxVal = float(job[stat])
     return maxVal
@@ -1633,9 +1798,9 @@ def maxStat2D(data: str, firstD: str, secondD: str) -> float:
     :returns float:
 
     """
-    maxVal = 0.0
-    with jsonlines.open(data, "r") as reader:
-        for job in reader:
+    maxVal: float = 0.0
+    with gzip.open(data) as reader:
+        for job in jsonlines.Reader(reader, ujson.loads):
             if maxVal < float(job[firstD][secondD]):
                 maxVal = float(job[firstD][secondD])
     return maxVal
@@ -1649,9 +1814,9 @@ def minStat(data: str, stat: str) -> float:
     :returns float:
 
     """
-    with jsonlines.open(data, "r") as reader:
+    with gzip.open(data) as reader:
         minVal: float = sys.float_info.max
-        for job in reader:
+        for job in jsonlines.Reader(reader, ujson.loads):
             if minVal > float(job[stat]):
                 minVal = float(job[stat])
     return minVal
@@ -1666,9 +1831,9 @@ def minStat2D(data: str, firstD: str, secondD: str) -> float:
     :returns float:
 
     """
-    with jsonlines.open(data, "r") as reader:
+    with gzip.open(data) as reader:
         minVal: float = sys.float_info.max
-        for job in reader:
+        for job in jsonlines.Reader(reader, ujson.loads):
             if minVal > float(job[firstD][secondD]):
                 minVal = float(job[firstD][secondD])
     return minVal
@@ -1682,9 +1847,9 @@ def medianStat(data: str, stat: str) -> float:
     :returns float:
 
     """
-    vals = []
-    with jsonlines.open(data, "r") as reader:
-        for job in reader:
+    vals: List[float] = []
+    with gzip.open(data) as reader:
+        for job in jsonlines.Reader(reader, ujson.loads):
             vals.append(float(job[stat]))
     return np.median(vals)
 
@@ -1698,9 +1863,9 @@ def medianStat2D(data: str, firstD: str, secondD: str) -> float:
     :returns float:
 
     """
-    vals = []
-    with jsonlines.open(data, "r") as reader:
-        for job in reader:
+    vals: List[float] = []
+    with gzip.open(data) as reader:
+        for job in jsonlines.Reader(reader, ujson.loads):
             vals.append(job[firstD][secondD])
     return np.median(vals)
 
@@ -1713,10 +1878,10 @@ def waveClearPercentageWithWeapon(data: str, weapon: str) -> float:
     :returns float:
 
     """
-    with jsonlines.open(data, mode="r") as reader:
-        sumVal = 0.0
-        count = 0.0
-        for job in reader:
+    with gzip.open(data) as reader:
+        sumVal: float = 0.0
+        count: float = 0.0
+        for job in jsonlines.Reader(reader, ujson.loads):
             sumVal += int(
                 (
                     weapon
@@ -1778,10 +1943,10 @@ def clearPercentage(data: str) -> float:
     :returns float:
 
     """
-    with jsonlines.open(data, mode="r") as reader:
-        sumVal = 0.0
-        count = 0.0
-        for job in reader:
+    with gzip.open(data) as reader:
+        sumVal: float = 0.0
+        count: float = 0.0
+        for job in jsonlines.Reader(reader, ujson.loads):
             sumVal += int(job["clear_waves"] == 3)
             count += 1.0
         return sumVal / count
@@ -1794,10 +1959,10 @@ def waveTwoPercentage(data: str) -> float:
     :returns float:
 
     """
-    with jsonlines.open(data, mode="r") as reader:
-        sumVal = 0.0
-        count = 0.0
-        for job in reader:
+    with gzip.open(data) as reader:
+        sumVal: float = 0.0
+        count: float = 0.0
+        for job in jsonlines.Reader(reader, ujson.loads):
             sumVal += int(job["clear_waves"] >= 2)
             count += 1.0
         return sumVal / count
@@ -1810,10 +1975,10 @@ def waveOnePercentage(data: str) -> float:
     :returns float:
 
     """
-    with jsonlines.open(data, mode="r") as reader:
-        sumVal = 0.0
-        count = 0.0
-        for job in reader:
+    with gzip.open(data) as reader:
+        sumVal: float = 0.0
+        count: float = 0.0
+        for job in jsonlines.Reader(reader, ujson.loads):
             sumVal += int(job["clear_waves"] >= 1)
             count += 1.0
         return sumVal / count
@@ -1860,7 +2025,10 @@ def statSummary2D(data: str, firstD: str, secondD: str) -> str:
     )
 
 
-def sumStatWaves(data: dict, stat: str) -> int:
+def sumStatWaves(
+    data: jobType,
+    stat: str,
+) -> int:
     """
 
     :param data: dict:
@@ -1868,13 +2036,13 @@ def sumStatWaves(data: dict, stat: str) -> int:
     :returns int:
 
     """
-    sumVal = 0
-    for w in data["waves"]:
+    sumVal: int = 0
+    for w in cast(Dict[str, List[Dict[str, int]]], data)["waves"]:
         sumVal += w[stat]
     return sumVal
 
 
-def getPlayersAttribute(data: dict, attr: str) -> str:
+def getPlayersAttribute(data: jobType, attr: str) -> str:
     """
 
     :param data: dict:
@@ -1882,28 +2050,35 @@ def getPlayersAttribute(data: dict, attr: str) -> str:
     :returns str:
 
     """
-    attrs = "{:<16}\t".format(data["my_data"][attr] or 0)
-    for p in data["teammates"]:
+    attrs: str = "{:<16}\t".format(
+        cast(Dict[str, Dict[str, Union[int, str]]], data)["my_data"][attr] or 0
+    )
+    for p in cast(Dict[str, List[Dict[str, Union[int, str]]]], data)["teammates"]:
         attrs += "{:<16}\t".format(p[attr] or 0)
     return attrs
 
 
-def getPlayersAttribute2D(data: dict, firstD: str, secondD: Union[int, str]) -> str:
+def getPlayersAttribute2D(data: jobType, firstD: str, secondD: Union[int, str]) -> str:
     """
-    s
-        :param data: dict:
-        :param firstD: str:
-        :param secondD: Union[int, str]:
-        :returns str:
+
+    :param data: dict:
+    :param firstD: str:
+    :param secondD: Union[int, str]:
+    :returns str:
 
     """
-    attrs = "{:<16}\t".format(data["my_data"][firstD][secondD] or 0)
-    for p in data["teammates"]:
+    attrs: str = "{:<16}\t".format(cast(Dict[str, Dict[str, Any]], data)["my_data"][firstD][secondD] or 0)
+    for p in cast(Dict[str, List[Dict[str, Any]]], data)["teammates"]:
         attrs += "{:<16}\t".format(p[firstD][secondD] or 0)
     return attrs
 
 
-def getPlayersAttribute3D(data: dict, firstD: str, secondD: str, thirdD: str) -> str:
+def getPlayersAttribute3D(
+    data: jobType,
+    firstD: str,
+    secondD: str,
+    thirdD: str,
+) -> str:
     """
 
     :param data: dict:
@@ -1913,14 +2088,25 @@ def getPlayersAttribute3D(data: dict, firstD: str, secondD: str, thirdD: str) ->
     :returns str:
 
     """
-    attrs = "{:<16}\t".format(data["my_data"][firstD][secondD][thirdD] or 0)
-    for p in data["teammates"]:
-        attrs += "{:<16}\t".format(p[firstD][secondD][thirdD] or 0)
+    attrs: str = "{:<16}\t".format(
+        cast(Dict[str, Dict[str, Dict[str, Dict[str, Union[int, str]]]]], data)["my_data"][firstD][secondD][
+            thirdD
+        ]
+        or 0
+    )
+    for p in cast(Dict[str, List[Dict[str, Dict[str, Dict[str, Union[int, str]]]]]], data)["teammates"]:
+        attrs += "{:<16}\t".format(
+            p[firstD][secondD][thirdD] or 0
+        )
     return attrs
 
 
 def getPlayersAttribute4D(
-    data: dict, firstD: str, secondD: int, thirdD: str, fourthD: str
+    data: jobType,
+    firstD: str,
+    secondD: int,
+    thirdD: str,
+    fourthD: str,
 ) -> str:
     """
 
@@ -1932,16 +2118,33 @@ def getPlayersAttribute4D(
     :returns str:
 
     """
-    attrs = "{:<16}\t".format(data["my_data"][firstD][secondD][thirdD][fourthD] or 0)
-    for p in data["teammates"]:
-        if p[firstD] is not None and secondD < len(p[firstD]):
-            attrs += "{:<16}\t".format(p[firstD][secondD][thirdD][fourthD] or 0)
+    attrs: str = "{:<16}\t".format(
+        cast(Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]], data["my_data"])[firstD][
+            secondD
+        ][thirdD][fourthD]
+        or 0
+    )
+    for p in cast(List[Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]]], data["teammates"]):
+        if cast(Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]], p)[
+            firstD
+        ] is not None and secondD < len(
+            cast(Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]], p)[firstD]
+        ):
+            attrs += "{:<16}\t".format(
+                cast(Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]], p)[firstD][secondD][
+                    thirdD
+                ][fourthD]
+                or 0
+            )
         else:
             attrs += "{:<16}\t".format("")
     return attrs
 
 
-def getWavesAttribute(data: dict, attr: str) -> str:
+def getWavesAttribute(
+    data: jobType,
+    attr: str,
+) -> str:
     """
 
     :param data: dict:
@@ -1949,16 +2152,21 @@ def getWavesAttribute(data: dict, attr: str) -> str:
     :returns str:
 
     """
-    attrs = ""
+    attrs: str = ""
     for i in range(0, 3):
-        if i < len(data["waves"]):
-            attrs += "{:<16}\t".format(data["waves"][i][attr])
+        if i < len(cast(Dict[str, List[Dict[str, Union[int, str]]]], data)["waves"]):
+            attrs += "{:<16}\t".format(cast(Dict[str, List[Dict[str, Union[int, str]]]], data)["waves"][i][attr])
         else:
             attrs += "{:<16}\t".format("")
     return attrs
 
 
-def getWavesAttribute3D(data: dict, firstD: str, secondD: str, thirdD: str) -> str:
+def getWavesAttribute3D(
+    data: jobType,
+    firstD: str,
+    secondD: str,
+    thirdD: str,
+) -> str:
     """
 
     :param data: dict:
@@ -1968,10 +2176,24 @@ def getWavesAttribute3D(data: dict, firstD: str, secondD: str, thirdD: str) -> s
     :returns str:
 
     """
-    attrs = ""
+    attrs: str = ""
     for i in range(0, 3):
-        if i < len(data["waves"]) and data["waves"][i][firstD]:
-            attrs += "{:<16}\t".format(data["waves"][i][firstD][secondD][thirdD])
+        if (
+            i
+            < len(
+                cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)[
+                    "waves"
+                ]
+            )
+            and cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)[
+                "waves"
+            ][i][firstD]
+        ):
+            attrs += "{:<16}\t".format(
+                cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)[
+                    "waves"
+                ][i][firstD][secondD][thirdD]
+            )
         else:
             attrs += "{:<16}\t".format("")
     return attrs
@@ -1996,29 +2218,42 @@ def printOverview(path: str, data: str) -> None:
     print("Hazard Level: " + statSummary(path + data, "danger_rate"))
 
 
-def printGeneral(data: dict) -> None:
+def printGeneral(data: jobType) -> None:
     """
 
     :param data: dict:
 
     """
-    print("Stat.ink Link: " + data["url"])
+    print("Stat.ink Link: " + cast(Dict[str, str], data)["url"])
     print("Splatnet #: {:<}".format(data["splatnet_number"]))
-    print("Stage: {:}".format(data["stage"]["name"][locale]))
-    print("Rotation Start Date: " + str(data["shift_start_at"]["iso8601"]))
-    print("Start Date: " + data["start_at"]["iso8601"])
+    print(
+        "Stage: {:}".format(
+            cast(Dict[str, Dict[str, Dict[str, str]]], data)["stage"]["name"][locale]
+        )
+    )
+    print(
+        "Rotation Start Date: "
+        + cast(Dict[str, Dict[str, str]], data)["shift_start_at"]["iso8601"]
+    )
+    print("Start Date: " + cast(Dict[str, Dict[str, str]], data)["start_at"]["iso8601"])
     print("Result: {:}".format("Cleared" if data["clear_waves"] == 3 else "Failed"))
     print(
         "Title: {:} {:<3} -> {:} {:<3}".format(
-            data["title"]["name"][locale] if data["title"] else "",
+            cast(Dict[str, Dict[str, Dict[str, str]]], data)["title"]["name"][locale]
+            if data["title"]
+            else "",
             data["title_exp"],
-            data["title_after"]["name"][locale] if data["title_after"] else "",
+            cast(Dict[str, Dict[str, Dict[str, str]]], data)["title_after"]["name"][
+                locale
+            ]
+            if data["title_after"]
+            else "",
             data["title_exp_after"],
         )
     )
 
 
-def printWaves(data: dict) -> None:
+def printWaves(data: jobType) -> None:
     """
 
     :param data: dict:
@@ -2069,13 +2304,20 @@ def printWaves(data: dict) -> None:
     )
 
 
-def printWeapons(data: dict) -> None:
+def printWeapons(data: jobType) -> None:
     """
 
     :param data: dict:
 
     """
-    for i in range(0, len(data["my_data"]["weapons"])):
+    for i in range(
+        0,
+        len(
+            cast(Dict[str, Dict[str, list]], data)["my_data"][
+                "weapons"
+            ]
+        ),
+    ):
         print(
             "{:16}\t{:}".format(
                 "Wave {:1} Weapon".format(i + 1),
@@ -2084,13 +2326,15 @@ def printWeapons(data: dict) -> None:
         )
 
 
-def printSpecials(data: dict) -> None:
+def printSpecials(data: jobType) -> None:
     """
 
     :param data: dict:
 
     """
-    for i in range(0, len(data["my_data"]["special_uses"])):
+    for i in range(
+        0, len(cast(Dict[str, Dict[str, List[int]]], data)["my_data"]["special_uses"])
+    ):
         print(
             "{:16}\t{:}".format(
                 "Wave {:1} Special Use".format(i + 1),
@@ -2099,84 +2343,127 @@ def printSpecials(data: dict) -> None:
         )
 
 
-def printPlayers(data: dict) -> None:
+def printPlayers(data: jobType) -> None:
     """
 
     :param data: dict:
 
     """
-    print("{:16}\t{:}".format("ID", getPlayersAttribute(data, "splatnet_id")))
-    print("{:16}\t{:}".format("Name", getPlayersAttribute(data, "name")))
+    print(
+        "{:16}\t{:}".format(
+            "ID",
+            getPlayersAttribute(
+                data,
+                "splatnet_id",
+            ),
+        )
+    )
+    print(
+        "{:16}\t{:}".format(
+            "Name",
+            getPlayersAttribute(
+                data,
+                "name",
+            ),
+        )
+    )
     printWeapons(data)
     print(
         "{:16}\t{:}".format(
-            "Special", getPlayersAttribute3D(data, "special", "name", locale)
+            "Special",
+            getPlayersAttribute3D(
+                data,
+                "special",
+                "name",
+                locale,
+            ),
         )
     )
     printSpecials(data)
-    print("{:16}\t{:}".format("Rescues", getPlayersAttribute(data, "rescue")))
-    print("{:16}\t{:}".format("Deaths", getPlayersAttribute(data, "death")))
     print(
         "{:16}\t{:}".format(
-            "Golden Eggs", getPlayersAttribute(data, "golden_egg_delivered")
+            "Rescues",
+            getPlayersAttribute(
+                data,
+                "rescue",
+            ),
         )
     )
     print(
         "{:16}\t{:}".format(
-            "Power Eggs", getPlayersAttribute(data, "power_egg_collected")
+            "Deaths",
+            getPlayersAttribute(
+                data,
+                "death",
+            ),
+        )
+    )
+    print(
+        "{:16}\t{:}".format(
+            "Golden Eggs",
+            getPlayersAttribute(
+                data,
+                "golden_egg_delivered",
+            ),
+        )
+    )
+    print(
+        "{:16}\t{:}".format(
+            "Power Eggs",
+            getPlayersAttribute(
+                data,
+                "power_egg_collected",
+            ),
         )
     )
 
 
-def getBosses(data: Dict[str, Union[str, int, List[Union[int, dict]], dict]]) -> list:
+def getBosses(data: jobType) -> List[Union[Dict[str, str], Dict[str, int]]]:
     """
 
     :param data: dict:
     :returns list:
 
     """
-    results: List[dict] = []
-    names = {}
-    appearances = {"": 0}
+    results: List[Union[Dict[str, str], Dict[str, int]]] = []
+    names: Dict[str, str] = {}
+    appearances: Dict[str, int] = {"": 0}
     if data["boss_appearances"] is None:
         return results
-    for boss in range(0, len(cast(List[dict], data["boss_appearances"]))):
+    for boss in range(0, len(cast(Dict[str, list], data)["boss_appearances"])):
         names[
-            cast(
-                str,
-                cast(List[dict], data["boss_appearances"])[boss]["boss"]["name"][
-                    locale
-                ],
-            )
-        ] = cast(List[dict], data["boss_appearances"])[boss]["boss"]["name"][locale]
+            cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)["boss_appearances"][boss]["boss"]["name"][
+                locale
+            ]
+        ] = cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)["boss_appearances"][boss]["boss"]["name"][locale]
         appearances[
-            cast(List[dict], data["boss_appearances"])[boss]["boss"]["name"][locale]
-        ] = cast(List[dict], data["boss_appearances"])[boss]["count"]
+            cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)["boss_appearances"][boss]["boss"]["name"][locale]
+        ] = cast(Dict[str, List[Dict[str, int]]], data)["boss_appearances"][boss]["count"]
     results.append(names)
     results.append(appearances)
-    my_data = {"": 0}
-    if cast(dict, data["my_data"])["boss_kills"] is not None:
-        for boss in range(0, len(cast(dict, data["my_data"])["boss_kills"])):
+    my_data: Dict[str, int] = {"": 0}
+    if cast(Dict[str, Dict[str, list]], data)["my_data"]["boss_kills"] is not None:
+        for boss in range(0, len(cast(Dict[str, Dict[str, list]], data)["my_data"]["boss_kills"])):
             my_data[
-                cast(dict, data["my_data"])["boss_kills"][boss]["boss"]["name"][locale]
-            ] = cast(dict, data["my_data"])["boss_kills"][boss]["count"]
+                cast(Dict[str, Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]]], data)["my_data"]["boss_kills"][boss]["boss"]["name"][locale]
+            ] = cast(Dict[str, Dict[str, List[Dict[str, int]]]], data)["my_data"]["boss_kills"][boss]["count"]
     results.append(my_data)
-    for teammate in range(0, len(cast(list, data["teammates"]))):
-        teammate_data = {"": 0}
-        if cast(list, data["teammates"])[teammate]["boss_kills"] is not None:
+    for teammate in range(0, len(cast(Dict[str, list], data)["teammates"])):
+        teammate_data: Dict[str, int] = {"": 0}
+        if cast(Dict[str, List[Dict[str, list]]], data)["teammates"][teammate]["boss_kills"] is not None:
             for boss in range(
-                0, len(cast(list, data["teammates"])[teammate]["boss_kills"])
+                0, len(cast(Dict[str, List[Dict[str, list]]], data)["teammates"][teammate]["boss_kills"])
             ):
                 my_data[
-                    cast(list, data["teammates"])[teammate]["boss_kills"][boss]["boss"][
+                    cast(Dict[str, List[Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]]]], data)["teammates"][teammate]["boss_kills"][boss]["boss"][
                         "name"
                     ][locale]
-                ] = cast(list, data["teammates"])[teammate]["boss_kills"][boss]["count"]
+                ] = cast(Dict[str, List[Dict[str, List[Dict[str, int]]]]], data)["teammates"][teammate]["boss_kills"][boss]["count"]
         results.append(teammate_data)
     return results
 
 
-def printBosses(data: dict) -> None:
+def printBosses(data: jobType) -> None:
     """
 
     :param data: dict:
@@ -2184,12 +2471,17 @@ def printBosses(data: dict) -> None:
     """
     print(
         "{:16}\t{:16}\t{:}".format(
-            "Boss Salmonid", "Appearances", getPlayersAttribute(data, "name")
+            "Boss Salmonid",
+            "Appearances",
+            getPlayersAttribute(
+                data,
+                "name",
+            ),
         )
     )
-    bosses = getBosses(data)
+    bosses: List[Union[Dict[str, str], Dict[str, int]]] = getBosses(data)
     if len(bosses) > 0:
-        listBosses = list(bosses[0])
+        listBosses: List[str] = list(bosses[0])
         for boss in range(0, len(bosses[0])):
             print(
                 "{:16}\t{:<16}\t{:<16}\t{:<16}\t{:<16}\t{:<16}".format(
@@ -2201,7 +2493,7 @@ def printBosses(data: dict) -> None:
                     if listBosses[boss] in bosses[2]
                     else "0",
                     bosses[3][listBosses[boss]]
-                    if listBosses[boss] in bosses[3]
+                    if (len(bosses) > 3 and listBosses[boss] in bosses[3])
                     else "0",
                     bosses[4][listBosses[boss]]
                     if (len(bosses) > 4 and listBosses[boss] in bosses[4])
@@ -2221,9 +2513,9 @@ def getArrayOfStat(data: str, stat: str) -> list:
     :returns list:
 
     """
-    with jsonlines.open(data, "r") as reader:
+    with gzip.open(data) as reader:
         results = []
-        for job in reader:
+        for job in jsonlines.Reader(reader, ujson.loads):
             results.append(float(job[stat]))
         return results
 
@@ -2237,9 +2529,9 @@ def getArrayOfStat2D(data: str, firstD: str, secondD: Union[str, int]) -> list:
     :returns ;ost:
 
     """
-    with jsonlines.open(data, "r") as reader:
+    with gzip.open(data) as reader:
         results = []
-        for job in reader:
+        for job in jsonlines.Reader(reader, ujson.loads):
             results.append(float(job[firstD][secondD]))
         return results
 
@@ -2250,21 +2542,24 @@ def initAll() -> Tuple[str, str]:
     :returns Tuple[str, str]:
 
     """
-    if os.path.exists("data/salmonAll.jsonl"):
+    if os.path.exists("data/salmonAll.jl.gz"):
         recentId = 0
         try:
-            with jsonlines.open("data/salmonAll.jsonl", mode="r") as reader:
-                with jsonlines.open("data/salmonAllTemp.jsonl", mode="w") as writer:
-                    for line in reader:
-                        writer.write(line)
+            with gzip.open("data/salmonAll.jl.gz") as reader:
+                with gzip.open(
+                    "data/salmonAllTemp.jl.gz", "at", encoding="utf8"
+                ) as writer:
+                    for line in jsonlines.Reader(reader, ujson.loads):
+                        ujson.dump(line, writer)
+                        writer.write("\n")
                         recentId = line["id"]
-                os.remove("data/salmonAllTemp.jsonl")
+                os.remove("data/salmonAllTemp.jl.gz")
         except jsonlines.jsonlines.InvalidLineError:
-            os.replace(r"data/salmonAllTemp.jsonl", r"data/salmonAll.jsonl")
+            os.replace(r"data/salmonAllTemp.jl.gz", r"data/salmonAll.jl.gz")
         fetchNewAll(recentId)
     else:
         fetchAll()
-    return ("data/", "salmonAll.jsonl")
+    return ("data/", "salmonAll.jl.gz")
 
 
 def initUser(api_key: str) -> Tuple[str, str]:
@@ -2274,30 +2569,39 @@ def initUser(api_key: str) -> Tuple[str, str]:
     :returns Tuple[str, str]:
 
     """
-    if os.path.exists("data/salmon.jsonl"):
+    if os.path.exists("data/salmon.jl.gz"):
         recentId = 0
-        with jsonlines.open("data/salmon.jsonl", mode="r") as reader:
-            for line in reader:
-                recentId = line["id"]
+        try:
+            with gzip.open("data/salmon.jl.gz") as reader:
+                with gzip.open(
+                    "data/salmonTemp.jl.gz", "at", encoding="utf8"
+                ) as writer:
+                    for line in jsonlines.Reader(reader, ujson.loads):
+                        ujson.dump(line, writer)
+                        writer.write("\n")
+                        recentId = line["id"]
+            os.remove("data/salmonTemp.jl.gz")
+        except jsonlines.jsonlines.InvalidLineError:
+            os.replace(r"data/salmonTemp.jl.gz", r"data/salmon.jl.gz")
         fetchNewUser(api_key, recentId)
     else:
         fetchAllUser(api_key)
-    return ("data/", "salmon.jsonl")
+    return ("data/", "salmon.jl.gz")
 
 
 if __name__ == "__main__":
-    user_key: str = json.load(open("keys.json", "r"))["statink_key"]
+    user_key: str = ujson.load(open("keys.json", "r"))["statink_key"]
     initAll()
     paths: List[str] = []
     dataFiles: List[str] = []
-    dataFile: str = "salmonAll.jsonl"
+    dataFile: str = "salmonAll.jl.gz"
     rotations: List[int] = findRotationByWeaponsAndStage(
         "data/" + dataFile,
         ("Grizzco Charger", "Grizzco Brella", "Grizzco Blaster", "Grizzco Slosher"),
         "Ruins of Ark Polaris",
     )
     print(rotations)
-    jobs = duringRotationInt("data/", dataFile, rotations[1])
+    jobs: Tuple[str, str] = duringRotationInt("data/", dataFile, rotations[1])
     paths.append(jobs[0])
     dataFiles.append(jobs[1])
     jobs = dangerRate(jobs[0], jobs[1], "200.0")
@@ -2307,8 +2611,8 @@ if __name__ == "__main__":
     print()
     for a in range(0, len(paths)):
         os.remove(paths[a] + dataFiles[a])
-        # with jsonlines.open(jobs[0] + jobs[1], "r") as readerFile:
-        """for job in reader:
+        # with gzip.open(jobs[0] + jobs[1]) as readerFile:
+        """for job in jsonlines.Reader(reader, ujson.loads):
         printGeneral(job)
         print()
         printWaves(job)

@@ -5,8 +5,8 @@ import json
 from typing import List
 
 initUser(json.load(open("keys.json", "r"))["statink_key"])
-path = "data/"
-data = "salmon.jsonl"
+path: str = "data/"
+data: str = "salmon.jsonl"
 dangerRates: List[float] = getArrayOfStat(path + data, "danger_rate")
 quotas: List[float] = getArrayOfStat2D(path + data, "quota", 2)
 plt.figure(1)

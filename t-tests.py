@@ -21,15 +21,15 @@ import json
 from typing import List, Union, Tuple
 
 initUser(json.load(open("keys.json", "r"))["statink_key"])
-path = "data/"
-data = "salmon.jsonl"
+path: str = "data/"
+data: str = "salmon.jsonl"
 print("Rotation")
 print("Player")
 print("Weapon")
 print("Stage")
 stat: str = input("Choose a stat to run analysis on: ")
-withVal: Union[List[str], Tuple[str, str]] = []
-withoutVal: Union[List[str], Tuple[str, str]] = []
+withVal: Tuple[str, str] = ("", "")
+withoutVal: Tuple[str, str] = ("", "")
 if stat == "Player":
     playerId: List[str] = findPlayerIdByName(
         path, data, input("Enter a player name to run analysis on: ")
@@ -39,10 +39,10 @@ if stat == "Player":
     withVal = hasPlayer(path, data, val)
     withoutVal = withoutPlayer(path, data, val)
 elif stat == "Rotation":
-    weapons = []
+    weapons: List[str] = []
     for i in range(0, 4):
         weapons.append(input("Enter a weapon: "))
-    stageChoice = input("Enter the stage: ")
+    stageChoice: str = input("Enter the stage: ")
     rotations: List[int] = findRotationByWeaponsAndStage(
         path + data, weapons, stageChoice
     )
@@ -60,15 +60,19 @@ elif stat == "Stage":
     withoutVal = notOnStage(path, data, val)
 else:
     sys.exit()
-withValClearWaves = getArrayOfStat(withVal[0] + withVal[1], "clear_waves")
-withoutValClearWaves = getArrayOfStat(withoutVal[0] + withoutVal[1], "clear_waves")
+withValClearWaves: List[float] = getArrayOfStat(withVal[0] + withVal[1], "clear_waves")
+withoutValClearWaves: List[float] = getArrayOfStat(
+    withoutVal[0] + withoutVal[1], "clear_waves"
+)
 t, p = ttest_ind(withValClearWaves, withoutValClearWaves, equal_var=False)
 print("a - b = " + str(np.mean(withValClearWaves) - np.mean(withoutValClearWaves)))
 print("t = " + str(t))
 print("p = " + str(p))
 print()
-withValDangerRate = getArrayOfStat(withVal[0] + withVal[1], "danger_rate")
-withoutValDangerRate = getArrayOfStat(withoutVal[0] + withoutVal[1], "danger_rate")
+withValDangerRate: List[float] = getArrayOfStat(withVal[0] + withVal[1], "danger_rate")
+withoutValDangerRate: List[float] = getArrayOfStat(
+    withoutVal[0] + withoutVal[1], "danger_rate"
+)
 t, p = ttest_ind(withValDangerRate, withoutValDangerRate, equal_var=False)
 plt.figure(1)
 plt.subplot(121)
@@ -83,10 +87,10 @@ print("a - b = " + str(np.mean(withValDangerRate) - np.mean(withoutValDangerRate
 print("t = " + str(t))
 print("p = " + str(p))
 print()
-withValGoldenTotal = getArrayOfStat2D(
+withValGoldenTotal: List[float] = getArrayOfStat2D(
     withVal[0] + withVal[1], "my_data", "golden_egg_delivered"
 )
-withoutValGoldenTotal = getArrayOfStat2D(
+withoutValGoldenTotal: List[float] = getArrayOfStat2D(
     withoutVal[0] + withoutVal[1], "my_data", "golden_egg_delivered"
 )
 t, p = ttest_ind(withValGoldenTotal, withoutValGoldenTotal, equal_var=False)
@@ -103,10 +107,10 @@ print("a - b = " + str(np.mean(withValGoldenTotal) - np.mean(withoutValGoldenTot
 print("t = " + str(t))
 print("p = " + str(p))
 print()
-withValPowerTotal = getArrayOfStat2D(
+withValPowerTotal: List[float] = getArrayOfStat2D(
     withVal[0] + withVal[1], "my_data", "power_egg_collected"
 )
-withoutValPowerTotal = getArrayOfStat2D(
+withoutValPowerTotal: List[float] = getArrayOfStat2D(
     withoutVal[0] + withoutVal[1], "my_data", "power_egg_collected"
 )
 t, p = ttest_ind(withValPowerTotal, withoutValPowerTotal, equal_var=False)
