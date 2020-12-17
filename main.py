@@ -421,27 +421,19 @@ elif scope == "User":
     data = dataFileStart[1]
 else:
     sys.exit()
-currentPaths: List[str] = []
+currentPaths: List[str] = [path]
 allPaths: List[str] = []
-dataFiles: List[str] = []
+dataFiles: List[str] = [data]
 allFiles: List[str] = []
 while input("Add a filter [Y/N]: ") == "Y":
-    if currentPaths == []:
-        filtered: List[Tuple[str, str]] = filterBy([path], [data])
-        for f in filtered:
-            currentPaths.append(f[0])
-            dataFiles.append(f[1])
-            allPaths.append(f[0])
-            allFiles.append(f[1])
-    else:
-        filtered = filterBy(currentPaths, dataFiles)
-        currentPaths = []
-        dataFiles = []
-        for f in filtered:
-            currentPaths.append(f[0])
-            dataFiles.append(f[1])
-            allPaths.append(f[0])
-            allFiles.append(f[1])
+    filtered = filterBy(currentPaths, dataFiles)
+    currentPaths = []
+    dataFiles = []
+    for f in filtered:
+        currentPaths.append(f[0])
+        dataFiles.append(f[1])
+        allPaths.append(f[0])
+        allFiles.append(f[1])
 processData(currentPaths, dataFiles)
 if input("Clean [Y/N] (only if you didn't use clearAfter): ") == "Y":
     for a in range(0, len(allPaths)):
