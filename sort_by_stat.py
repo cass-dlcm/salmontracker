@@ -174,11 +174,12 @@ def sortRotation(path: str, data: str, stat: str) -> None:
     )
 
 
-# fullPath: Tuple[str, str] = salmontracker.initUser(ujson.load(open("keys.json", "r"))["statink_key"])
-fullPath: Tuple[str, str] = salmontracker.initAll()
-filePath: str = fullPath[0]
-dataFile: str = fullPath[1]
-# sortStages(filePath + dataFile, "clear_waves")
-sortWeapons(filePath, dataFile, "clear_waves")
-# sortSpecial(filePath + dataFile, "clear_waves")
-# sortRotation(filePath, dataFile, "clear_waves")
+if __name__ == "__main__":
+    # fullPath: Tuple[str, str] = salmontracker.initUser(ujson.load(open("keys.json", "r"))["statink_key"])
+    fullPath: Tuple[str, str] = salmontracker.initAll()
+    filePath: str = fullPath[0]
+    dataFile: str = fullPath[1]
+    # sortStages(filePath + dataFile, "clear_waves")
+    sortWeapons(filePath, dataFile, "clear_waves")
+    # sortSpecial(filePath + dataFile, "clear_waves")
+    # sortRotation(filePath, dataFile, "clear_waves")
