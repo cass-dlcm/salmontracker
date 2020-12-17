@@ -28,7 +28,7 @@ author = "Cassandra de la Cruz-Munoz"
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.linkcode", 'sphinx.ext.intersphinx']
+extensions = ["sphinx.ext.autodoc", "sphinx.ext.linkcode", "sphinx.ext.intersphinx"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -36,7 +36,7 @@ templates_path = ["_templates"]
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['data']
+exclude_patterns = ["data"]
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -52,16 +52,16 @@ html_theme = "alabaster"
 html_static_path = ["_static"]
 
 
-master_doc = 'index'
+master_doc = "index"
 
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3', None),
-    'numpy': ('https://numpy.org/doc/stable/', None),
-    'jsonlines': ('https://jsonlines.readthedocs.io/en/latest/', None),
-    'requests': ('https://requests.readthedocs.io/en/master/', None),
-    'matplotlib': ('https://matplotlib.org/contents.html', None),
-    'ujson': ('https://github.com/ultrajson/ultrajson', None)
+    "python": ("https://docs.python.org/3", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+    "jsonlines": ("https://jsonlines.readthedocs.io/en/latest/", None),
+    "requests": ("https://requests.readthedocs.io/en/master/", None),
+    "matplotlib": ("https://matplotlib.org/contents.html", None),
+    "ujson": ("https://github.com/ultrajson/ultrajson", None),
 }
 
 
@@ -71,4 +71,6 @@ def linkcode_resolve(domain, info):
     if not info["module"]:
         return None
     filename = info["module"].replace(".", "/")
-    return "https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/%s.py" % filename
+    return (
+        "https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/%s.py" % filename
+    )
