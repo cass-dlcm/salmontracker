@@ -2067,7 +2067,9 @@ def getPlayersAttribute2D(data: jobType, firstD: str, secondD: Union[int, str]) 
     :returns str:
 
     """
-    attrs: str = "{:<16}\t".format(cast(Dict[str, Dict[str, Any]], data)["my_data"][firstD][secondD] or 0)
+    attrs: str = "{:<16}\t".format(
+        cast(Dict[str, Dict[str, Any]], data)["my_data"][firstD][secondD] or 0
+    )
     for p in cast(Dict[str, List[Dict[str, Any]]], data)["teammates"]:
         attrs += "{:<16}\t".format(p[firstD][secondD] or 0)
     return attrs
@@ -2089,15 +2091,15 @@ def getPlayersAttribute3D(
 
     """
     attrs: str = "{:<16}\t".format(
-        cast(Dict[str, Dict[str, Dict[str, Dict[str, Union[int, str]]]]], data)["my_data"][firstD][secondD][
-            thirdD
-        ]
+        cast(Dict[str, Dict[str, Dict[str, Dict[str, Union[int, str]]]]], data)[
+            "my_data"
+        ][firstD][secondD][thirdD]
         or 0
     )
-    for p in cast(Dict[str, List[Dict[str, Dict[str, Dict[str, Union[int, str]]]]]], data)["teammates"]:
-        attrs += "{:<16}\t".format(
-            p[firstD][secondD][thirdD] or 0
-        )
+    for p in cast(
+        Dict[str, List[Dict[str, Dict[str, Dict[str, Union[int, str]]]]]], data
+    )["teammates"]:
+        attrs += "{:<16}\t".format(p[firstD][secondD][thirdD] or 0)
     return attrs
 
 
@@ -2119,21 +2121,23 @@ def getPlayersAttribute4D(
 
     """
     attrs: str = "{:<16}\t".format(
-        cast(Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]], data["my_data"])[firstD][
-            secondD
-        ][thirdD][fourthD]
+        cast(Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]], data["my_data"])[
+            firstD
+        ][secondD][thirdD][fourthD]
         or 0
     )
-    for p in cast(List[Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]]], data["teammates"]):
+    for p in cast(
+        List[Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]]], data["teammates"]
+    ):
         if cast(Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]], p)[
             firstD
         ] is not None and secondD < len(
             cast(Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]], p)[firstD]
         ):
             attrs += "{:<16}\t".format(
-                cast(Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]], p)[firstD][secondD][
-                    thirdD
-                ][fourthD]
+                cast(Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]], p)[firstD][
+                    secondD
+                ][thirdD][fourthD]
                 or 0
             )
         else:
@@ -2155,7 +2159,11 @@ def getWavesAttribute(
     attrs: str = ""
     for i in range(0, 3):
         if i < len(cast(Dict[str, List[Dict[str, Union[int, str]]]], data)["waves"]):
-            attrs += "{:<16}\t".format(cast(Dict[str, List[Dict[str, Union[int, str]]]], data)["waves"][i][attr])
+            attrs += "{:<16}\t".format(
+                cast(Dict[str, List[Dict[str, Union[int, str]]]], data)["waves"][i][
+                    attr
+                ]
+            )
         else:
             attrs += "{:<16}\t".format("")
     return attrs
@@ -2312,11 +2320,7 @@ def printWeapons(data: jobType) -> None:
     """
     for i in range(
         0,
-        len(
-            cast(Dict[str, Dict[str, list]], data)["my_data"][
-                "weapons"
-            ]
-        ),
+        len(cast(Dict[str, Dict[str, list]], data)["my_data"]["weapons"]),
     ):
         print(
             "{:16}\t{:}".format(
@@ -2432,33 +2436,82 @@ def getBosses(data: jobType) -> List[Union[Dict[str, str], Dict[str, int]]]:
         return results
     for boss in range(0, len(cast(Dict[str, list], data)["boss_appearances"])):
         names[
-            cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)["boss_appearances"][boss]["boss"]["name"][
-                locale
-            ]
-        ] = cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)["boss_appearances"][boss]["boss"]["name"][locale]
+            cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)[
+                "boss_appearances"
+            ][boss]["boss"]["name"][locale]
+        ] = cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)[
+            "boss_appearances"
+        ][
+            boss
+        ][
+            "boss"
+        ][
+            "name"
+        ][
+            locale
+        ]
         appearances[
-            cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)["boss_appearances"][boss]["boss"]["name"][locale]
-        ] = cast(Dict[str, List[Dict[str, int]]], data)["boss_appearances"][boss]["count"]
+            cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)[
+                "boss_appearances"
+            ][boss]["boss"]["name"][locale]
+        ] = cast(Dict[str, List[Dict[str, int]]], data)["boss_appearances"][boss][
+            "count"
+        ]
     results.append(names)
     results.append(appearances)
     my_data: Dict[str, int] = {"": 0}
     if cast(Dict[str, Dict[str, list]], data)["my_data"]["boss_kills"] is not None:
-        for boss in range(0, len(cast(Dict[str, Dict[str, list]], data)["my_data"]["boss_kills"])):
+        for boss in range(
+            0, len(cast(Dict[str, Dict[str, list]], data)["my_data"]["boss_kills"])
+        ):
             my_data[
-                cast(Dict[str, Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]]], data)["my_data"]["boss_kills"][boss]["boss"]["name"][locale]
-            ] = cast(Dict[str, Dict[str, List[Dict[str, int]]]], data)["my_data"]["boss_kills"][boss]["count"]
+                cast(
+                    Dict[str, Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]]],
+                    data,
+                )["my_data"]["boss_kills"][boss]["boss"]["name"][locale]
+            ] = cast(Dict[str, Dict[str, List[Dict[str, int]]]], data)["my_data"][
+                "boss_kills"
+            ][
+                boss
+            ][
+                "count"
+            ]
     results.append(my_data)
     for teammate in range(0, len(cast(Dict[str, list], data)["teammates"])):
         teammate_data: Dict[str, int] = {"": 0}
-        if cast(Dict[str, List[Dict[str, list]]], data)["teammates"][teammate]["boss_kills"] is not None:
+        if (
+            cast(Dict[str, List[Dict[str, list]]], data)["teammates"][teammate][
+                "boss_kills"
+            ]
+            is not None
+        ):
             for boss in range(
-                0, len(cast(Dict[str, List[Dict[str, list]]], data)["teammates"][teammate]["boss_kills"])
+                0,
+                len(
+                    cast(Dict[str, List[Dict[str, list]]], data)["teammates"][teammate][
+                        "boss_kills"
+                    ]
+                ),
             ):
                 my_data[
-                    cast(Dict[str, List[Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]]]], data)["teammates"][teammate]["boss_kills"][boss]["boss"][
-                        "name"
-                    ][locale]
-                ] = cast(Dict[str, List[Dict[str, List[Dict[str, int]]]]], data)["teammates"][teammate]["boss_kills"][boss]["count"]
+                    cast(
+                        Dict[
+                            str,
+                            List[Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]]],
+                        ],
+                        data,
+                    )["teammates"][teammate]["boss_kills"][boss]["boss"]["name"][locale]
+                ] = cast(Dict[str, List[Dict[str, List[Dict[str, int]]]]], data)[
+                    "teammates"
+                ][
+                    teammate
+                ][
+                    "boss_kills"
+                ][
+                    boss
+                ][
+                    "count"
+                ]
         results.append(teammate_data)
     return results
 
