@@ -9,7 +9,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - run: apt-get install python3-sphinx && pip install -r requirements.txt && make html
+    - run: sudo apt-get install python3-sphinx && pip install -r requirements.txt && make html
     # Create an artifact of the html output.
     - uses: actions/upload-artifact@v1
       with:
