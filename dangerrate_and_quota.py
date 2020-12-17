@@ -4,6 +4,7 @@ import numpy
 import json
 from typing import List
 
+
 initUser(json.load(open("keys.json", "r"))["statink_key"])
 path: str = "data/"
 data: str = "salmon.jsonl"

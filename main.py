@@ -406,35 +406,36 @@ def processData(paths: List[str], dataFile: List[str]):
         mode = input("What would you like to do: ")
 
 
-print("All")
-print("User")
-scope: str = input("Pick an analysis scope: ")
-path: str = ""
-data: str = ""
-if scope == "All":
-    dataFileStart = initAll()
-    path = dataFileStart[0]
-    data = dataFileStart[1]
-elif scope == "User":
-    dataFileStart = initUser(ujson.load(open("keys.json", "r"))["statink_key"])
-    path = dataFileStart[0]
-    data = dataFileStart[1]
-else:
-    sys.exit()
-currentPaths: List[str] = [path]
-allPaths: List[str] = []
-dataFiles: List[str] = [data]
-allFiles: List[str] = []
-while input("Add a filter [Y/N]: ") == "Y":
-    filtered = filterBy(currentPaths, dataFiles)
-    currentPaths = []
-    dataFiles = []
-    for f in filtered:
-        currentPaths.append(f[0])
-        dataFiles.append(f[1])
-        allPaths.append(f[0])
-        allFiles.append(f[1])
-processData(currentPaths, dataFiles)
-if input("Clean [Y/N] (only if you didn't use clearAfter): ") == "Y":
-    for a in range(0, len(allPaths)):
-        os.remove(allPaths[a] + allFiles[a])
+if __name__ == "__main__":
+    print("All")
+    print("User")
+    scope: str = input("Pick an analysis scope: ")
+    path: str = ""
+    data: str = ""
+    if scope == "All":
+        dataFileStart = initAll()
+        path = dataFileStart[0]
+        data = dataFileStart[1]
+    elif scope == "User":
+        dataFileStart = initUser(ujson.load(open("keys.json", "r"))["statink_key"])
+        path = dataFileStart[0]
+        data = dataFileStart[1]
+    else:
+        sys.exit()
+    currentPaths: List[str] = [path]
+    allPaths: List[str] = []
+    dataFiles: List[str] = [data]
+    allFiles: List[str] = []
+    while input("Add a filter [Y/N]: ") == "Y":
+        filtered = filterBy(currentPaths, dataFiles)
+        currentPaths = []
+        dataFiles = []
+        for f in filtered:
+            currentPaths.append(f[0])
+            dataFiles.append(f[1])
+            allPaths.append(f[0])
+            allFiles.append(f[1])
+    processData(currentPaths, dataFiles)
+    if input("Clean [Y/N] (only if you didn't use clearAfter): ") == "Y":
+        for a in range(0, len(allPaths)):
+            os.remove(allPaths[a] + allFiles[a])
