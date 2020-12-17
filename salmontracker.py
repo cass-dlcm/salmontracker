@@ -1654,7 +1654,7 @@ def notGreaterThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]
                 encoding="utf8",
             ) as writer:
                 for job in jsonlines.Reader(reader, ujson.loads):
-                    if not float(job["danger_rate"]) > float(rate):
+                    if float(job["danger_rate"]) <= float(rate):
                         ujson.dump(job, writer)
                         writer.write("\n")
     return (path + data[0:-6] + "/dangerRate/notGreaterThan/", rate + ".jl.gz")
@@ -1718,7 +1718,7 @@ def notLessThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
                 encoding="utf8",
             ) as writer:
                 for job in jsonlines.Reader(reader, ujson.loads):
-                    if not float(job["danger_rate"]) < float(rate):
+                    if float(job["danger_rate"]) >= float(rate):
                         ujson.dump(job, writer)
                         writer.write("\n")
     return (path + data[0:-6] + "/dangerRate/lessThan/", rate + ".jl.gz")
