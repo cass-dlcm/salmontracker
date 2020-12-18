@@ -2058,14 +2058,28 @@ def printOverview(data: str) -> None:
     :param data: str:
 
     """
-    stats = ["clear_waves", "my_data golden_egg_delivered", "my_data power_egg_collected", "my_data rescue", "my_data death", "danger_rate"]
+    stats = [
+        "clear_waves",
+        "my_data golden_egg_delivered",
+        "my_data power_egg_collected",
+        "my_data rescue",
+        "my_data death",
+        "danger_rate",
+    ]
     with gzip.open(data) as reader:
         clearCount: float = 0.0
         waveTwoCount: float = 0.0
         waveOneCount: float = 0.0
         sumVal: List[float] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         maxVal: List[float] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-        minVal: List[float] = [sys.float_info.max,  sys.float_info.max, sys.float_info.max, sys.float_info.max, sys.float_info.max, sys.float_info.max]
+        minVal: List[float] = [
+            sys.float_info.max,
+            sys.float_info.max,
+            sys.float_info.max,
+            sys.float_info.max,
+            sys.float_info.max,
+            sys.float_info.max,
+        ]
         vals: List[List[float]] = [[], [], [], [], [], []]
         medians: List[float] = []
         count: int = 0
@@ -2092,11 +2106,31 @@ def printOverview(data: str) -> None:
     print("Clear %: " + str(clearCount / count))
     print("Wave 2 %: " + str(waveTwoCount / count))
     print("Wave 1 %: " + str(waveOneCount / count))
-    print("Golden: {} ({}, {}, {}".format(sumVal[1] / count, minVal[1], np.median(vals[1]), maxVal[1]))
-    print("Power Eggs: {} ({}, {}, {})".format(sumVal[2] / count, minVal[2], np.median(vals[2]), maxVal[2]))
-    print("Rescued: {} ({}, {}, {})".format(sumVal[3] / count, minVal[3], np.median(vals[3]), maxVal[3]))
-    print("Deaths: {} ({}, {}, {})".format(sumVal[4] / count, minVal[4], np.median(vals[4]), maxVal[4]))
-    print("Hazard Level: {} ({}, {}, {})".format(sumVal[5] / count, minVal[5], np.median(vals[5]), maxVal[5]))
+    print(
+        "Golden: {} ({}, {}, {}".format(
+            sumVal[1] / count, minVal[1], np.median(vals[1]), maxVal[1]
+        )
+    )
+    print(
+        "Power Eggs: {} ({}, {}, {})".format(
+            sumVal[2] / count, minVal[2], np.median(vals[2]), maxVal[2]
+        )
+    )
+    print(
+        "Rescued: {} ({}, {}, {})".format(
+            sumVal[3] / count, minVal[3], np.median(vals[3]), maxVal[3]
+        )
+    )
+    print(
+        "Deaths: {} ({}, {}, {})".format(
+            sumVal[4] / count, minVal[4], np.median(vals[4]), maxVal[4]
+        )
+    )
+    print(
+        "Hazard Level: {} ({}, {}, {})".format(
+            sumVal[5] / count, minVal[5], np.median(vals[5]), maxVal[5]
+        )
+    )
 
 
 def printGeneral(data: jobType) -> None:
@@ -2114,9 +2148,14 @@ def printGeneral(data: jobType) -> None:
     )
     print(
         "Rotation Start Date: {}".format(
-        cast(Dict[str, Dict[str, str]], data)["shift_start_at"]["iso8601"]
-    ))
-    print("Start Date: {}".format(cast(Dict[str, Dict[str, str]], data)["start_at"]["iso8601"]))
+            cast(Dict[str, Dict[str, str]], data)["shift_start_at"]["iso8601"]
+        )
+    )
+    print(
+        "Start Date: {}".format(
+            cast(Dict[str, Dict[str, str]], data)["start_at"]["iso8601"]
+        )
+    )
     print("Result: {}".format("Cleared" if data["clear_waves"] == 3 else "Failed"))
     print(
         "Title: {} {:<3} -> {} {:<3}".format(
@@ -2440,7 +2479,13 @@ def getArrayOfStat(data: str, stat: str) -> list:
     with gzip.open(data) as reader:
         results = []
         for job in jsonlines.Reader(reader, ujson.loads):
-            results.append(float(getValMultiDimensional(job, cast(List[Union[str, int]], stat.split()))))
+            results.append(
+                float(
+                    getValMultiDimensional(
+                        job, cast(List[Union[str, int]], stat.split())
+                    )
+                )
+            )
         return results
 
 

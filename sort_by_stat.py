@@ -58,9 +58,10 @@ def sortWeapons(path: str, data: str, stat: str) -> None:
             ):
                 result["key"] = cast(str, weapon["main_ref"])
                 result["name"] = cast(Dict[str, str], weapon["name"])[locale]
-                result["value"] = statSummary(withVal[0] + withVal[1], stat)[0] - statSummary(
-                    withoutVal[0] + withoutVal[1], stat
-                )[0]
+                result["value"] = (
+                    statSummary(withVal[0] + withVal[1], stat)[0]
+                    - statSummary(withoutVal[0] + withoutVal[1], stat)[0]
+                )
                 results.append(result)
         elif not hasJobs(withVal[0], withVal[1]):
             os.remove(withVal[0] + withVal[1])
@@ -163,9 +164,10 @@ def sortRotation(path: str, data: str, stat: str) -> None:
                 result["data"] = core.findWeaponsAndStageByRotation(
                     withVal[0] + withVal[1], rotation
                 )
-                result["value"] = statSummary(withVal[0] + withVal[1], stat)[0] - statSummary(
-                    withoutVal[0] + withoutVal[1], stat
-                )[0]
+                result["value"] = (
+                    statSummary(withVal[0] + withVal[1], stat)[0]
+                    - statSummary(withoutVal[0] + withoutVal[1], stat)[0]
+                )
                 rotationResultsList.append(result)
         elif not hasJobs(withVal[0], withVal[1]):
             os.remove(withVal[0] + withVal[1])
