@@ -169,7 +169,8 @@ def fetchNewAll(recentId: int) -> None:
     """
     Fetch new Salmon Run results for all users and store it in the "data/salmonAll.jl.gz" file.
 
-    :param recentId: int: the ID of the most recently retrieved jobs
+    :param recentId: the ID of the most recently retrieved jobs
+    :type recentId: int
 
     """
     prevLastId: int = 0
@@ -202,8 +203,12 @@ def hasJobs(path: str, data: str) -> bool:
     """
     Check if a given data file has data.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :return: whether the file has jobs or not
+    :rtype: bool
 
     """
     with gzip.open(path + data) as reader:
@@ -218,9 +223,14 @@ def hasPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
     """
     Filter the jobs in the given data file to only jobs that contain the chosen player.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param player: str: the Splatnet ID of the chosen player
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param player: the Splatnet ID of the chosen player
+    :type player: str
+    :return: the path and file name of the filtered file
+    :rtype: Tuple[str, str]
 
     """
     if not os.path.exists(path + data[0:-6] + "/playerId/" + player + ".jl.gz"):
@@ -260,9 +270,14 @@ def withoutPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
     """
     Filter the jobs in the given data file to only jobs that do not contain the chosen player.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param player: str: the Splatnet ID of the chosen player
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param player: the Splatnet ID of the chosen player
+    :type player: str
+    :return: the path and file name of the filtered file
+    :rtype: Tuple[str, str]
 
     """
     if not os.path.exists(path + data[0:-6] + "/notPlayerId/" + player + ".jl.gz"):
@@ -302,9 +317,14 @@ def hasPlayerByName(path: str, data: str, player: str) -> Tuple[str, str]:
     """
     Filter the jobs in the given data file to only jobs that contain the chosen player.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param player: str: the name of the chosen player
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param player: the name the chosen player
+    :type player: str
+    :return: the path and file name of the filtered file
+    :rtype: Tuple[str, str]
 
     """
     if not os.path.exists(path + data[0:-6] + "/player/" + player + ".jl.gz"):
@@ -347,9 +367,13 @@ def findRotationByWeaponsAndStage(
     Find the rotation IDs for a rotation of the given weapons and stage in the given data file.
 
     :param data: str: the full path of the data file
-    :param weapons: Union[Tuple[str, str, str, str], List[str]: the chosen weapons
+    :type data: str
+    :param weapons: the chosen weapons
+    :type weapons: Union[Tuple[str, str, str, str], List[str] 
     :param stage: str: the chosen stage
-    :returns: List[int]: a list of rotation IDs
+    :type stage: str
+    :return: a list of rotation IDs
+    :rtype: List[int]
 
     """
     foundRotations: List[int] = []
@@ -515,6 +539,16 @@ def findRotationByWeaponsAndStage(
 def findWeaponsAndStageByRotation(
     data: str, rotation: int
 ) -> Dict[str, Union[str, List[str]]]:
+    """
+    Find the weapons and stage for a given rotation.
+
+    :param data: the full path of the data file
+    :type data: str
+    :param rotation: the unix time of the rotation start
+    :type rotation: int
+
+
+    """
     result: Dict[str, Union[str, List[str]]] = {}
     with gzip.open(data) as reader:
         for job in jsonlines.Reader(reader, ujson.loads):
@@ -1764,10 +1798,9 @@ def getValMultiDimensional(
         return getValMultiDimensional(
             cast(Dict[str, Union[list, Dict[str, Any]]], data)[statArr[0]], statArr[1:]
         )
-    else:
-        if isinstance(statArr[0], int):
-            return cast(List[Union[str, int]], data)[statArr[0]]
-        return cast(Dict[str, Union[str, int]], data)[statArr[0]]
+    if isinstance(statArr[0], int):
+        return cast(List[str], data)[statArr[0]]
+    return cast(Dict[str, str], data)[statArr[0]]
 
 
 def avgStat(data: str, stat: str) -> float:

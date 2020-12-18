@@ -5,3 +5,4 @@ example_job.json
 python-probe.log
 .mypy_cache
 build/
+_build/
