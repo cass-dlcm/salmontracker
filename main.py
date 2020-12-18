@@ -55,8 +55,10 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
         for i in range(0, len(paths)):
             if mode == "With":
                 filters.append(hasPlayer(paths[i], dataFile[i], val)[0])
+                os.remove(paths[i] + dataFile[i][:-6] + "/notPlayer/" + val + ".jl.gz")
             elif mode == "Without":
                 filters.append(hasPlayer(paths[i], dataFile[i], val)[1])
+                os.remove(paths[i] + dataFile[i][:-6] + "/player/" + val + ".jl.gz")
             elif mode == "Both":
                 result: Tuple[Tuple[str, str], Tuple[str, str]] = hasPlayer(
                     paths[i], dataFile[i], val
@@ -98,8 +100,10 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
         for i in range(0, len(paths)):
             if mode == "With":
                 filters.append(hasWeapon(paths[i], dataFile[i], val)[0])
+                os.remove(path + data[0:-6] + "/notWeapon/" + val + ".jl.gz")
             elif mode == "Without":
                 filters.append(hasWeapon(paths[i], dataFile[i], val)[1])
+                os.remove(path + data[0:-6] + "/weapon/" + val + ".jl.gz")
             elif mode == "Both":
                 result = hasWeapon(paths[i], dataFile[i], val)
                 filters.append(result[0])
@@ -115,8 +119,10 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
         for i in range(0, len(paths)):
             if mode == "With":
                 filters.append(usesWeapon(paths[i], dataFile[i], val)[0])
+                os.remove(path + data[0:-6] + "/notUsesWeapon/" + val + ".jl.gz")
             elif mode == "Without":
                 filters.append(usesWeapon(paths[i], dataFile[i], val)[1])
+                os.remove(path + data[0:-6] + "/usesWeapon/" + val + ".jl.gz")
             elif mode == "Both":
                 result = usesWeapon(paths[i], dataFile[i], val)
                 filters.append(result[0])
@@ -132,8 +138,10 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
         for i in range(0, len(paths)):
             if mode == "With":
                 filters.append(onStage(paths[i], dataFile[i], val)[0])
+                os.remove(path + data[0:-6] + "/notStage/" + val + ".jl.gz")
             elif mode == "Without":
                 filters.append(onStage(paths[i], dataFile[i], val)[1])
+                os.remove(path + data[0:-6] + "/stage/" + val + ".jl.gz")
             elif mode == "Both":
                 result = onStage(paths[i], dataFile[i], val)
                 filters.append(result[0])
@@ -229,8 +237,10 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
         for i in range(0, len(paths)):
             if mode == "With":
                 filters.append(withSpecial(paths[i], dataFile[i], val)[0])
+                os.remove(path + data[0:-6] + "/notSpecial/" + val + ".jl.gz")
             elif mode == "Without":
                 filters.append(withSpecial(paths[i], dataFile[i], val)[0])
+                os.remove(path + data[0:-6] + "/special/" + val + ".jl.gz")
             elif mode == "Both":
                 result = withSpecial(paths[i], dataFile[i], val)
                 filters.append(result[0])
