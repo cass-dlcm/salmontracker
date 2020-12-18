@@ -511,7 +511,7 @@ def findRotationByWeaponsAndStage(
 
 def findWeaponsAndStageByRotation(
     data: str, rotation: int
-) -> Optional[Dict[str, Union[str, List[str]]]]:
+) -> Dict[str, Union[str, List[str]]]:
     result: Dict[str, Union[str, List[str]]] = {}
     with gzip.open(data) as reader:
         for job in jsonlines.Reader(reader, ujson.loads):
@@ -535,8 +535,7 @@ def findWeaponsAndStageByRotation(
                             cast(Dict[str, List[str]], result)["weapons"].append(
                                 job["teammates"][i]["weapons"][j]["name"][locale]
                             )
-                return result
-    return None
+    return result
 
 
 def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
@@ -1729,9 +1728,10 @@ def notLessThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
 
 def jobsCount(data: str) -> int:
     """
+    Find the total number of jobs in a given data set.
 
-    :param data: str:
-    :returns int:
+    :param data: str: The full file path of the data file
+    :returns int: The number of jobs in the file
 
     """
     with gzip.open(data) as reader:
@@ -1741,71 +1741,69 @@ def jobsCount(data: str) -> int:
         return count
 
 
+def getValMultiDimensional(
+    data: Union[list, Dict[str, Any]], statArr: List[Union[str, int]]
+):
+    if len(statArr) > 1:
+        if isinstance(statArr[0], int):
+            return getValMultiDimensional(cast(list, data)[statArr[0]], statArr[1:])
+        else:
+            return getValMultiDimensional(
+                cast(Dict[str, Union[list, Dict[str, Any]]], data)[statArr[0]],
+                statArr[1:],
+            )
+    else:
+        if isinstance(statArr[0], int):
+            return cast(List[Union[str, int]], data)[statArr[0]]
+        else:
+            return cast(Dict[str, Union[str, int]], data)[statArr[0]]
+
+
 def avgStat(data: str, stat: str) -> float:
     """
+    Find the average value of a stat over a given data set.
 
-    :param data: str:
-    :param stat: str:
-    :returns float:
-
-    """
-    with gzip.open(data) as reader:
-        sumVal: float = 0.0
-        count: float = 0.0
-        for job in jsonlines.Reader(reader, ujson.loads):
-            sumVal += float(job[stat])
-            count += 1.0
-        return sumVal / count
-
-
-def avgStat2D(data: str, firstD: str, secondD: str) -> float:
-    """
-
-    :param data: str:
-    :param firstD: str:
-    :param secondD: str:
-    :returns float:
+    :param data: str: The full file path of the data file
+    :param stat: str: The stat to average
+    :returns float: The resulting average
 
     """
     with gzip.open(data) as reader:
+        statArr: List[str] = stat.split()
         sumVal: float = 0.0
         count: float = 0.0
         for job in jsonlines.Reader(reader, ujson.loads):
-            sumVal += float(job[firstD][secondD])
+            sumVal += float(
+                getValMultiDimensional(
+                    job,
+                    list(map(lambda ele: int(ele) if ele.isdigit() else ele, statArr)),
+                )
+            )
             count += 1.0
         return sumVal / count
 
 
 def maxStat(data: str, stat: str) -> float:
     """
+    Find the maximum value of a stat over a given data set.
 
-    :param data: str:
-    :param stat: str:
-    :returns float:
-
-    """
-    maxVal: float = 0.0
-    with gzip.open(data) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
-            if maxVal < float(job[stat]):
-                maxVal = float(job[stat])
-    return maxVal
-
-
-def maxStat2D(data: str, firstD: str, secondD: str) -> float:
-    """
-
-    :param data: str:
-    :param firstD: str:
-    :param secondD: str:
-    :returns float:
+    :param data: str: The full file path of the data file
+    :param stat: str: The stat to find the max
+    :returns float: The resulting max value
 
     """
     maxVal: float = 0.0
+    statArr: List[str] = stat.split()
     with gzip.open(data) as reader:
         for job in jsonlines.Reader(reader, ujson.loads):
-            if maxVal < float(job[firstD][secondD]):
-                maxVal = float(job[firstD][secondD])
+            val: float = float(
+                getValMultiDimensional(
+                    job,
+                    list(map(lambda ele: int(ele) if ele.isdigit() else ele, statArr)),
+                )
+            )
+            if maxVal < val:
+                maxVal = val
     return maxVal
 
 
@@ -1818,27 +1816,17 @@ def minStat(data: str, stat: str) -> float:
 
     """
     with gzip.open(data) as reader:
+        statArr: List[str] = stat.split()
         minVal: float = sys.float_info.max
         for job in jsonlines.Reader(reader, ujson.loads):
-            if minVal > float(job[stat]):
-                minVal = float(job[stat])
-    return minVal
-
-
-def minStat2D(data: str, firstD: str, secondD: str) -> float:
-    """
-
-    :param data: str:
-    :param firstD: str:
-    :param secondD: str:
-    :returns float:
-
-    """
-    with gzip.open(data) as reader:
-        minVal: float = sys.float_info.max
-        for job in jsonlines.Reader(reader, ujson.loads):
-            if minVal > float(job[firstD][secondD]):
-                minVal = float(job[firstD][secondD])
+            val = float(
+                getValMultiDimensional(
+                    job,
+                    list(map(lambda ele: int(ele) if ele.isdigit() else ele, statArr)),
+                )
+            )
+            if minVal > val:
+                minVal = val
     return minVal
 
 
@@ -1851,25 +1839,19 @@ def medianStat(data: str, stat: str) -> float:
 
     """
     vals: List[float] = []
+    statArr: List[str] = stat.split()
     with gzip.open(data) as reader:
         for job in jsonlines.Reader(reader, ujson.loads):
-            vals.append(float(job[stat]))
-    return np.median(vals)
-
-
-def medianStat2D(data: str, firstD: str, secondD: str) -> float:
-    """
-
-    :param data: str:
-    :param firstD: str:
-    :param secondD: str:
-    :returns float:
-
-    """
-    vals: List[float] = []
-    with gzip.open(data) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
-            vals.append(job[firstD][secondD])
+            vals.append(
+                float(
+                    getValMultiDimensional(
+                        job,
+                        list(
+                            map(lambda ele: int(ele) if ele.isdigit() else ele, statArr)
+                        ),
+                    )
+                )
+            )
     return np.median(vals)
 
 
@@ -2007,31 +1989,7 @@ def statSummary(data: str, stat: str) -> str:
     )
 
 
-def statSummary2D(data: str, firstD: str, secondD: str) -> str:
-    """
-
-    :param data: str:
-    :param firstD: str:
-    :param secondD: str:
-    :returns str:
-
-    """
-    return (
-        str(avgStat2D(data, firstD, secondD))
-        + " ("
-        + str(minStat2D(data, firstD, secondD))
-        + ", "
-        + str(medianStat2D(data, firstD, secondD))
-        + ", "
-        + str(maxStat2D(data, firstD, secondD))
-        + ")"
-    )
-
-
-def sumStatWaves(
-    data: jobType,
-    stat: str,
-) -> int:
+def sumStatWaves(data: jobType, stat: str) -> int:
     """
 
     :param data: dict:
@@ -2053,105 +2011,25 @@ def getPlayersAttribute(data: jobType, attr: str) -> str:
     :returns str:
 
     """
+    attrsList: List[str] = attr.split()
     attrs: str = "{:<16}\t".format(
-        cast(Dict[str, Dict[str, Union[int, str]]], data)["my_data"][attr] or 0
-    )
-    for p in cast(Dict[str, List[Dict[str, Union[int, str]]]], data)["teammates"]:
-        attrs += "{:<16}\t".format(p[attr] or 0)
-    return attrs
-
-
-def getPlayersAttribute2D(data: jobType, firstD: str, secondD: Union[int, str]) -> str:
-    """
-
-    :param data: dict:
-    :param firstD: str:
-    :param secondD: Union[int, str]:
-    :returns str:
-
-    """
-    attrs: str = "{:<16}\t".format(
-        cast(Dict[str, Dict[str, Any]], data)["my_data"][firstD][secondD] or 0
+        getValMultiDimensional(
+            cast(Dict[str, Union[list, Dict[str, Any]]], data)["my_data"],
+            list(map(lambda ele: int(ele) if ele.isdigit() else ele, attrsList)),
+        )
+        or 0
     )
     for p in cast(Dict[str, List[Dict[str, Any]]], data)["teammates"]:
-        attrs += "{:<16}\t".format(p[firstD][secondD] or 0)
-    return attrs
-
-
-def getPlayersAttribute3D(
-    data: jobType,
-    firstD: str,
-    secondD: str,
-    thirdD: str,
-) -> str:
-    """
-
-    :param data: dict:
-    :param firstD: str:
-    :param secondD: str:
-    :param thirdD: str:
-    :returns str:
-
-    """
-    attrs: str = "{:<16}\t".format(
-        cast(Dict[str, Dict[str, Dict[str, Dict[str, Union[int, str]]]]], data)[
-            "my_data"
-        ][firstD][secondD][thirdD]
-        or 0
-    )
-    for p in cast(
-        Dict[str, List[Dict[str, Dict[str, Dict[str, Union[int, str]]]]]], data
-    )["teammates"]:
-        attrs += "{:<16}\t".format(p[firstD][secondD][thirdD] or 0)
-    return attrs
-
-
-def getPlayersAttribute4D(
-    data: jobType,
-    firstD: str,
-    secondD: int,
-    thirdD: str,
-    fourthD: str,
-) -> str:
-    """
-
-    :param data: dict:
-    :param firstD: str:
-    :param secondD: int:
-    :param thirdD: str:
-    :param fourthD: str:
-    :returns str:
-
-    """
-    attrs: str = "{:<16}\t".format(
-        cast(Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]], data["my_data"])[
-            firstD
-        ][secondD][thirdD][fourthD]
-        or 0
-    )
-    for p in cast(
-        List[Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]]], data["teammates"]
-    ):
-        if cast(Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]], p)[
-            firstD
-        ] is not None and secondD < len(
-            cast(Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]], p)[firstD]
-        ):
-            attrs += "{:<16}\t".format(
-                cast(Dict[str, List[Dict[str, Dict[str, Union[int, str]]]]], p)[firstD][
-                    secondD
-                ][thirdD][fourthD]
-                or 0
+        attrs += "{:<16}\t".format(
+            getValMultiDimensional(
+                p, list(map(lambda ele: int(ele) if ele.isdigit() else ele, attrsList))
             )
-        else:
-            attrs += "{:<16}\t".format("")
+            or 0
+        )
     return attrs
 
 
-def getWavesAttribute(
-    data: jobType,
-    attr: str,
-) -> str:
+def getWavesAttribute(data: jobType, attr: str) -> str:
     """
 
     :param data: dict:
@@ -2160,50 +2038,17 @@ def getWavesAttribute(
 
     """
     attrs: str = ""
+    attrsList: List[str] = attr.split()
     for i in range(0, 3):
-        if i < len(cast(Dict[str, List[Dict[str, Union[int, str]]]], data)["waves"]):
+        if i < len(cast(Dict[str, List[Dict[str, Any]]], data)["waves"]):
             attrs += "{:<16}\t".format(
-                cast(Dict[str, List[Dict[str, Union[int, str]]]], data)["waves"][i][
-                    attr
-                ]
-            )
-        else:
-            attrs += "{:<16}\t".format("")
-    return attrs
-
-
-def getWavesAttribute3D(
-    data: jobType,
-    firstD: str,
-    secondD: str,
-    thirdD: str,
-) -> str:
-    """
-
-    :param data: dict:
-    :param firstD: str:
-    :param secondD: str:
-    :param thirdD: str:
-    :returns str:
-
-    """
-    attrs: str = ""
-    for i in range(0, 3):
-        if (
-            i
-            < len(
-                cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)[
-                    "waves"
-                ]
-            )
-            and cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)[
-                "waves"
-            ][i][firstD]
-        ):
-            attrs += "{:<16}\t".format(
-                cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)[
-                    "waves"
-                ][i][firstD][secondD][thirdD]
+                getValMultiDimensional(
+                    cast(Dict[str, List[Dict[str, Any]]], data)["waves"],
+                    list(
+                        map(lambda ele: int(ele) if ele.isdigit() else ele, attrsList)
+                    ),
+                )
+                or 0
             )
         else:
             attrs += "{:<16}\t".format("")
@@ -2222,10 +2067,10 @@ def printOverview(path: str, data: str) -> None:
     print("Clear %: " + str(clearPercentage(path + data)))
     print("Wave 2 %: " + str(waveTwoPercentage(path + data)))
     print("Wave 1 %: " + str(waveOnePercentage(path + data)))
-    print("Golden: " + statSummary2D(path + data, "my_data", "golden_egg_delivered"))
-    print("Power Eggs: " + statSummary2D(path + data, "my_data", "power_egg_collected"))
-    print("Rescued: " + statSummary2D(path + data, "my_data", "rescue"))
-    print("Deaths: " + statSummary2D(path + data, "my_data", "death"))
+    print("Golden: " + statSummary(path + data, "my_data golden_egg_delivered"))
+    print("Power Eggs: " + statSummary(path + data, "my_data power_egg_collected"))
+    print("Rescued: " + statSummary(path + data, "my_data rescue"))
+    print("Deaths: " + statSummary(path + data, "my_data death"))
     print("Hazard Level: " + statSummary(path + data, "danger_rate"))
 
 
@@ -2277,12 +2122,12 @@ def printWaves(data: jobType) -> None:
     )
     print(
         "{:16}\t{:<}".format(
-            "Event", getWavesAttribute3D(data, "known_occurrence", "name", locale)
+            "Event", getWavesAttribute(data, "known_occurrence name " + locale)
         )
     )
     print(
         "{:16}\t{:<}".format(
-            "Water Level", getWavesAttribute3D(data, "water_level", "name", locale)
+            "Water Level", getWavesAttribute(data, "water_level name " + locale)
         )
     )
     print(
@@ -2328,7 +2173,7 @@ def printWeapons(data: jobType) -> None:
         print(
             "{:16}\t{:}".format(
                 "Wave {:1} Weapon".format(i + 1),
-                getPlayersAttribute4D(data, "weapons", i, "name", locale),
+                getPlayersAttribute(data, "weapons " + str(i) + " name " + locale),
             )
         )
 
@@ -2345,7 +2190,7 @@ def printSpecials(data: jobType) -> None:
         print(
             "{:16}\t{:}".format(
                 "Wave {:1} Special Use".format(i + 1),
-                getPlayersAttribute2D(data, "special_uses", i),
+                getPlayersAttribute(data, "special_uses " + str(i)),
             )
         )
 
@@ -2378,11 +2223,9 @@ def printPlayers(data: jobType) -> None:
     print(
         "{:16}\t{:}".format(
             "Special",
-            getPlayersAttribute3D(
+            getPlayersAttribute(
                 data,
-                "special",
-                "name",
-                locale,
+                "special " + "name " + locale,
             ),
         )
     )
