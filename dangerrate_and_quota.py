@@ -1,16 +1,14 @@
-from core import initAll, getArrayOfStat, getArrayOfStat2D
 import core
 import matplotlib.pyplot as plt
 import numpy
-import ujson
 from typing import List
 
 
 if __name__ == "__main__":
     path: str = "data/"
     data: str = "salmonAll.jl.gz"
-    dangerRates: List[float] = getArrayOfStat(path + data, "danger_rate")
-    quotas: List[float] = getArrayOfStat2D(path + data, "quota", 2)
+    dangerRates: List[float] = core.getArrayOfStat(path + data, "danger_rate")
+    quotas: List[float] = core.getArrayOfStat2D(path + data, "quota", 2)
     plt.figure(1)
     plt.scatter(quotas, dangerRates)
     m, b = numpy.polyfit(quotas, dangerRates, 1)
