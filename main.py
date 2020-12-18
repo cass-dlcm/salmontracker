@@ -201,7 +201,14 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
         for i in range(0, len(paths)):
             if mode == "With":
                 if comparison == "=":
-                    filters.append(clearWave(paths[i], dataFile[i], wave))
+                    filters.append(clearWave(paths[i], dataFile[i], wave)[0])
+                    os.remove(
+                        path
+                        + data[0:-6]
+                        + "/clearWaves/notEqual/"
+                        + str(wave)
+                        + ".jl.gz"
+                    )
                 elif comparison == ">":
                     filters.append(greaterThanClearWave(paths[i], dataFile[i], wave))
                 elif comparison == "<":
@@ -210,7 +217,10 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
                     sys.exit()
             elif mode == "Without":
                 if comparison == "=":
-                    filters.append(notClearWave(paths[i], dataFile[i], wave))
+                    filters.append(clearWave(paths[i], dataFile[i], wave)[1])
+                    os.remove(
+                        path + data[0:-6] + "/clearWaves/equal/" + str(wave) + ".jl.gz"
+                    )
                 elif comparison == ">":
                     filters.append(notGreaterThanClearWave(paths[i], dataFile[i], wave))
                 elif comparison == "<":
@@ -219,8 +229,9 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
                     sys.exit()
             elif mode == "Both":
                 if comparison == "=":
-                    filters.append(clearWave(paths[i], dataFile[i], wave))
-                    filters.append(notClearWave(paths[i], dataFile[i], wave))
+                    result = clearWave(paths[i], dataFile[i], wave)
+                    filters.append(result[0])
+                    filters.append(result[1])
                 elif comparison == ">":
                     filters.append(greaterThanClearWave(paths[i], dataFile[i], wave))
                     filters.append(notGreaterThanClearWave(paths[i], dataFile[i], wave))
