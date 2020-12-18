@@ -5,12 +5,10 @@ from core import (
     initUser,
     findPlayerIdByName,
     hasPlayer,
-    withoutPlayer,
     findRotationByWeaponsAndStage,
     duringRotationInt,
     notDuringRotationInt,
     hasWeapon,
-    doesntHaveWeapon,
     onStage,
     notOnStage,
     usesWeapon,
@@ -54,19 +52,22 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
     stat: str = input("Choose an attribute to run filter on: ")
     if stat == "Player":
         playerName: str = input("Enter a player name to run analysis on: ")
-        playerId: List[str] = findPlayerIdByName(paths[0], dataFile[0], playerName)
+        playerId: List[str] = findPlayerIdByName(paths[0] + dataFile[0], playerName)
         print(playerId)
         val: str = playerId[int(input("Pick the player id by index: "))]
         mode: str = input("Choose whether you want [With/Without/Both]: ")
         clearAfter: str = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(paths)):
             if mode == "With":
-                filters.append(hasPlayer(paths[i], dataFile[i], val))
+                filters.append(hasPlayer(paths[i], dataFile[i], val)[0])
             elif mode == "Without":
-                filters.append(withoutPlayer(paths[i], dataFile[i], val))
+                filters.append(hasPlayer(paths[i], dataFile[i], val)[1])
             elif mode == "Both":
-                filters.append(hasPlayer(paths[i], dataFile[i], val))
-                filters.append(withoutPlayer(paths[i], dataFile[i], val))
+                result: Tuple[Tuple[str, str], Tuple[str, str]] = hasPlayer(
+                    paths[i], dataFile[i], val
+                )
+                filters.append(result[0])
+                filters.append(result[1])
             else:
                 sys.exit()
             if clearAfter == "Y" and paths[i] != "data/":
@@ -101,12 +102,13 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
         clearAfter = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(paths)):
             if mode == "With":
-                filters.append(hasWeapon(paths[i], dataFile[i], val))
+                filters.append(hasWeapon(paths[i], dataFile[i], val)[0])
             elif mode == "Without":
-                filters.append(doesntHaveWeapon(paths[i], dataFile[i], val))
+                filters.append(hasWeapon(paths[i], dataFile[i], val)[1])
             elif mode == "Both":
-                filters.append(hasWeapon(paths[i], dataFile[i], val))
-                filters.append(doesntHaveWeapon(paths[i], dataFile[i], val))
+                result = hasWeapon(paths[i], dataFile[i], val)
+                filters.append(result[0])
+                filters.append(result[1])
             else:
                 sys.exit()
             if clearAfter == "Y" and paths[i] != "data/":

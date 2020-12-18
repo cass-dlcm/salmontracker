@@ -225,9 +225,11 @@ def hasJobs(path: str, data: str) -> bool:
             return False
 
 
-def hasPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
+def hasPlayer(
+    path: str, data: str, player: str
+) -> Tuple[Tuple[str, str], Tuple[str, str]]:
     """
-    Filter the jobs in the given data file to only jobs that contain the chosen player.
+    Filter the jobs in the given data file to jobs that contain the chosen player and jobs that don't.
 
     :param path: the directory path of the data file
     :type path: str
@@ -235,8 +237,8 @@ def hasPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
     :type data: str
     :param player: the Splatnet ID of the chosen player
     :type player: str
-    :return: the path and file name of the filtered file
-    :rtype: Tuple[str, str]
+    :return: the path and file name of the paired filtered files
+    :rtype: Tuple[Tuple[str, str], Tuple[str, str]
 
     """
     if not os.path.exists(path + data[0:-6] + "/playerId/" + player + ".jl.gz"):
@@ -248,49 +250,6 @@ def hasPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/playerId/")
         except FileExistsError:
             pass
-        with gzip.open(path + data) as reader:
-            if hasJobs(path, data):
-                with gzip.open(
-                    path + data[0:-6] + "/playerId/" + player + ".jl.gz",
-                    "at",
-                    encoding="utf8",
-                ) as writer:
-                    for var in jsonlines.Reader(reader, ujson.loads):
-                        if (
-                            var["teammates"][0]["splatnet_id"] == player
-                            or (
-                                len(var["teammates"]) > 1
-                                and var["teammates"][1]["splatnet_id"] == player
-                            )
-                            or (
-                                len(var["teammates"]) > 2
-                                and var["teammates"][2]["splatnet_id"] == player
-                            )
-                        ):
-                            ujson.dump(var, writer)
-                            writer.write("\n")
-    return (path + data[0:-6] + "/playerId/", player + ".jl.gz")
-
-
-def withoutPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
-    """
-    Filter the jobs in the given data file to only jobs that do not contain the chosen player.
-
-    :param path: the directory path of the data file
-    :type path: str
-    :param data: the file name of the data file
-    :type data: str
-    :param player: the Splatnet ID of the chosen player
-    :type player: str
-    :return: the path and file name of the filtered file
-    :rtype: Tuple[str, str]
-
-    """
-    if not os.path.exists(path + data[0:-6] + "/notPlayerId/" + player + ".jl.gz"):
-        try:
-            os.mkdir(path + data[0:-6] + "/")
-        except FileExistsError:
-            pass
         try:
             os.mkdir(path + data[0:-6] + "/notPlayerId/")
         except FileExistsError:
@@ -298,72 +257,36 @@ def withoutPlayer(path: str, data: str, player: str) -> Tuple[str, str]:
         with gzip.open(path + data) as reader:
             if hasJobs(path, data):
                 with gzip.open(
-                    path + data[0:-6] + "/notPlayerId/" + player + ".jl.gz",
+                    path + data[0:-6] + "/playerId/" + player + ".jl.gz",
                     "at",
                     encoding="utf8",
-                ) as writer:
-                    for var in jsonlines.Reader(reader, ujson.loads):
-                        if not (
-                            var["teammates"][0]["splatnet_id"] == player
-                            or (
-                                len(var["teammates"]) > 1
-                                and var["teammates"][1]["splatnet_id"] == player
-                            )
-                            or (
-                                len(var["teammates"]) > 2
-                                and var["teammates"][2]["splatnet_id"] == player
-                            )
-                        ):
-                            ujson.dump(var, writer)
-                            writer.write("\n")
-    return (path + data[0:-6] + "/notPlayerId/", player + ".jl.gz")
-
-
-def hasPlayerByName(path: str, data: str, player: str) -> Tuple[str, str]:
-    """
-    Filter the jobs in the given data file to only jobs that contain the chosen player.
-
-    :param path: the directory path of the data file
-    :type path: str
-    :param data: the file name of the data file
-    :type data: str
-    :param player: the name the chosen player
-    :type player: str
-    :return: the path and file name of the filtered file
-    :rtype: Tuple[str, str]
-
-    """
-    if not os.path.exists(path + data[0:-6] + "/player/" + player + ".jl.gz"):
-        try:
-            os.mkdir(path + data[0:-6] + "/")
-        except FileExistsError:
-            pass
-        try:
-            os.mkdir(path + data[0:-6] + "/player/")
-        except FileExistsError:
-            pass
-        with gzip.open(path + data) as reader:
-            if hasJobs(path, data):
-                with gzip.open(
-                    path + data[0:-6] + "/player/" + player + ".jl.gz",
-                    "at",
-                    encoding="utf8",
-                ) as writer:
-                    for var in jsonlines.Reader(reader, ujson.loads):
-                        if (
-                            var["teammates"][0]["name"] == player
-                            or (
-                                len(var["teammates"]) > 1
-                                and var["teammates"][1]["name"] == player
-                            )
-                            or (
-                                len(var["teammates"]) > 2
-                                and var["teammates"][2]["name"] == player
-                            )
-                        ):
-                            ujson.dump(var, writer)
-                            writer.write("\n")
-    return (path + data[0:-6] + "/player/", player + ".jl.gz")
+                ) as writerA:
+                    with gzip.open(
+                        path + data[0:-6] + "/notPlayerId/" + player + ".jl.gz",
+                        "at",
+                        encoding="utf8",
+                    ) as writerB:
+                        for var in jsonlines.Reader(reader, ujson.loads):
+                            if (
+                                var["teammates"][0]["splatnet_id"] == player
+                                or (
+                                    len(var["teammates"]) > 1
+                                    and var["teammates"][1]["splatnet_id"] == player
+                                )
+                                or (
+                                    len(var["teammates"]) > 2
+                                    and var["teammates"][2]["splatnet_id"] == player
+                                )
+                            ):
+                                ujson.dump(var, writerA)
+                                writerA.write("\n")
+                            else:
+                                ujson.dump(var, writerB)
+                                writerB.write("\n")
+    return (
+        (path + data[0:-6] + "/playerId/", player + ".jl.gz"),
+        (path + data[0:-6] + "/notPlayerId/", player + ".jl.gz"),
+    )
 
 
 def findRotationByWeaponsAndStage(
@@ -582,7 +505,9 @@ def findWeaponsAndStageByRotation(
     return result
 
 
-def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
+def hasWeapon(
+    path: str, data: str, weapon: str
+) -> Tuple[Tuple[str, str], Tuple[str, str]]:
     """
     Filter the data file to only jobs that contain the chosen weapon.
 
@@ -593,7 +518,7 @@ def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     :param weapon: the name or ID of the chosen weapon
     :type weapon: str
     :return: the path and filename of the output data file
-    :rtype: Tuple[str, str]
+    :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
 
     """
     if not os.path.exists(path + data[0:-6] + "/weapon/" + weapon + ".jl.gz"):
@@ -605,363 +530,201 @@ def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/weapon/")
         except FileExistsError:
             pass
-        with gzip.open(path + data) as reader:
-            with gzip.open(
-                path + data[0:-6] + "/weapon/" + weapon + ".jl.gz",
-                "at",
-                encoding="utf8",
-            ) as writer:
-                for var in jsonlines.Reader(reader, ujson.loads):
-                    if (
-                        var["my_data"]["weapons"][0]["key"] == weapon
-                        or (
-                            len(var["my_data"]["weapons"]) > 1
-                            and var["my_data"]["weapons"][1]["key"] == weapon
-                        )
-                        or (
-                            len(var["my_data"]["weapons"]) > 2
-                            and var["my_data"]["weapons"][2]["key"] == weapon
-                        )
-                        or (
-                            var["teammates"] is not None
-                            and (
-                                (
-                                    len(var["teammates"]) > 0
-                                    and var["teammates"][0]["weapons"] is not None
-                                    and (
-                                        var["teammates"][0]["weapons"][0]["key"]
-                                        == weapon
-                                        or (
-                                            len(var["teammates"][0]["weapons"]) > 1
-                                            and var["teammates"][0]["weapons"][1]["key"]
-                                            == weapon
-                                        )
-                                        or (
-                                            len(var["teammates"][0]["weapons"]) > 2
-                                            and var["teammates"][0]["weapons"][2]["key"]
-                                            == weapon
-                                        )
-                                    )
-                                )
-                                or (
-                                    len(var["teammates"]) > 1
-                                    and var["teammates"][1]["weapons"] is not None
-                                    and (
-                                        var["teammates"][1]["weapons"][0]["key"]
-                                        == weapon
-                                        or (
-                                            len(var["teammates"][1]["weapons"]) > 1
-                                            and var["teammates"][1]["weapons"][1]["key"]
-                                            == weapon
-                                        )
-                                        or (
-                                            len(var["teammates"][1]["weapons"]) > 2
-                                            and var["teammates"][1]["weapons"][2]["key"]
-                                            == weapon
-                                        )
-                                    )
-                                )
-                                or (
-                                    len(var["teammates"]) > 2
-                                    and var["teammates"][2]["weapons"] is not None
-                                    and (
-                                        var["teammates"][2]["weapons"][0]["key"]
-                                        == weapon
-                                        or (
-                                            len(var["teammates"][2]["weapons"]) > 1
-                                            and var["teammates"][2]["weapons"][1]["key"]
-                                            == weapon
-                                        )
-                                        or (
-                                            len(var["teammates"][2]["weapons"]) > 2
-                                            and var["teammates"][2]["weapons"][2]["key"]
-                                            == weapon
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                        or (var["my_data"]["weapons"][0]["name"][locale] == weapon)
-                        or (
-                            len(var["my_data"]["weapons"]) > 1
-                            and var["my_data"]["weapons"][1]["name"][locale] == weapon
-                        )
-                        or (
-                            len(var["my_data"]["weapons"]) > 2
-                            and var["my_data"]["weapons"][2]["name"][locale] == weapon
-                        )
-                        or (
-                            var["teammates"] is not None
-                            and (
-                                (
-                                    len(var["teammates"]) > 0
-                                    and var["teammates"][0]["weapons"] is not None
-                                    and (
-                                        var["teammates"][0]["weapons"][0]["name"][
-                                            locale
-                                        ]
-                                        == weapon
-                                        or (
-                                            len(var["teammates"][0]["weapons"]) > 1
-                                            and var["teammates"][0]["weapons"][1][
-                                                "name"
-                                            ][locale]
-                                            == weapon
-                                        )
-                                        or (
-                                            len(var["teammates"][0]["weapons"]) > 2
-                                            and var["teammates"][0]["weapons"][2][
-                                                "name"
-                                            ][locale]
-                                            == weapon
-                                        )
-                                    )
-                                )
-                                or (
-                                    len(var["teammates"]) > 1
-                                    and var["teammates"][1]["weapons"] is not None
-                                    and (
-                                        var["teammates"][1]["weapons"][0]["name"][
-                                            locale
-                                        ]
-                                        == weapon
-                                        or (
-                                            len(var["teammates"][1]["weapons"]) > 1
-                                            and var["teammates"][1]["weapons"][1][
-                                                "name"
-                                            ][locale]
-                                            == weapon
-                                        )
-                                        or (
-                                            len(var["teammates"][1]["weapons"]) > 2
-                                            and var["teammates"][1]["weapons"][2][
-                                                "name"
-                                            ][locale]
-                                            == weapon
-                                        )
-                                    )
-                                )
-                                or (
-                                    len(var["teammates"]) > 2
-                                    and var["teammates"][2]["weapons"] is not None
-                                    and (
-                                        var["teammates"][2]["weapons"][0]["name"][
-                                            locale
-                                        ]
-                                        == weapon
-                                        or (
-                                            len(var["teammates"][2]["weapons"]) > 1
-                                            and var["teammates"][2]["weapons"][1][
-                                                "name"
-                                            ][locale]
-                                            == weapon
-                                        )
-                                        or (
-                                            len(var["teammates"][2]["weapons"]) > 2
-                                            and var["teammates"][2]["weapons"][2][
-                                                "name"
-                                            ][locale]
-                                            == weapon
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    ):
-                        ujson.dump(var, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/weapon/", weapon + ".jl.gz")
-
-
-def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
-    """
-    Filter the data file to only jobs that do not contain the chosen weapon.
-
-    :param path: the directory path of the data file
-    :type path: str
-    :param data: the file name of the data file
-    :type data: str
-    :param weapon: the name or ID of the chosen weapon
-    :type weapon: str
-    :return: the path and filename of the output data file
-    :rtype: Tuple[str, str]
-
-    """
-    if not os.path.exists(path + data[0:-6] + "/notWeapon/" + weapon + ".jl.gz"):
-        try:
-            os.mkdir(path + data[0:-6] + "/")
-        except FileExistsError:
-            pass
         try:
             os.mkdir(path + data[0:-6] + "/notWeapon/")
         except FileExistsError:
             pass
         with gzip.open(path + data) as reader:
             with gzip.open(
-                path + data[0:-6] + "/notWeapon/" + weapon + ".jl.gz",
+                path + data[0:-6] + "/weapon/" + weapon + ".jl.gz",
                 "at",
                 encoding="utf8",
-            ) as writer:
-                for var in jsonlines.Reader(reader, ujson.loads):
-                    if not (
-                        var["my_data"]["weapons"][0]["key"] == weapon
-                        or (
-                            len(var["my_data"]["weapons"]) > 1
-                            and var["my_data"]["weapons"][1]["key"] == weapon
-                        )
-                        or (
-                            len(var["my_data"]["weapons"]) > 2
-                            and var["my_data"]["weapons"][2]["key"] == weapon
-                        )
-                        or (
-                            var["teammates"] is not None
-                            and (
-                                (
-                                    len(var["teammates"]) > 0
-                                    and var["teammates"][0]["weapons"] is not None
-                                    and (
-                                        var["teammates"][0]["weapons"][0]["key"]
-                                        == weapon
-                                        or (
-                                            len(var["teammates"][0]["weapons"]) > 1
-                                            and var["teammates"][0]["weapons"][1]["key"]
+            ) as writerA:
+                with gzip.open(
+                    path + data[0:-6] + "/notWeapon/" + weapon + ".jl.gz",
+                    "at",
+                    encoding="utf8",
+                ) as writerB:
+                    for var in jsonlines.Reader(reader, ujson.loads):
+                        if (
+                            var["my_data"]["weapons"][0]["key"] == weapon
+                            or (
+                                len(var["my_data"]["weapons"]) > 1
+                                and var["my_data"]["weapons"][1]["key"] == weapon
+                            )
+                            or (
+                                len(var["my_data"]["weapons"]) > 2
+                                and var["my_data"]["weapons"][2]["key"] == weapon
+                            )
+                            or (
+                                var["teammates"] is not None
+                                and (
+                                    (
+                                        len(var["teammates"]) > 0
+                                        and var["teammates"][0]["weapons"] is not None
+                                        and (
+                                            var["teammates"][0]["weapons"][0]["key"]
                                             == weapon
-                                        )
-                                        or (
-                                            len(var["teammates"][0]["weapons"]) > 2
-                                            and var["teammates"][0]["weapons"][2]["key"]
-                                            == weapon
-                                        )
-                                    )
-                                )
-                                or (
-                                    len(var["teammates"]) > 1
-                                    and var["teammates"][1]["weapons"] is not None
-                                    and (
-                                        var["teammates"][1]["weapons"][0]["key"]
-                                        == weapon
-                                        or (
-                                            len(var["teammates"][1]["weapons"]) > 1
-                                            and var["teammates"][1]["weapons"][1]["key"]
-                                            == weapon
-                                        )
-                                        or (
-                                            len(var["teammates"][1]["weapons"]) > 2
-                                            and var["teammates"][1]["weapons"][2]["key"]
-                                            == weapon
+                                            or (
+                                                len(var["teammates"][0]["weapons"]) > 1
+                                                and var["teammates"][0]["weapons"][1][
+                                                    "key"
+                                                ]
+                                                == weapon
+                                            )
+                                            or (
+                                                len(var["teammates"][0]["weapons"]) > 2
+                                                and var["teammates"][0]["weapons"][2][
+                                                    "key"
+                                                ]
+                                                == weapon
+                                            )
                                         )
                                     )
-                                )
-                                or (
-                                    len(var["teammates"]) > 2
-                                    and var["teammates"][2]["weapons"] is not None
-                                    and (
-                                        var["teammates"][2]["weapons"][0]["key"]
-                                        == weapon
-                                        or (
-                                            len(var["teammates"][2]["weapons"]) > 1
-                                            and var["teammates"][2]["weapons"][1]["key"]
+                                    or (
+                                        len(var["teammates"]) > 1
+                                        and var["teammates"][1]["weapons"] is not None
+                                        and (
+                                            var["teammates"][1]["weapons"][0]["key"]
                                             == weapon
+                                            or (
+                                                len(var["teammates"][1]["weapons"]) > 1
+                                                and var["teammates"][1]["weapons"][1][
+                                                    "key"
+                                                ]
+                                                == weapon
+                                            )
+                                            or (
+                                                len(var["teammates"][1]["weapons"]) > 2
+                                                and var["teammates"][1]["weapons"][2][
+                                                    "key"
+                                                ]
+                                                == weapon
+                                            )
                                         )
-                                        or (
-                                            len(var["teammates"][2]["weapons"]) > 2
-                                            and var["teammates"][2]["weapons"][2]["key"]
+                                    )
+                                    or (
+                                        len(var["teammates"]) > 2
+                                        and var["teammates"][2]["weapons"] is not None
+                                        and (
+                                            var["teammates"][2]["weapons"][0]["key"]
                                             == weapon
+                                            or (
+                                                len(var["teammates"][2]["weapons"]) > 1
+                                                and var["teammates"][2]["weapons"][1][
+                                                    "key"
+                                                ]
+                                                == weapon
+                                            )
+                                            or (
+                                                len(var["teammates"][2]["weapons"]) > 2
+                                                and var["teammates"][2]["weapons"][2][
+                                                    "key"
+                                                ]
+                                                == weapon
+                                            )
                                         )
                                     )
                                 )
                             )
-                        )
-                        or (var["my_data"]["weapons"][0]["name"][locale] == weapon)
-                        or (
-                            len(var["my_data"]["weapons"]) > 1
-                            and var["my_data"]["weapons"][1]["name"][locale] == weapon
-                        )
-                        or (
-                            len(var["my_data"]["weapons"]) > 2
-                            and var["my_data"]["weapons"][2]["name"][locale] == weapon
-                        )
-                        or (
-                            var["teammates"] is not None
-                            and (
-                                (
-                                    len(var["teammates"]) > 0
-                                    and var["teammates"][0]["weapons"] is not None
-                                    and (
-                                        var["teammates"][0]["weapons"][0]["name"][
-                                            locale
-                                        ]
-                                        == weapon
-                                        or (
-                                            len(var["teammates"][0]["weapons"]) > 1
-                                            and var["teammates"][0]["weapons"][1][
-                                                "name"
-                                            ][locale]
+                            or (var["my_data"]["weapons"][0]["name"][locale] == weapon)
+                            or (
+                                len(var["my_data"]["weapons"]) > 1
+                                and var["my_data"]["weapons"][1]["name"][locale]
+                                == weapon
+                            )
+                            or (
+                                len(var["my_data"]["weapons"]) > 2
+                                and var["my_data"]["weapons"][2]["name"][locale]
+                                == weapon
+                            )
+                            or (
+                                var["teammates"] is not None
+                                and (
+                                    (
+                                        len(var["teammates"]) > 0
+                                        and var["teammates"][0]["weapons"] is not None
+                                        and (
+                                            var["teammates"][0]["weapons"][0]["name"][
+                                                locale
+                                            ]
                                             == weapon
-                                        )
-                                        or (
-                                            len(var["teammates"][0]["weapons"]) > 2
-                                            and var["teammates"][0]["weapons"][2][
-                                                "name"
-                                            ][locale]
-                                            == weapon
-                                        )
-                                    )
-                                )
-                                or (
-                                    len(var["teammates"]) > 1
-                                    and var["teammates"][1]["weapons"] is not None
-                                    and (
-                                        var["teammates"][1]["weapons"][0]["name"][
-                                            locale
-                                        ]
-                                        == weapon
-                                        or (
-                                            len(var["teammates"][1]["weapons"]) > 1
-                                            and var["teammates"][1]["weapons"][1][
-                                                "name"
-                                            ][locale]
-                                            == weapon
-                                        )
-                                        or (
-                                            len(var["teammates"][1]["weapons"]) > 2
-                                            and var["teammates"][1]["weapons"][2][
-                                                "name"
-                                            ][locale]
-                                            == weapon
+                                            or (
+                                                len(var["teammates"][0]["weapons"]) > 1
+                                                and var["teammates"][0]["weapons"][1][
+                                                    "name"
+                                                ][locale]
+                                                == weapon
+                                            )
+                                            or (
+                                                len(var["teammates"][0]["weapons"]) > 2
+                                                and var["teammates"][0]["weapons"][2][
+                                                    "name"
+                                                ][locale]
+                                                == weapon
+                                            )
                                         )
                                     )
-                                )
-                                or (
-                                    len(var["teammates"]) > 2
-                                    and var["teammates"][2]["weapons"] is not None
-                                    and (
-                                        var["teammates"][2]["weapons"][0]["name"][
-                                            locale
-                                        ]
-                                        == weapon
-                                        or (
-                                            len(var["teammates"][2]["weapons"]) > 1
-                                            and var["teammates"][2]["weapons"][1][
-                                                "name"
-                                            ][locale]
+                                    or (
+                                        len(var["teammates"]) > 1
+                                        and var["teammates"][1]["weapons"] is not None
+                                        and (
+                                            var["teammates"][1]["weapons"][0]["name"][
+                                                locale
+                                            ]
                                             == weapon
+                                            or (
+                                                len(var["teammates"][1]["weapons"]) > 1
+                                                and var["teammates"][1]["weapons"][1][
+                                                    "name"
+                                                ][locale]
+                                                == weapon
+                                            )
+                                            or (
+                                                len(var["teammates"][1]["weapons"]) > 2
+                                                and var["teammates"][1]["weapons"][2][
+                                                    "name"
+                                                ][locale]
+                                                == weapon
+                                            )
                                         )
-                                        or (
-                                            len(var["teammates"][2]["weapons"]) > 2
-                                            and var["teammates"][2]["weapons"][2][
-                                                "name"
-                                            ][locale]
+                                    )
+                                    or (
+                                        len(var["teammates"]) > 2
+                                        and var["teammates"][2]["weapons"] is not None
+                                        and (
+                                            var["teammates"][2]["weapons"][0]["name"][
+                                                locale
+                                            ]
                                             == weapon
+                                            or (
+                                                len(var["teammates"][2]["weapons"]) > 1
+                                                and var["teammates"][2]["weapons"][1][
+                                                    "name"
+                                                ][locale]
+                                                == weapon
+                                            )
+                                            or (
+                                                len(var["teammates"][2]["weapons"]) > 2
+                                                and var["teammates"][2]["weapons"][2][
+                                                    "name"
+                                                ][locale]
+                                                == weapon
+                                            )
                                         )
                                     )
                                 )
                             )
-                        )
-                    ):
-                        ujson.dump(var, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/notWeapon/", weapon + ".jl.gz")
+                        ):
+                            ujson.dump(var, writerA)
+                            writerA.write("\n")
+                        else:
+                            ujson.dump(var, writerB)
+                            writerB.write("\n")
+    return (
+        (path + data[0:-6] + "/weapon/", weapon + ".jl.gz"),
+        (path + data[0:-6] + "/notWeapon/", weapon + ".jl.gz"),
+    )
 
 
 def usesWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
@@ -1074,13 +837,11 @@ def doesntUseWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     return (path + data[0:-6] + "/notUsesWeapon/", weapon + ".jl.gz")
 
 
-def findPlayerIdByName(path: str, data: str, player: str) -> List[str]:
+def findPlayerIdByName(data: str, player: str) -> List[str]:
     """
     Find all the recorded player IDs for a given player name.
 
-    :param path: the directory path of the data file
-    :type path: str
-    :param data: the file name of the data file
+    :param data: the full name of the data file
     :type data: str
     :param player: the player name to find
     :type player: str
@@ -1089,8 +850,7 @@ def findPlayerIdByName(path: str, data: str, player: str) -> List[str]:
 
     """
     foundIds: List[str] = []
-    matches = hasPlayerByName(path, data, player)
-    with gzip.open(matches[0] + matches[1]) as reader:
+    with gzip.open(data) as reader:
         for job in jsonlines.Reader(reader, ujson.loads):
             for teammate in job["teammates"]:
                 if (
@@ -1938,52 +1698,26 @@ def waveClearPercentageWithWeapon(data: str, weapon: str) -> float:
         return sumVal / count
 
 
-def clearPercentage(data: str) -> float:
+def wavePercentages(data: str) -> Tuple[float, float, float]:
     """
 
-    :param data: str:
-    :returns float:
-
-    """
-    with gzip.open(data) as reader:
-        sumVal: float = 0.0
-        count: float = 0.0
-        for job in jsonlines.Reader(reader, ujson.loads):
-            sumVal += int(job["clear_waves"] == 3)
-            count += 1.0
-        return sumVal / count
-
-
-def waveTwoPercentage(data: str) -> float:
-    """
-
-    :param data: str:
-    :returns float:
+    :param data:
+    :type data: str
+    :return:
+    :rtype: Tuple[float, float, float]
 
     """
     with gzip.open(data) as reader:
-        sumVal: float = 0.0
+        clearCount: float = 0.0
+        waveTwoCount: float = 0.0
+        waveOneCount: float = 0.0
         count: float = 0.0
         for job in jsonlines.Reader(reader, ujson.loads):
-            sumVal += int(job["clear_waves"] >= 2)
+            clearCount += int(job["clear_waves"] == 3)
+            waveTwoCount += int(job["clear_waves"] >= 2)
+            waveOneCount += int(job["clear_waves"] >= 1)
             count += 1.0
-        return sumVal / count
-
-
-def waveOnePercentage(data: str) -> float:
-    """
-
-    :param data: str:
-    :returns float:
-
-    """
-    with gzip.open(data) as reader:
-        sumVal: float = 0.0
-        count: float = 0.0
-        for job in jsonlines.Reader(reader, ujson.loads):
-            sumVal += int(job["clear_waves"] >= 1)
-            count += 1.0
-        return sumVal / count
+        return (clearCount / count, waveTwoCount / count, waveOneCount / count)
 
 
 def sumStatWaves(data: jobType, stat: str) -> int:
