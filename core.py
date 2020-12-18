@@ -369,7 +369,7 @@ def findRotationByWeaponsAndStage(
     :param data: str: the full path of the data file
     :type data: str
     :param weapons: the chosen weapons
-    :type weapons: Union[Tuple[str, str, str, str], List[str] 
+    :type weapons: Union[Tuple[str, str, str, str], List[str]
     :param stage: str: the chosen stage
     :type stage: str
     :return: a list of rotation IDs
