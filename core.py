@@ -104,7 +104,10 @@ def hasPlayer(
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]
 
     """
-    if not os.path.exists(path + data[0:-6] + "/playerId/" + player + ".jl.gz"):
+    if not (
+        os.path.exists(path + data[0:-6] + "/playerId/" + player + ".jl.gz")
+        and os.path.exists(path + data[0:-6] + "/notPlayerId/" + player + ".jl.gz")
+    ):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -384,7 +387,10 @@ def hasWeapon(
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
 
     """
-    if not os.path.exists(path + data[0:-6] + "/weapon/" + weapon + ".jl.gz"):
+    if not (
+        os.path.exists(path + data[0:-6] + "/weapon/" + weapon + ".jl.gz")
+        and os.path.exists(path + data[0:-6] + "/notWeapon/" + weapon + ".jl.gz")
+    ):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -606,7 +612,10 @@ def usesWeapon(
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
 
     """
-    if not os.path.exists(path + data[0:-6] + "/usesWeapon/" + weapon + ".jl.gz"):
+    if not (
+        os.path.exists(path + data[0:-6] + "/usesWeapon/" + weapon + ".jl.gz")
+        and os.path.exists(path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jl.gz")
+    ):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -688,7 +697,9 @@ def findPlayerIdByName(data: str, player: str) -> List[str]:
     return foundIds
 
 
-def onStage(path: str, data: str, stage: str) -> Tuple[str, str]:
+def onStage(
+    path: str, data: str, stage: str
+) -> Tuple[Tuple[str, str], Tuple[str, str]]:
     """
     Filter the data file to only jobs on the chosen stage.
 
@@ -702,7 +713,10 @@ def onStage(path: str, data: str, stage: str) -> Tuple[str, str]:
     :rtype: Tuple[str, str]
 
     """
-    if not os.path.exists(path + data[0:-6] + "/stage/" + stage + ".jl.gz"):
+    if not (
+        os.path.exists(path + data[0:-6] + "/stage/" + stage + ".jl.gz")
+        and os.path.exists(path + data[0:-6] + "/notStage/" + stage + ".jl.gz")
+    ):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -711,53 +725,30 @@ def onStage(path: str, data: str, stage: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/stage/")
         except FileExistsError:
             pass
-        with gzip.open(path + data) as reader:
-            with gzip.open(
-                path + data[0:-6] + "/stage/" + stage + ".jl.gz", "at", encoding="utf8"
-            ) as writer:
-                for var in jsonlines.Reader(reader, ujson.loads):
-                    if stage in (var["stage"]["key"], var["stage"]["name"][locale]):
-                        ujson.dump(var, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/stage/", stage + ".jl.gz")
-
-
-def notOnStage(path: str, data: str, stage: str) -> Tuple[str, str]:
-    """
-    Filter the data file to only jobs not on the chosen stage.
-
-    :param path: the directory path of the data file
-    :type path: str
-    :param data: the file name of the data file
-    :type data: str
-    :param stage: the name or ID of the chosen stage
-    :type stage: str
-    :returns: the path and filename of the output data file
-    :rtype: Tuple[str, str]
-
-    """
-    if not os.path.exists(path + data[0:-6] + "/notStage/" + stage + ".jl.gz"):
-        try:
-            os.mkdir(path + data[0:-6] + "/")
-        except FileExistsError:
-            pass
         try:
             os.mkdir(path + data[0:-6] + "/notStage/")
         except FileExistsError:
             pass
         with gzip.open(path + data) as reader:
             with gzip.open(
-                path + data[0:-6] + "/notStage/" + stage + ".jl.gz",
-                "at",
-                encoding="utf8",
-            ) as writer:
-                for var in jsonlines.Reader(reader, ujson.loads):
-                    if not (
-                        stage in (var["stage"]["key"], var["stage"]["name"][locale])
-                    ):
-                        ujson.dump(var, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/notStage/", stage + ".jl.gz")
+                path + data[0:-6] + "/stage/" + stage + ".jl.gz", "at", encoding="utf8"
+            ) as writerA:
+                with gzip.open(
+                    path + data[0:-6] + "/notStage/" + stage + ".jl.gz",
+                    "at",
+                    encoding="utf8",
+                ) as writerB:
+                    for var in jsonlines.Reader(reader, ujson.loads):
+                        if stage in (var["stage"]["key"], var["stage"]["name"][locale]):
+                            ujson.dump(var, writerA)
+                            writerA.write("\n")
+                        else:
+                            ujson.dump(var, writerB)
+                            writerB.write("\n")
+    return (
+        (path + data[0:-6] + "/stage/", stage + ".jl.gz"),
+        (path + data[0:-6] + "/notStage/", stage + ".jl.gz"),
+    )
 
 
 def withSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
