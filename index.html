@@ -34,27 +34,6 @@
 <div class="toctree-wrapper compound">
 </div>
 <span class="target" id="module-core"></span><dl class="function">
-<dt id="core.avgStat">
-<code class="descclassname">core.</code><code class="descname">avgStat</code><span class="sig-paren">(</span><em>data: str</em>, <em>stat: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.avgStat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find the average value of a stat over a given data set.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> – str: The full file path of the data file</li>
-<li><strong>stat</strong> – str: The stat to average</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"><p class="first last">The resulting average</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
 <dt id="core.clearPercentage">
 <code class="descclassname">core.</code><code class="descname">clearPercentage</code><span class="sig-paren">(</span><em>data: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.clearPercentage" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
@@ -124,14 +103,16 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – str: the directory path of the data file</li>
-<li><strong>data</strong> – str: the file name of the data file</li>
-<li><strong>weapon</strong> – str: The name or ID of the chosen weapon</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
+<li><strong>weapon</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the name or ID of the chosen weapon</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">The path and filename of the output data file</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data file</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
 </td>
 </tr>
 </tbody>
@@ -147,14 +128,16 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – str: the directory path of the data file</li>
-<li><strong>data</strong> – str: the file name of the data file</li>
-<li><strong>weapon</strong> – str: The name or ID of the chosen weapon</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
+<li><strong>weapon</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the name or ID of the chosen weapon</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">The path and filename of the output data file</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data file</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
 </td>
 </tr>
 </tbody>
@@ -268,14 +251,16 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – str: the directory path of the data file</li>
-<li><strong>data</strong> – str: the file name of the data file</li>
-<li><strong>player</strong> – str: the player name to find</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
+<li><strong>player</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the player name to find</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns List[str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the list of found player IDs</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the list of found player IDs</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
 </td>
 </tr>
 </tbody>
@@ -292,7 +277,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – str: the full path of the data file</li>
-<li><strong>weapons</strong> (<em>Union</em><em>[</em><em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>]</em><em>, </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>]</em>) – the chosen weapons</li>
+<li><strong>weapons</strong> (<em>Union</em><em>[</em><em>Tuple</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>]</em><em>, </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>]</em><em>]</em>) – the chosen weapons</li>
 <li><strong>stage</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – str: the chosen stage</li>
 </ul>
 </td>
@@ -315,10 +300,16 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the full path of the data file</li>
 <li><strong>rotation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the unix time of the rotation start</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the weapons and stage for that rotation</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Dict[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, Union[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]]</p>
 </td>
 </tr>
 </tbody>
@@ -339,26 +330,6 @@
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns list:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.getArrayOfStat2D">
-<code class="descclassname">core.</code><code class="descname">getArrayOfStat2D</code><span class="sig-paren">(</span><em>data: str, firstD: str, secondD: Union[str, int]</em><span class="sig-paren">)</span> &#x2192; list<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getArrayOfStat2D" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> – str:</li>
-<li><strong>firstD</strong> – str:</li>
-<li><strong>secondD</strong> – Union[str, int]:</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns ;ost:</th><td class="field-body"></td>
 </tr>
 </tbody>
 </table>
@@ -570,14 +541,16 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – str: the directory path of the data file</li>
-<li><strong>data</strong> – str: the file name of the data file</li>
-<li><strong>weapon</strong> – str: The name or ID of the chosen weapon</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
+<li><strong>weapon</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the name or ID of the chosen weapon</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">The path and filename of the output data file</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data file</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
 </td>
 </tr>
 </tbody>
@@ -671,65 +644,6 @@
 <tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.maxStat">
-<code class="descclassname">core.</code><code class="descname">maxStat</code><span class="sig-paren">(</span><em>data: str</em>, <em>stat: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.maxStat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find the maximum value of a stat over a given data set.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> – str: The full file path of the data file</li>
-<li><strong>stat</strong> – str: The stat to find the max</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"><p class="first last">The resulting max value</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.medianStat">
-<code class="descclassname">core.</code><code class="descname">medianStat</code><span class="sig-paren">(</span><em>data: str</em>, <em>stat: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.medianStat" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> – str:</li>
-<li><strong>stat</strong> – str:</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.minStat">
-<code class="descclassname">core.</code><code class="descname">minStat</code><span class="sig-paren">(</span><em>data: str</em>, <em>stat: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.minStat" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> – str:</li>
-<li><strong>stat</strong> – str:</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"></td>
 </tr>
 </tbody>
 </table>
@@ -928,14 +842,16 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – str: the directory path of the data file</li>
-<li><strong>data</strong> – str: the file name of the data file</li>
-<li><strong>stage</strong> – str: the name or ID of the chosen stage</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
+<li><strong>stage</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the name or ID of the chosen stage</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data file</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
 </td>
 </tr>
 </tbody>
@@ -951,14 +867,16 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – str: the directory path of the data file</li>
-<li><strong>data</strong> – str: the file name of the data file</li>
-<li><strong>stage</strong> – str: the name or ID of the chosen stage</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
+<li><strong>stage</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the name or ID of the chosen stage</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data file</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
 </td>
 </tr>
 </tbody>
@@ -993,16 +911,12 @@
 
 <dl class="function">
 <dt id="core.printOverview">
-<code class="descclassname">core.</code><code class="descname">printOverview</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printOverview" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">printOverview</code><span class="sig-paren">(</span><em>data: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printOverview" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>path</strong> – str:</li>
-<li><strong>data</strong> – str:</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – str:</td>
 </tr>
 </tbody>
 </table>
@@ -1062,18 +976,23 @@
 
 <dl class="function">
 <dt id="core.statSummary">
-<code class="descclassname">core.</code><code class="descname">statSummary</code><span class="sig-paren">(</span><em>data: str</em>, <em>stat: str</em><span class="sig-paren">)</span> &#x2192; str<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.statSummary" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<code class="descclassname">core.</code><code class="descname">statSummary</code><span class="sig-paren">(</span><em>data: str</em>, <em>stat: str</em><span class="sig-paren">)</span> &#x2192; Tuple[float, float, float, float]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.statSummary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the average, min, median, and max of a stat given a data file</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> – str:</li>
-<li><strong>stat</strong> – str:</li>
+<li><strong>data</strong> – str: The full file path of the data file</li>
+<li><strong>stat</strong> – str: The stat</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns str:</th><td class="field-body"></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The resulting average, min, median, and max</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a>]</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1107,14 +1026,16 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – str: the directory path of the data file</li>
-<li><strong>data</strong> – str: the file name of the data file</li>
-<li><strong>weapon</strong> – str: The name or ID of the chosen weapon</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
+<li><strong>weapon</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the name or ID of the chosen weapon</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">The path and filename of the output data file</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data file</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
 </td>
 </tr>
 </tbody>
