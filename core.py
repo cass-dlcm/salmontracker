@@ -934,7 +934,7 @@ def clearWave(
     :type data: str
     :param wave: the chosen clear wave
     :type wave: int
-    :return: the path and filename of the output data file
+    :return: the path and filename of the output data files
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
 
     """
@@ -982,18 +982,25 @@ def clearWave(
     )
 
 
-def greaterThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
+def greaterThanClearWave(
+    path: str, data: str, wave: int
+) -> Tuple[Tuple[str, str], Tuple[str, str]]:
     """
     Filter the data file to only jobs where the clear wave was greater than the chosen clear wave.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param wave: int: the chosen clear wave
-    :returns Tuple[str, str]: the path and filename of the output data file
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param wave: the chosen clear wave
+    :type wave: int
+    :return: the path and filename of the output data files
+    :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
 
     """
     if not os.path.exists(
-        path + data[0:-6] + "/clearWaves/greaterThan/" + str(wave) + ".jl.gz"
+        (path + data[0:-6] + "/clearWaves/greaterThan/" + str(wave) + ".jl.gz")
+        and (path + data[0:-6] + "/clearWaves/notGreaterThan/" + str(wave) + ".jl.gz")
     ):
         try:
             os.mkdir(path + data[0:-6] + "/")
@@ -1007,59 +1014,36 @@ def greaterThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/clearWaves/greaterThan/")
         except FileExistsError:
             pass
-        with gzip.open(path + data) as reader:
-            with gzip.open(
-                path + data[0:-6] + "/clearWaves/greaterThan/" + str(wave) + ".jl.gz",
-                "at",
-                encoding="utf8",
-            ) as writer:
-                for job in jsonlines.Reader(reader, ujson.loads):
-                    if job["clear_waves"] > wave:
-                        ujson.dump(job, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/clearWaves/greaterThan/", str(wave) + ".jl.gz")
-
-
-def notGreaterThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
-    """
-    Filter the data file to only jobs where the clear wave was not greater than the chosen clear wave.
-
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param wave: int: the chosen clear wave
-    :returns Tuple[str, str]: the path and filename of the output data file
-
-    """
-    if not os.path.exists(
-        path + data[0:-6] + "/clearWaves/notGreaterThan/" + str(wave) + ".jl.gz"
-    ):
-        try:
-            os.mkdir(path + data[0:-6] + "/")
-        except FileExistsError:
-            pass
-        try:
-            os.mkdir(path + data[0:-6] + "/clearWaves/")
-        except FileExistsError:
-            pass
         try:
             os.mkdir(path + data[0:-6] + "/clearWaves/notGreaterThan/")
         except FileExistsError:
             pass
         with gzip.open(path + data) as reader:
             with gzip.open(
-                path
-                + data[0:-6]
-                + "/clearWaves/notGreaterThan/"
-                + str(wave)
-                + ".jl.gz",
+                path + data[0:-6] + "/clearWaves/greaterThan/" + str(wave) + ".jl.gz",
                 "at",
                 encoding="utf8",
-            ) as writer:
-                for job in jsonlines.Reader(reader, ujson.loads):
-                    if not job["clear_waves"] > wave:
-                        ujson.dump(job, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/clearWaves/notGreaterThan/", str(wave) + ".jl.gz")
+            ) as writerA:
+                with gzip.open(
+                    path
+                    + data[0:-6]
+                    + "/clearWaves/notGreaterThan/"
+                    + str(wave)
+                    + ".jl.gz",
+                    "at",
+                    encoding="utf8",
+                ) as writerB:
+                    for job in jsonlines.Reader(reader, ujson.loads):
+                        if job["clear_waves"] > wave:
+                            ujson.dump(job, writerA)
+                            writerA.write("\n")
+                        else:
+                            ujson.dump(job, writerB)
+                            writerB.write("\n")
+    return (
+        (path + data[0:-6] + "/clearWaves/greaterThan/", str(wave) + ".jl.gz"),
+        (path + data[0:-6] + "/clearWaves/notGreaterThan/", str(wave) + ".jl.gz"),
+    )
 
 
 def lessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
@@ -2073,7 +2057,7 @@ if __name__ == "__main__":
         "Ruins of Ark Polaris",
     )
     print(rotations)
-    jobs: Tuple[str, str] = duringRotationInt(startFile[0], startFile[1], rotations[1])
+    jobs: Tuple[str, str] = duringRotationInt(startFile[0], startFile[1], rotations[1])[0]
     paths.append(jobs[0])
     dataFiles.append(jobs[1])
     jobs = dangerRate(jobs[0], jobs[1], "200.0")

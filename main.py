@@ -5,7 +5,6 @@ from core import (
     hasPlayer,
     findRotationByWeaponsAndStage,
     duringRotationInt,
-    notDuringRotationInt,
     hasWeapon,
     onStage,
     usesWeapon,
@@ -16,9 +15,7 @@ from core import (
     lessThanDangerRate,
     notLessThanDangerRate,
     clearWave,
-    notClearWave,
     greaterThanClearWave,
-    notGreaterThanClearWave,
     lessThanClearWave,
     notLessThanClearWave,
     withSpecial,
@@ -210,7 +207,14 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
                         + ".jl.gz"
                     )
                 elif comparison == ">":
-                    filters.append(greaterThanClearWave(paths[i], dataFile[i], wave))
+                    filters.append(greaterThanClearWave(paths[i], dataFile[i], wave)[0])
+                    os.remove(
+                        path
+                        + data[0:-6]
+                        + "/clearWaves/notGreaterThan/"
+                        + str(wave)
+                        + ".jl.gz"
+                    )
                 elif comparison == "<":
                     filters.append(lessThanClearWave(paths[i], dataFile[i], wave))
                 else:
@@ -222,7 +226,14 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
                         path + data[0:-6] + "/clearWaves/equal/" + str(wave) + ".jl.gz"
                     )
                 elif comparison == ">":
-                    filters.append(notGreaterThanClearWave(paths[i], dataFile[i], wave))
+                    filters.append(greaterThanClearWave(paths[i], dataFile[i], wave)[1])
+                    os.remove(
+                        path
+                        + data[0:-6]
+                        + "/clearWaves/greaterThan/"
+                        + str(wave)
+                        + ".jl.gz"
+                    )
                 elif comparison == "<":
                     filters.append(notLessThanClearWave(paths[i], dataFile[i], wave))
                 else:
@@ -230,16 +241,15 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
             elif mode == "Both":
                 if comparison == "=":
                     result = clearWave(paths[i], dataFile[i], wave)
-                    filters.append(result[0])
-                    filters.append(result[1])
                 elif comparison == ">":
-                    filters.append(greaterThanClearWave(paths[i], dataFile[i], wave))
-                    filters.append(notGreaterThanClearWave(paths[i], dataFile[i], wave))
+                    result = greaterThanClearWave(paths[i], dataFile[i], wave)
                 elif comparison == "<":
                     filters.append(lessThanClearWave(paths[i], dataFile[i], wave))
                     filters.append(notLessThanClearWave(paths[i], dataFile[i], wave))
                 else:
                     sys.exit()
+                filters.append(result[0])
+                filters.append(result[1])
             else:
                 sys.exit()
             if clearAfter == "Y" and paths[i] != "data/":
