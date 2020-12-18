@@ -33,6 +33,1169 @@
 <h1>Welcome to Salmontracker’s documentation!<a class="headerlink" href="#welcome-to-salmontracker-s-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
+<span class="target" id="module-core"></span><dl class="function">
+<dt id="core.avgStat">
+<code class="descclassname">core.</code><code class="descname">avgStat</code><span class="sig-paren">(</span><em>data: str</em>, <em>stat: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.avgStat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the average value of a stat over a given data set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – str: The full file path of the data file</li>
+<li><strong>stat</strong> – str: The stat to average</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"><p class="first last">The resulting average</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.clearPercentage">
+<code class="descclassname">core.</code><code class="descname">clearPercentage</code><span class="sig-paren">(</span><em>data: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.clearPercentage" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – str:</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.clearWave">
+<code class="descclassname">core.</code><code class="descname">clearWave</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>wave: int</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.clearWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the clear wave was the chosen clear wave.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>wave</strong> – int: the chosen clear wave</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.dangerRate">
+<code class="descclassname">core.</code><code class="descname">dangerRate</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rate: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.dangerRate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the danger rate was the chosen danger rate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>rate</strong> – int: the chosen danger rate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.doesntHaveWeapon">
+<code class="descclassname">core.</code><code class="descname">doesntHaveWeapon</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>weapon: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.doesntHaveWeapon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs that do not contain the chosen weapon.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>weapon</strong> – str: The name or ID of the chosen weapon</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">The path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.doesntUseWeapon">
+<code class="descclassname">core.</code><code class="descname">doesntUseWeapon</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>weapon: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.doesntUseWeapon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the player doesn’t use the chosen weapon.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>weapon</strong> – str: The name or ID of the chosen weapon</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">The path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.duringRotationInt">
+<code class="descclassname">core.</code><code class="descname">duringRotationInt</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rotation: int</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.duringRotationInt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the rotation was the chosen rotation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>rotation</strong> – int: the ID of the chosen rotation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.failReason">
+<code class="descclassname">core.</code><code class="descname">failReason</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>reason: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.failReason" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the fail reason was the chosen reason.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>reason</strong> – str: the chosen reason</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.fetchAll">
+<code class="descclassname">core.</code><code class="descname">fetchAll</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.fetchAll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch all Salmon Run results for all users and store it in the “data/salmonAll.jl.gz” file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.fetchAllUser">
+<code class="descclassname">core.</code><code class="descname">fetchAllUser</code><span class="sig-paren">(</span><em>api_key: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.fetchAllUser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch all Salmon Run results for the authenticated user and store it in the “data/salmon.jl.gz” file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>api_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the stat.ink API key for the user</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.fetchNewAll">
+<code class="descclassname">core.</code><code class="descname">fetchNewAll</code><span class="sig-paren">(</span><em>recentId: int</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.fetchNewAll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch new Salmon Run results for all users and store it in the “data/salmonAll.jl.gz” file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recentId</strong> – int: the ID of the most recently retrieved jobs</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.fetchNewUser">
+<code class="descclassname">core.</code><code class="descname">fetchNewUser</code><span class="sig-paren">(</span><em>api_key: str</em>, <em>recentId: int</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.fetchNewUser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch new Salmon Run results for authenticated user and store it in the “data/salmon.jl.gz” file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>api_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the stat.ink API key for the user</li>
+<li><strong>recentId</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the ID of the most recently retrieved job</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.findPlayerIdByName">
+<code class="descclassname">core.</code><code class="descname">findPlayerIdByName</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>player: str</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.findPlayerIdByName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find all the recorded player IDs for a given player name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>player</strong> – str: the player name to find</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns List[str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the list of found player IDs</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.findRotationByWeaponsAndStage">
+<code class="descclassname">core.</code><code class="descname">findRotationByWeaponsAndStage</code><span class="sig-paren">(</span><em>data: str, weapons: Union[Tuple[str, str, str, str], List[str]], stage: str</em><span class="sig-paren">)</span> &#x2192; List[int]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.findRotationByWeaponsAndStage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the rotation IDs for a rotation of the given weapons and stage in the given data file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – str: the full path of the data file</li>
+<li><strong>weapons</strong> – Union[Tuple[str, str, str, str], List[str]: the chosen weapons</li>
+<li><strong>stage</strong> – str: the chosen stage</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">List[int]: a list of rotation IDs</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.getArrayOfStat">
+<code class="descclassname">core.</code><code class="descname">getArrayOfStat</code><span class="sig-paren">(</span><em>data: str</em>, <em>stat: str</em><span class="sig-paren">)</span> &#x2192; list<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getArrayOfStat" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – str:</li>
+<li><strong>stat</strong> – str:</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns list:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.getArrayOfStat2D">
+<code class="descclassname">core.</code><code class="descname">getArrayOfStat2D</code><span class="sig-paren">(</span><em>data: str, firstD: str, secondD: Union[str, int]</em><span class="sig-paren">)</span> &#x2192; list<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getArrayOfStat2D" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – str:</li>
+<li><strong>firstD</strong> – str:</li>
+<li><strong>secondD</strong> – Union[str, int]:</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns ;ost:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.getBosses">
+<code class="descclassname">core.</code><code class="descname">getBosses</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]]</em><span class="sig-paren">)</span> &#x2192; List[Union[Dict[str, str], Dict[str, int]]]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getBosses" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – dict:</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns list:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.getPlayersAttribute">
+<code class="descclassname">core.</code><code class="descname">getPlayersAttribute</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]], attr: str</em><span class="sig-paren">)</span> &#x2192; str<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getPlayersAttribute" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – dict:</li>
+<li><strong>attr</strong> – str:</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns str:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.getValMultiDimensional">
+<code class="descclassname">core.</code><code class="descname">getValMultiDimensional</code><span class="sig-paren">(</span><em>data: Union[list, Dict[str, Any]], statArr: List[Union[str, int]]</em><span class="sig-paren">)</span> &#x2192; str<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getValMultiDimensional" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the chosen stat from the provided data structure, using recursion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>, </em><em>Dict</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>Any</em><em>]</em><em>]</em>) – the data structure to retrieve data from</li>
+<li><strong>statArr</strong> (<em>statArr: List</em><em>[</em><em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – the list of dimensions of the data structure needed to retrieve the stat</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the value retrieved</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.getWavesAttribute">
+<code class="descclassname">core.</code><code class="descname">getWavesAttribute</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]], attr: str</em><span class="sig-paren">)</span> &#x2192; str<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getWavesAttribute" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – dict:</li>
+<li><strong>attr</strong> – str:</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns str:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.greaterThanClearWave">
+<code class="descclassname">core.</code><code class="descname">greaterThanClearWave</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>wave: int</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.greaterThanClearWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the clear wave was greater than the chosen clear wave.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>wave</strong> – int: the chosen clear wave</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.greaterThanDangerRate">
+<code class="descclassname">core.</code><code class="descname">greaterThanDangerRate</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rate: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.greaterThanDangerRate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the danger rate was greater than the chosen danger rate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>rate</strong> – int: the chosen danger rate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.hasJobs">
+<code class="descclassname">core.</code><code class="descname">hasJobs</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.hasJobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a given data file has data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.hasPlayer">
+<code class="descclassname">core.</code><code class="descname">hasPlayer</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>player: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.hasPlayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the jobs in the given data file to only jobs that contain the chosen player.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>player</strong> – str: the Splatnet ID of the chosen player</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.hasPlayerByName">
+<code class="descclassname">core.</code><code class="descname">hasPlayerByName</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>player: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.hasPlayerByName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the jobs in the given data file to only jobs that contain the chosen player.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>player</strong> – str: the name of the chosen player</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.hasWeapon">
+<code class="descclassname">core.</code><code class="descname">hasWeapon</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>weapon: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.hasWeapon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs that contain the chosen weapon.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>weapon</strong> – str: The name or ID of the chosen weapon</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">The path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.initAll">
+<code class="descclassname">core.</code><code class="descname">initAll</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.initAll" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.initUser">
+<code class="descclassname">core.</code><code class="descname">initUser</code><span class="sig-paren">(</span><em>api_key: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.initUser" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>api_key</strong> – str:</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.jobsCount">
+<code class="descclassname">core.</code><code class="descname">jobsCount</code><span class="sig-paren">(</span><em>data: str</em><span class="sig-paren">)</span> &#x2192; int<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.jobsCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the total number of jobs in a given data set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – str: The full file path of the data file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns int:</th><td class="field-body">The number of jobs in the file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.lessThanClearWave">
+<code class="descclassname">core.</code><code class="descname">lessThanClearWave</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>wave: int</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.lessThanClearWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the clear wave was less than the chosen clear wave.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>wave</strong> – int: the chosen clear wave</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.lessThanDangerRate">
+<code class="descclassname">core.</code><code class="descname">lessThanDangerRate</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rate: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.lessThanDangerRate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the danger rate was less than the chosen danger rate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>rate</strong> – int: the chosen danger rate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.maxStat">
+<code class="descclassname">core.</code><code class="descname">maxStat</code><span class="sig-paren">(</span><em>data: str</em>, <em>stat: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.maxStat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the maximum value of a stat over a given data set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – str: The full file path of the data file</li>
+<li><strong>stat</strong> – str: The stat to find the max</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"><p class="first last">The resulting max value</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.medianStat">
+<code class="descclassname">core.</code><code class="descname">medianStat</code><span class="sig-paren">(</span><em>data: str</em>, <em>stat: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.medianStat" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – str:</li>
+<li><strong>stat</strong> – str:</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.minStat">
+<code class="descclassname">core.</code><code class="descname">minStat</code><span class="sig-paren">(</span><em>data: str</em>, <em>stat: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.minStat" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – str:</li>
+<li><strong>stat</strong> – str:</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.notClearWave">
+<code class="descclassname">core.</code><code class="descname">notClearWave</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>wave: int</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.notClearWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the clear wave was not the chosen clear wave.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>wave</strong> – int: the chosen clear wave</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.notDangerRate">
+<code class="descclassname">core.</code><code class="descname">notDangerRate</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rate: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.notDangerRate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the danger rate was not the chosen danger rate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>rate</strong> – int: the chosen danger rate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.notDuringRotationInt">
+<code class="descclassname">core.</code><code class="descname">notDuringRotationInt</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rotation: int</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.notDuringRotationInt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the rotation was not the chosen rotation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>rotation</strong> – int: the ID of the chosen rotation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.notFailReason">
+<code class="descclassname">core.</code><code class="descname">notFailReason</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>reason: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.notFailReason" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the fail reason was not the chosen reason.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>reason</strong> – str: the chosen reason</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.notGreaterThanClearWave">
+<code class="descclassname">core.</code><code class="descname">notGreaterThanClearWave</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>wave: int</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.notGreaterThanClearWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the clear wave was not greater than the chosen clear wave.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>wave</strong> – int: the chosen clear wave</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.notGreaterThanDangerRate">
+<code class="descclassname">core.</code><code class="descname">notGreaterThanDangerRate</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rate: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.notGreaterThanDangerRate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the danger rate was not greater than the chosen danger rate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>rate</strong> – int: the chosen danger rate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.notLessThanClearWave">
+<code class="descclassname">core.</code><code class="descname">notLessThanClearWave</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>wave: int</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.notLessThanClearWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the clear wave was not less than the chosen clear wave.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>wave</strong> – int: the chosen clear wave</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.notLessThanDangerRate">
+<code class="descclassname">core.</code><code class="descname">notLessThanDangerRate</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rate: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.notLessThanDangerRate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the danger rate was not less than the chosen danger rate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>rate</strong> – int: the chosen danger rate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.notOnStage">
+<code class="descclassname">core.</code><code class="descname">notOnStage</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>stage: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.notOnStage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs not on the chosen stage.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>stage</strong> – str: the name or ID of the chosen stage</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.onStage">
+<code class="descclassname">core.</code><code class="descname">onStage</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>stage: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.onStage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs on the chosen stage.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>stage</strong> – str: the name or ID of the chosen stage</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.printBosses">
+<code class="descclassname">core.</code><code class="descname">printBosses</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printBosses" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – dict:</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.printGeneral">
+<code class="descclassname">core.</code><code class="descname">printGeneral</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printGeneral" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – dict:</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.printOverview">
+<code class="descclassname">core.</code><code class="descname">printOverview</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printOverview" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> – str:</li>
+<li><strong>data</strong> – str:</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.printPlayers">
+<code class="descclassname">core.</code><code class="descname">printPlayers</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printPlayers" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – dict:</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.printSpecials">
+<code class="descclassname">core.</code><code class="descname">printSpecials</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printSpecials" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – dict:</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.printWaves">
+<code class="descclassname">core.</code><code class="descname">printWaves</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printWaves" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – dict:</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.printWeapons">
+<code class="descclassname">core.</code><code class="descname">printWeapons</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printWeapons" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – dict:</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.statSummary">
+<code class="descclassname">core.</code><code class="descname">statSummary</code><span class="sig-paren">(</span><em>data: str</em>, <em>stat: str</em><span class="sig-paren">)</span> &#x2192; str<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.statSummary" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – str:</li>
+<li><strong>stat</strong> – str:</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns str:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.sumStatWaves">
+<code class="descclassname">core.</code><code class="descname">sumStatWaves</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]], stat: str</em><span class="sig-paren">)</span> &#x2192; int<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.sumStatWaves" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – dict:</li>
+<li><strong>stat</strong> – str:</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns int:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.usesWeapon">
+<code class="descclassname">core.</code><code class="descname">usesWeapon</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>weapon: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.usesWeapon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the player uses the chosen weapon.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>weapon</strong> – str: The name or ID of the chosen weapon</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">The path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.waveClearPercentageWithWeapon">
+<code class="descclassname">core.</code><code class="descname">waveClearPercentageWithWeapon</code><span class="sig-paren">(</span><em>data: str</em>, <em>weapon: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.waveClearPercentageWithWeapon" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> – str:</li>
+<li><strong>weapon</strong> – str:</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.waveOnePercentage">
+<code class="descclassname">core.</code><code class="descname">waveOnePercentage</code><span class="sig-paren">(</span><em>data: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.waveOnePercentage" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – str:</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.waveTwoPercentage">
+<code class="descclassname">core.</code><code class="descname">waveTwoPercentage</code><span class="sig-paren">(</span><em>data: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.waveTwoPercentage" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – str:</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.withSpecial">
+<code class="descclassname">core.</code><code class="descname">withSpecial</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>special: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.withSpecial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the player had the chosen special.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>special</strong> – str: the name or ID of the chosen special</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.withoutPlayer">
+<code class="descclassname">core.</code><code class="descname">withoutPlayer</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>player: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.withoutPlayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the jobs in the given data file to only jobs that do not contain the chosen player.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>player</strong> – str: the Splatnet ID of the chosen player</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.withoutSpecial">
+<code class="descclassname">core.</code><code class="descname">withoutSpecial</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>special: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.withoutSpecial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the data file to only jobs where the player didn’t have the chosen special.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> – str: the directory path of the data file</li>
+<li><strong>data</strong> – str: the file name of the data file</li>
+<li><strong>special</strong> – str: the name or ID of the chosen special</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
