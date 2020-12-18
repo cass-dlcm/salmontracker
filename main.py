@@ -117,12 +117,13 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
         clearAfter = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(paths)):
             if mode == "With":
-                filters.append(usesWeapon(paths[i], dataFile[i], val))
+                filters.append(usesWeapon(paths[i], dataFile[i], val)[0])
             elif mode == "Without":
-                filters.append(doesntUseWeapon(paths[i], dataFile[i], val))
+                filters.append(usesWeapon(paths[i], dataFile[i], val)[1])
             elif mode == "Both":
-                filters.append(usesWeapon(paths[i], dataFile[i], val))
-                filters.append(doesntUseWeapon(paths[i], dataFile[i], val))
+                result = usesWeapon(paths[i], dataFile[i], val)
+                filters.append(result[0])
+                filters.append(result[1])
             else:
                 sys.exit()
             if clearAfter == "Y" and paths[i] != "data/":
