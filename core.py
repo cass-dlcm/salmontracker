@@ -2667,14 +2667,3 @@ if __name__ == "__main__":
     print()
     for a in range(0, len(paths)):
         os.remove(paths[a] + dataFiles[a])
-        # with gzip.open(jobs[0] + jobs[1]) as readerFile:
-        """for job in jsonlines.Reader(reader, ujson.loads):
-        printGeneral(job)
-        print()
-        printWaves(job)
-        print()
-        printPlayers(job)
-        print()
-        printBosses(job)
-        print()
-        print()"""
