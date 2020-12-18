@@ -1,8 +1,6 @@
 import core
 import sort_by_stat
 from core import (
-    initAll,
-    initUser,
     findPlayerIdByName,
     hasPlayer,
     findRotationByWeaponsAndStage,

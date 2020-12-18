@@ -67,6 +67,7 @@ jobType = Dict[
     ],
 ]
 
+
 def hasJobs(path: str, data: str) -> bool:
     """
     Check if a given data file has data.
@@ -1486,10 +1487,8 @@ def statSummary(data: str, stat: str) -> Tuple[float, float, float, float]:
             )
             sumVal += val
             count += 1.0
-            if maxVal < val:
-                maxVal = val
-            if minVal > val:
-                minVal = val
+            maxVal = max(maxVal, val)
+            minVal = min(minVal, val)
             vals.append(val)
         return (sumVal / count, minVal, np.median(vals), maxVal)
 
@@ -1677,7 +1676,6 @@ def printOverview(data: str) -> None:
             sys.float_info.max,
         ]
         vals: List[List[float]] = [[], [], [], [], [], []]
-        medians: List[float] = []
         count: int = 0
         for job in jsonlines.Reader(reader, ujson.loads):
             count += 1
@@ -1692,10 +1690,8 @@ def printOverview(data: str) -> None:
                     )
                 )
                 sumVal[i] += val
-                if maxVal[i] < val:
-                    maxVal[i] = val
-                if minVal[i] > val:
-                    minVal[i] = val
+                maxVal[i] = max(maxVal[i], val)
+                minVal[i] = min(minVal[i], val)
                 vals[i].append(val)
     print("Jobs: " + str(count))
     print("Average Waves: " + str(sumVal[0] / count))
