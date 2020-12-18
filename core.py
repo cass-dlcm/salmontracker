@@ -810,17 +810,26 @@ def withSpecial(
     )
 
 
-def failReason(path: str, data: str, reason: str) -> Tuple[str, str]:
+def failReason(
+    path: str, data: str, reason: str
+) -> Tuple[Tuple[str, str], Tuple[str, str]]:
     """
     Filter the data file to only jobs where the fail reason was the chosen reason.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param reason: str: the chosen reason
-    :returns Tuple[str, str]: the path and filename of the output data file
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param reason: the chosen reason
+    :type reason: str
+    :return: the path and filename of the output data file
+    :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
 
     """
-    if not os.path.exists(path + data[0:-6] + "/failReason/" + reason + ".jl.gz"):
+    if not (
+        os.path.exists(path + data[0:-6] + "/failReason/" + reason + ".jl.gz")
+        and os.path.exists(path + data[0:-6] + "/notFailReason/" + reason + ".jl.gz")
+    ):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -829,49 +838,32 @@ def failReason(path: str, data: str, reason: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/failReason/")
         except FileExistsError:
             pass
-        with gzip.open(path + data) as reader:
-            with gzip.open(
-                path + data[0:-6] + "/failReason/" + reason + ".jl.gz",
-                "at",
-                encoding="utf8",
-            ) as writer:
-                for var in jsonlines.Reader(reader, ujson.loads):
-                    if var["fail_reason"] == reason:
-                        ujson.dump(var, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/failReason/", reason + ".jl.gz")
-
-
-def notFailReason(path: str, data: str, reason: str) -> Tuple[str, str]:
-    """
-    Filter the data file to only jobs where the fail reason was not the chosen reason.
-
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param reason: str: the chosen reason
-    :returns Tuple[str, str]: the path and filename of the output data file
-
-    """
-    if not os.path.exists(path + data[0:-6] + "/notFailReason/" + reason + ".jl.gz"):
-        try:
-            os.mkdir(path + data[0:-6] + "/")
-        except FileExistsError:
-            pass
         try:
             os.mkdir(path + data[0:-6] + "/notFailReason/")
         except FileExistsError:
             pass
         with gzip.open(path + data) as reader:
             with gzip.open(
-                path + data[0:-6] + "/notFailReason/" + reason + ".jl.gz",
+                path + data[0:-6] + "/failReason/" + reason + ".jl.gz",
                 "at",
                 encoding="utf8",
-            ) as writer:
-                for var in jsonlines.Reader(reader, ujson.loads):
-                    if not var["fail_reason"] == reason:
-                        ujson.dump(var, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/notFailReason/", reason + ".jl.gz")
+            ) as writerA:
+                with gzip.open(
+                    path + data[0:-6] + "/failReason/" + reason + ".jl.gz",
+                    "at",
+                    encoding="utf8",
+                ) as writerB:
+                    for var in jsonlines.Reader(reader, ujson.loads):
+                        if var["fail_reason"] == reason:
+                            ujson.dump(var, writerA)
+                            writerA.write("\n")
+                        else:
+                            ujson.dump(var, writerB)
+                            writerB.write("\n")
+    return (
+        (path + data[0:-6] + "/failReason/", reason + ".jl.gz"),
+        (path + data[0:-6] + "/notFailReason/", reason + ".jl.gz"),
+    )
 
 
 def duringRotationInt(path: str, data: str, rotation: int) -> Tuple[str, str]:
