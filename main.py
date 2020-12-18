@@ -83,12 +83,15 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
         clearAfter = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(paths)):
             if mode == "With":
-                filters.append(duringRotationInt(paths[i], dataFile[i], rot))
+                filters.append(duringRotationInt(paths[i], dataFile[i], rot)[0])
+                os.remove(path + data[0:-6] + "/notRotation/" + str(rot) + ".jl.gz")
             elif mode == "Without":
-                filters.append(notDuringRotationInt(paths[i], dataFile[i], rot))
+                filters.append(duringRotationInt(paths[i], dataFile[i], rot)[1])
+                os.remove(path + data[0:-6] + "/rotation/" + str(rot) + ".jl.gz")
             elif mode == "Both":
-                filters.append(duringRotationInt(paths[i], dataFile[i], rot))
-                filters.append(notDuringRotationInt(paths[i], dataFile[i], rot))
+                result = duringRotationInt(paths[i], dataFile[i], rot)
+                filters.append(result[0])
+                filters.append(result[1])
             else:
                 sys.exit()
             if clearAfter == "Y" and paths[i] != "data/":
