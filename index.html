@@ -34,21 +34,6 @@
 <div class="toctree-wrapper compound">
 </div>
 <span class="target" id="module-core"></span><dl class="function">
-<dt id="core.clearPercentage">
-<code class="descclassname">core.</code><code class="descname">clearPercentage</code><span class="sig-paren">(</span><em>data: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.clearPercentage" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – str:</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
 <dt id="core.clearWave">
 <code class="descclassname">core.</code><code class="descname">clearWave</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>wave: int</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.clearWave" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter the data file to only jobs where the clear wave was the chosen clear wave.</p>
@@ -88,31 +73,6 @@
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.doesntHaveWeapon">
-<code class="descclassname">core.</code><code class="descname">doesntHaveWeapon</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>weapon: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.doesntHaveWeapon" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter the data file to only jobs that do not contain the chosen weapon.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
-<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
-<li><strong>weapon</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the name or ID of the chosen weapon</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data file</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
 </td>
 </tr>
 </tbody>
@@ -244,15 +204,14 @@
 
 <dl class="function">
 <dt id="core.findPlayerIdByName">
-<code class="descclassname">core.</code><code class="descname">findPlayerIdByName</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>player: str</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.findPlayerIdByName" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">findPlayerIdByName</code><span class="sig-paren">(</span><em>data: str</em>, <em>player: str</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.findPlayerIdByName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find all the recorded player IDs for a given player name.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
-<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the full name of the data file</li>
 <li><strong>player</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the player name to find</li>
 </ul>
 </td>
@@ -484,8 +443,8 @@
 
 <dl class="function">
 <dt id="core.hasPlayer">
-<code class="descclassname">core.</code><code class="descname">hasPlayer</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>player: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.hasPlayer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter the jobs in the given data file to only jobs that contain the chosen player.</p>
+<code class="descclassname">core.</code><code class="descname">hasPlayer</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>player: str</em><span class="sig-paren">)</span> &#x2192; Tuple[Tuple[str, str], Tuple[str, str]]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.hasPlayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the jobs in the given data file to jobs that contain the chosen player and jobs that don’t.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -497,35 +456,10 @@
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and file name of the filtered file</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and file name of the paired filtered files</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.hasPlayerByName">
-<code class="descclassname">core.</code><code class="descname">hasPlayerByName</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>player: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.hasPlayerByName" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter the jobs in the given data file to only jobs that contain the chosen player.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
-<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
-<li><strong>player</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the name the chosen player</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and file name of the filtered file</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
 </td>
 </tr>
 </tbody>
@@ -534,7 +468,7 @@
 
 <dl class="function">
 <dt id="core.hasWeapon">
-<code class="descclassname">core.</code><code class="descname">hasWeapon</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>weapon: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.hasWeapon" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">hasWeapon</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>weapon: str</em><span class="sig-paren">)</span> &#x2192; Tuple[Tuple[str, str], Tuple[str, str]]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.hasWeapon" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter the data file to only jobs that contain the chosen weapon.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -550,7 +484,7 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data file</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
 </td>
 </tr>
 </tbody>
@@ -1062,30 +996,17 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="core.waveOnePercentage">
-<code class="descclassname">core.</code><code class="descname">waveOnePercentage</code><span class="sig-paren">(</span><em>data: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.waveOnePercentage" title="Permalink to this definition">¶</a></dt>
+<dt id="core.wavePercentages">
+<code class="descclassname">core.</code><code class="descname">wavePercentages</code><span class="sig-paren">(</span><em>data: str</em><span class="sig-paren">)</span> &#x2192; Tuple[float, float, float]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.wavePercentages" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – str:</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.waveTwoPercentage">
-<code class="descclassname">core.</code><code class="descname">waveTwoPercentage</code><span class="sig-paren">(</span><em>data: str</em><span class="sig-paren">)</span> &#x2192; float<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.waveTwoPercentage" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – str:</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Tuple[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a>]</td>
 </tr>
 </tbody>
 </table>
@@ -1108,31 +1029,6 @@
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.withoutPlayer">
-<code class="descclassname">core.</code><code class="descname">withoutPlayer</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>player: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.withoutPlayer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter the jobs in the given data file to only jobs that do not contain the chosen player.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
-<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
-<li><strong>player</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the Splatnet ID of the chosen player</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and file name of the filtered file</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
 </td>
 </tr>
 </tbody>
