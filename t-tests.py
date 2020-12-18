@@ -1,17 +1,12 @@
 from core import (
-    initUser,
+    init,
     findPlayerIdByName,
     hasPlayer,
-    withoutPlayer,
     findRotationByWeaponsAndStage,
     duringRotationInt,
-    notDuringRotationInt,
     hasWeapon,
-    doesntHaveWeapon,
     onStage,
-    notOnStage,
     getArrayOfStat,
-    getArrayOfStat2D,
 )
 from scipy.stats import ttest_ind
 import numpy as np
@@ -20,7 +15,7 @@ import sys
 import json
 from typing import List, Union, Tuple
 
-initUser(json.load(open("keys.json", "r"))["statink_key"])
+init("User", json.load(open("keys.json", "r"))["statink_key"])
 path: str = "data/"
 data: str = "salmon.jsonl"
 print("Rotation")
@@ -28,16 +23,13 @@ print("Player")
 print("Weapon")
 print("Stage")
 stat: str = input("Choose a stat to run analysis on: ")
-withVal: Tuple[str, str] = ("", "")
-withoutVal: Tuple[str, str] = ("", "")
 if stat == "Player":
     playerId: List[str] = findPlayerIdByName(
-        path, data, input("Enter a player name to run analysis on: ")
+        path + data, input("Enter a player name to run analysis on: ")
     )
     print(playerId)
     val: str = playerId[int(input("Pick the player id by index: "))]
-    withVal = hasPlayer(path, data, val)
-    withoutVal = withoutPlayer(path, data, val)
+    result: Tuple[Tuple[str, str], Tuple[str, str]] = hasPlayer(path, data, val)
 elif stat == "Rotation":
     weapons: List[str] = []
     for i in range(0, 4):
@@ -48,18 +40,17 @@ elif stat == "Rotation":
     )
     print(rotations)
     rot: int = rotations[int(input("Pick the rotation id by index: "))]
-    withVal = duringRotationInt(path, data, rot)
-    withoutVal = notDuringRotationInt(path, data, rot)
+    result = duringRotationInt(path, data, rot)
 elif stat == "Weapon":
     val = input("Enter a weapon: ")
-    withVal = hasWeapon(path, data, val)
-    withoutVal = doesntHaveWeapon(path, data, val)
+    result = hasWeapon(path, data, val)
 elif stat == "Stage":
     val = input("Enter a stage: ")
-    withVal = onStage(path, data, val)
-    withoutVal = notOnStage(path, data, val)
+    result = onStage(path, data, val)
 else:
     sys.exit()
+withVal = result[0]
+withoutVal = result[1]
 withValClearWaves: List[float] = getArrayOfStat(withVal[0] + withVal[1], "clear_waves")
 withoutValClearWaves: List[float] = getArrayOfStat(
     withoutVal[0] + withoutVal[1], "clear_waves"
@@ -87,11 +78,11 @@ print("a - b = " + str(np.mean(withValDangerRate) - np.mean(withoutValDangerRate
 print("t = " + str(t))
 print("p = " + str(p))
 print()
-withValGoldenTotal: List[float] = getArrayOfStat2D(
-    withVal[0] + withVal[1], "my_data", "golden_egg_delivered"
+withValGoldenTotal: List[float] = getArrayOfStat(
+    withVal[0] + withVal[1], "my_data golden_egg_delivered"
 )
-withoutValGoldenTotal: List[float] = getArrayOfStat2D(
-    withoutVal[0] + withoutVal[1], "my_data", "golden_egg_delivered"
+withoutValGoldenTotal: List[float] = getArrayOfStat(
+    withoutVal[0] + withoutVal[1], "my_data golden_egg_delivered"
 )
 t, p = ttest_ind(withValGoldenTotal, withoutValGoldenTotal, equal_var=False)
 plt.figure(2)
@@ -107,11 +98,11 @@ print("a - b = " + str(np.mean(withValGoldenTotal) - np.mean(withoutValGoldenTot
 print("t = " + str(t))
 print("p = " + str(p))
 print()
-withValPowerTotal: List[float] = getArrayOfStat2D(
-    withVal[0] + withVal[1], "my_data", "power_egg_collected"
+withValPowerTotal: List[float] = getArrayOfStat(
+    withVal[0] + withVal[1], "my_data power_egg_collected"
 )
-withoutValPowerTotal: List[float] = getArrayOfStat2D(
-    withoutVal[0] + withoutVal[1], "my_data", "power_egg_collected"
+withoutValPowerTotal: List[float] = getArrayOfStat(
+    withoutVal[0] + withoutVal[1], "my_data power_egg_collected"
 )
 t, p = ttest_ind(withValPowerTotal, withoutValPowerTotal, equal_var=False)
 plt.figure(3)
