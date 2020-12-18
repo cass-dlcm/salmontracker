@@ -6,6 +6,7 @@ import jsonlines
 import sys
 from typing import Tuple, List, Union, Dict, cast, Optional, Any
 import gzip
+import shutil
 
 locale = "en_US"
 
@@ -140,6 +141,7 @@ def fetchNewUser(api_key: str, recentId: int) -> None:
         "http://stat.ink/api/v2/user-salmon", headers=headers, params=params
     ).json()
     if len(temp) > 0:
+        shutil.rmtree("data/salmon/")
         lastId: int = cast(List[Dict[str, int]], temp)[-1]["id"]
         print(lastId)
         with gzip.open("data/salmon.jl.gz", "at", encoding="utf8") as writer:
@@ -173,6 +175,7 @@ def fetchNewAll(recentId: int) -> None:
         "http://stat.ink/api/v2/salmon", params=params
     ).json()
     if len(temp) > 0:
+        shutil.rmtree("data/salmonAll/")
         lastId: int = cast(List[Dict[str, int]], temp)[-1]["id"]
         print(lastId)
         with gzip.open("data/salmonAll.jl.gz", "at", encoding="utf8") as writer:

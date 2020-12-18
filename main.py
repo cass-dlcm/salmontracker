@@ -1,6 +1,6 @@
-import salmontracker
+import core
 import sort_by_stat
-from salmontracker import (
+from core import (
     initAll,
     initUser,
     findPlayerIdByName,
@@ -248,12 +248,12 @@ def printOverview(paths: List[str], dataFile: List[str]):
     which: str = input("Would you like to print a [SpecificList/AllLists]: ")
     if which == "AllLists":
         for i in range(0, len(paths)):
-            salmontracker.printOverview(paths[i], dataFile[i])
+            core.printOverview(paths[i], dataFile[i])
     elif which == "SpecificList":
         for i in range(0, len(paths)):
             print(paths[i] + dataFile[i])
         chosenList: int = int(input("Which list (by index): "))
-        salmontracker.printOverview(paths[chosenList], dataFile[chosenList])
+        core.printOverview(paths[chosenList], dataFile[chosenList])
         print()
     else:
         sys.exit()
@@ -262,13 +262,13 @@ def printOverview(paths: List[str], dataFile: List[str]):
 def printAllJobs(dataFile: str):
     with jsonlines.open(dataFile, mode="r") as reader:
         for job in reader:
-            salmontracker.printGeneral(job)
+            core.printGeneral(job)
             print()
-            salmontracker.printWaves(job)
+            core.printWaves(job)
             print()
-            salmontracker.printPlayers(job)
+            core.printPlayers(job)
             print()
-            salmontracker.printBosses(job)
+            core.printBosses(job)
             print()
             print()
 
@@ -293,10 +293,8 @@ def hypothesisTesting(paths: List[str], dataFile: List[str]):
     first: int = int(input("Which is the first list you'd like to use (by index): "))
     second: int = int(input("Which is the first list you'd like to use (by index): "))
     stat: str = input("Which stat would you like to test: ")
-    firstStat: List[float] = salmontracker.getArrayOfStat(
-        paths[first] + dataFile[first], stat
-    )
-    secondStat: List[float] = salmontracker.getArrayOfStat(
+    firstStat: List[float] = core.getArrayOfStat(paths[first] + dataFile[first], stat)
+    secondStat: List[float] = core.getArrayOfStat(
         paths[second] + dataFile[second], stat
     )
     t, p = ttest_ind(firstStat, secondStat, equal_var=False)
@@ -357,16 +355,14 @@ def waveClearPercentageWithWeapon(paths: List[str], dataFile: List[str]):
                 weapon
                 + ": "
                 + str(
-                    salmontracker.waveClearPercentageWithWeapon(
-                        paths[i] + dataFile[i], weapon
-                    )
+                    core.waveClearPercentageWithWeapon(paths[i] + dataFile[i], weapon)
                 )
             )
     elif which == "SpecificList":
         for i in range(0, len(paths)):
             print(paths[i] + dataFile[i])
         chosenList = int(input("Which list (by index): "))
-        salmontracker.waveClearPercentageWithWeapon(
+        core.waveClearPercentageWithWeapon(
             paths[chosenList] + dataFile[chosenList], weapon
         )
         print()

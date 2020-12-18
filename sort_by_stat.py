@@ -1,5 +1,5 @@
-import salmontracker
-from salmontracker import (
+import core
+from core import (
     hasJobs,
     locale,
     hasWeapon,
@@ -151,16 +151,16 @@ def sortRotation(path: str, data: str, stat: str) -> None:
         result: Dict[
             str, Union[int, float, Union[None, Dict[str, Union[str, List[str]]]]]
         ] = {}
-        withVal: Tuple[str, str] = salmontracker.duringRotationInt(path, data, rotation)
+        withVal: Tuple[str, str] = core.duringRotationInt(path, data, rotation)
         if hasJobs(withVal[0], withVal[1]):
-            withoutVal: Tuple[str, str] = salmontracker.notDuringRotationInt(
+            withoutVal: Tuple[str, str] = core.notDuringRotationInt(
                 path, data, rotation
             )
             if (hasJobs(withVal[0], withVal[1])) and (
                 hasJobs(withoutVal[0], withoutVal[1])
             ):
                 result["name"] = rotation
-                result["data"] = salmontracker.findWeaponsAndStageByRotation(
+                result["data"] = core.findWeaponsAndStageByRotation(
                     withVal[0] + withVal[1], rotation
                 )
                 result["value"] = avgStat(withVal[0] + withVal[1], stat) - avgStat(
@@ -175,8 +175,8 @@ def sortRotation(path: str, data: str, stat: str) -> None:
 
 
 if __name__ == "__main__":
-    # fullPath: Tuple[str, str] = salmontracker.initUser(ujson.load(open("keys.json", "r"))["statink_key"])
-    fullPath: Tuple[str, str] = salmontracker.initAll()
+    # fullPath: Tuple[str, str] = core.initUser(ujson.load(open("keys.json", "r"))["statink_key"])
+    fullPath: Tuple[str, str] = core.initAll()
     filePath: str = fullPath[0]
     dataFile: str = fullPath[1]
     # sortStages(filePath + dataFile, "clear_waves")

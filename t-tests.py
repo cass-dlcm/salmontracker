@@ -1,4 +1,4 @@
-from salmontracker import (
+from core import (
     initUser,
     findPlayerIdByName,
     hasPlayer,

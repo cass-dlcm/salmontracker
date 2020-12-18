@@ -1,4 +1,4 @@
-from salmontracker import initUser, getArrayOfStat, getArrayOfStat2D
+from core import initUser, getArrayOfStat, getArrayOfStat2D
 import matplotlib.pyplot as plt
 import numpy
 import json
