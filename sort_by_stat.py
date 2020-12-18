@@ -3,7 +3,6 @@ from core import (
     hasJobs,
     locale,
     hasWeapon,
-    doesntHaveWeapon,
     statSummary,
     grizzcoWeapons,
 )
@@ -46,13 +45,14 @@ def sortWeapons(path: str, data: str, stat: str) -> None:
     for weapon in weaponsList:
         print(weapon["key"])
         result: Dict[str, Union[str, float]] = {}
-        withVal: Tuple[str, str] = hasWeapon(path, data, cast(str, weapon["main_ref"]))
+        filters: Tuple[Tuple[str, str], Tuple[str, str]] = hasWeapon(
+            path, data, cast(str, weapon["main_ref"])
+        )
+        withVal: Tuple[str, str] = filters[0]
+        withoutVal: Tuple[str, str] = filters[1]
         if hasJobs(withVal[0], withVal[1]) and not hasVal(
             cast(List[Dict[str, str]], results), cast(str, weapon["main_ref"])
         ):
-            withoutVal: Tuple[str, str] = doesntHaveWeapon(
-                path, data, cast(str, weapon["main_ref"])
-            )
             if (hasJobs(withVal[0], withVal[1])) and (
                 hasJobs(withoutVal[0], withoutVal[1])
             ):
@@ -65,6 +65,7 @@ def sortWeapons(path: str, data: str, stat: str) -> None:
                 results.append(result)
         elif not hasJobs(withVal[0], withVal[1]):
             os.remove(withVal[0] + withVal[1])
+            os.remove(withoutVal[0] + withoutVal[1])
     pprint.pprint(sorted(results, key=lambda val: val["value"]))
 
 
@@ -178,7 +179,7 @@ def sortRotation(path: str, data: str, stat: str) -> None:
 
 if __name__ == "__main__":
     # fullPath: Tuple[str, str] = core.initUser(ujson.load(open("keys.json", "r"))["statink_key"])
-    fullPath: Tuple[str, str] = core.initAll()
+    fullPath: Tuple[str, str] = core.init("All")
     filePath: str = fullPath[0]
     dataFile: str = fullPath[1]
     # sortStages(filePath + dataFile, "clear_waves")

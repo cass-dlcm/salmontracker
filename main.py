@@ -408,18 +408,11 @@ if __name__ == "__main__":
     print("All")
     print("User")
     scope: str = input("Pick an analysis scope: ")
-    path: str = ""
-    data: str = ""
-    if scope == "All":
-        dataFileStart = initAll()
-        path = dataFileStart[0]
-        data = dataFileStart[1]
-    elif scope == "User":
-        dataFileStart = initUser(ujson.load(open("keys.json", "r"))["statink_key"])
-        path = dataFileStart[0]
-        data = dataFileStart[1]
-    else:
-        sys.exit()
+    dataFileStart: Tuple[str, str] = core.init(
+        scope, ujson.load(open("keys.json", "r"))["statink_key"]
+    )
+    path: str = dataFileStart[0]
+    data: str = dataFileStart[1]
     currentPaths: List[str] = ["data/"]
     allPaths: List[str] = []
     dataFiles: List[str] = ["salmonAll.jl.gz"]

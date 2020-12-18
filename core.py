@@ -67,144 +67,6 @@ jobType = Dict[
     ],
 ]
 
-
-def fetchAllUser(api_key: str) -> None:
-    """Fetch all Salmon Run results for the authenticated user and store it in the "data/salmon.jl.gz" file.
-
-    :param api_key: the stat.ink API key for the user
-    :type api_key: str
-
-    """
-    headers: Dict[str, str] = {"Authorization": "Bearer {}".format(api_key)}
-    prevLastId: int = 0
-    params: Dict[str, str] = {"order": "asc"}
-    temp: List[jobType] = requests.get(
-        "http://stat.ink/api/v2/user-salmon", headers=headers, params=params
-    ).json()
-    lastId: int = cast(List[Dict[str, int]], temp)[-1]["id"]
-    print(lastId)
-    with gzip.open("data/salmon.jl.gz", "at", encoding="utf8") as writer:
-        while lastId != prevLastId:
-            for job in temp:
-                ujson.dump(job, writer)
-                writer.write("\n")
-            params["newer_than"] = str(lastId)
-            result = requests.get(
-                "http://stat.ink/api/v2/user-salmon", headers=headers, params=params
-            )
-            print(result.url)
-            print(result)
-            temp = result.json()
-            prevLastId = lastId
-            if len(temp) > 0:
-                lastId = cast(List[Dict[str, int]], temp)[-1]["id"]
-            print(lastId)
-
-
-def fetchAll() -> None:
-    """Fetch all Salmon Run results for all users and store it in the "data/salmonAll.jl.gz" file."""
-    prevLastId: int = 0
-    params: Dict[str, str] = {"order": "asc"}
-    temp: List[jobType] = requests.get(
-        "http://stat.ink/api/v2/salmon", params=params
-    ).json()
-    lastId: int = cast(List[Dict[str, int]], temp)[-1]["id"]
-    print(lastId)
-    with gzip.open("data/salmonAll.jl.gz", "at", encoding="utf8") as writer:
-        while lastId != prevLastId:
-            for job in temp:
-                ujson.dump(job, writer)
-                writer.write("\n")
-            print(os.path.getsize("data/salmonAll.jl.gz"))
-            params["newer_than"] = str(lastId)
-            result = requests.get("http://stat.ink/api/v2/salmon", params=params)
-            print(result.url)
-            print(result)
-            temp = result.json()
-            prevLastId = lastId
-            if len(temp) > 0:
-                lastId = cast(List[Dict[str, int]], temp)[-1]["id"]
-            print(lastId)
-
-
-def fetchNewUser(api_key: str, recentId: int) -> None:
-    """
-    Fetch new Salmon Run results for authenticated user and store it in the "data/salmon.jl.gz" file.
-
-    :param api_key: the stat.ink API key for the user
-    :type api_key: str
-    :param recentId: the ID of the most recently retrieved job
-    :type recentId: int
-
-    """
-    headers: Dict[str, str] = {"Authorization": "Bearer {}".format(api_key)}
-    prevLastId: int = 0
-    params: Dict[str, str] = {"order": "asc", "newer_than": str(recentId)}
-    temp: List[jobType] = requests.get(
-        "http://stat.ink/api/v2/user-salmon", headers=headers, params=params
-    ).json()
-    if len(temp) > 0:
-        try:
-            shutil.rmtree("data/salmon/")
-        except FileNotFoundError:
-            pass
-        lastId: int = cast(List[Dict[str, int]], temp)[-1]["id"]
-        print(lastId)
-        with gzip.open("data/salmon.jl.gz", "at", encoding="utf8") as writer:
-            while lastId != prevLastId:
-                for job in temp:
-                    ujson.dump(job, writer)
-                    writer.write("\n")
-                params["newer_than"] = str(lastId)
-                result = requests.get(
-                    "http://stat.ink/api/v2/user-salmon", headers=headers, params=params
-                )
-                print(result.url)
-                print(result)
-                temp = result.json()
-                prevLastId = lastId
-                if len(temp) > 0:
-                    lastId = cast(List[Dict[str, int]], temp)[-1]["id"]
-                print(lastId)
-
-
-def fetchNewAll(recentId: int) -> None:
-    """
-    Fetch new Salmon Run results for all users and store it in the "data/salmonAll.jl.gz" file.
-
-    :param recentId: the ID of the most recently retrieved jobs
-    :type recentId: int
-
-    """
-    prevLastId: int = 0
-    params: Dict[str, str] = {"order": "asc", "newer_than": str(recentId)}
-    temp: List[jobType] = requests.get(
-        "http://stat.ink/api/v2/salmon", params=params
-    ).json()
-    if len(temp) > 0:
-        try:
-            shutil.rmtree("data/salmonAll/")
-        except FileNotFoundError:
-            pass
-        lastId: int = cast(List[Dict[str, int]], temp)[-1]["id"]
-        print(lastId)
-        with gzip.open("data/salmonAll.jl.gz", "at", encoding="utf8") as writer:
-            while lastId != prevLastId:
-                for job in temp:
-                    ujson.dump(job, writer)
-                    writer.write("\n")
-                print(os.path.getsize("data/salmonAll.jl.gz"))
-                params["newer_than"] = str(lastId)
-                result = requests.get("http://stat.ink/api/v2/salmon", params=params)
-                print(result.url)
-                print(result)
-                temp = result.json()
-                prevLastId = lastId
-                if len(temp) > 0:
-                    lastId = cast(List[Dict[str, int]], temp)[-1]["id"]
-                print(lastId)
-
-
 def hasJobs(path: str, data: str) -> bool:
     """
     Check if a given data file has data.
@@ -2223,72 +2085,92 @@ def getArrayOfStat(data: str, stat: str) -> list:
         return results
 
 
-def initAll() -> Tuple[str, str]:
-    """
-
-    :returns Tuple[str, str]:
-
-    """
-    if os.path.exists("data/salmonAll.jl.gz"):
+def init(mode: str, api_key: str = None) -> Tuple[str, str]:
+    headers: Dict[str, str] = {}
+    if mode == "All":
+        fileName: str = "data/salmonAll.jl.gz"
+        url: str = "http://stat.ink/api/v2/salmon"
+    elif mode == "User":
+        fileName = "data/salmon.jl.gz"
+        url = "http://stat.ink/api/v2/user-salmon"
+        headers = {"Authorization": "Bearer {}".format(api_key)}
+    if os.path.exists(fileName):
         recentId = 0
         try:
-            with gzip.open("data/salmonAll.jl.gz") as reader:
+            with gzip.open(fileName) as reader:
                 with gzip.open(
-                    "data/salmonAllTemp.jl.gz", "at", encoding="utf8"
+                    fileName[0:-6] + "Temp.jl.gz", "at", encoding="utf8"
                 ) as writer:
                     for line in jsonlines.Reader(reader, ujson.loads):
                         ujson.dump(line, writer)
                         writer.write("\n")
                         recentId = line["id"]
-                os.remove("data/salmonAllTemp.jl.gz")
+            os.remove(fileName[0:-6] + "Temp.jl.gz")
         except jsonlines.jsonlines.InvalidLineError:
-            os.replace(r"data/salmonAllTemp.jl.gz", r"data/salmonAll.jl.gz")
-        fetchNewAll(recentId)
-    else:
-        fetchAll()
-    return ("data/", "salmonAll.jl.gz")
-
-
-def initUser(api_key: str) -> Tuple[str, str]:
-    """
-
-    :param api_key: str:
-    :returns Tuple[str, str]:
-
-    """
-    if os.path.exists("data/salmon.jl.gz"):
-        recentId = 0
-        try:
-            with gzip.open("data/salmon.jl.gz") as reader:
-                with gzip.open(
-                    "data/salmonTemp.jl.gz", "at", encoding="utf8"
-                ) as writer:
-                    for line in jsonlines.Reader(reader, ujson.loads):
-                        ujson.dump(line, writer)
+            os.replace(fileName[0:-6] + "Temp.jl.gz", fileName)
+        prevLastId: int = 0
+        params: Dict[str, str] = {"order": "asc", "newer_than": str(recentId)}
+        temp: List[jobType] = requests.get(url, headers=headers, params=params).json()
+        if len(temp) > 0:
+            try:
+                shutil.rmtree(fileName[0:-6])
+            except FileNotFoundError:
+                pass
+            lastId: int = cast(List[Dict[str, int]], temp)[-1]["id"]
+            print(lastId)
+            with gzip.open("data/salmon.jl.gz", "at", encoding="utf8") as writer:
+                while lastId != prevLastId:
+                    for job in temp:
+                        ujson.dump(job, writer)
                         writer.write("\n")
-                        recentId = line["id"]
-            os.remove("data/salmonTemp.jl.gz")
-        except jsonlines.jsonlines.InvalidLineError:
-            os.replace(r"data/salmonTemp.jl.gz", r"data/salmon.jl.gz")
-        fetchNewUser(api_key, recentId)
+                    params["newer_than"] = str(lastId)
+                    result = requests.get(
+                        "http://stat.ink/api/v2/user-salmon",
+                        headers=headers,
+                        params=params,
+                    )
+                    print(result.url)
+                    print(result)
+                    temp = result.json()
+                    prevLastId = lastId
+                    if len(temp) > 0:
+                        lastId = cast(List[Dict[str, int]], temp)[-1]["id"]
+                    print(lastId)
     else:
-        fetchAllUser(api_key)
-    return ("data/", "salmon.jl.gz")
+        prevLastId = 0
+        params = {"order": "asc"}
+        temp = requests.get(url, headers=headers, params=params).json()
+        lastId = cast(List[Dict[str, int]], temp)[-1]["id"]
+        print(lastId)
+        with gzip.open(fileName, "at", encoding="utf8") as writer:
+            while lastId != prevLastId:
+                for job in temp:
+                    ujson.dump(job, writer)
+                    writer.write("\n")
+                params["newer_than"] = str(lastId)
+                result = requests.get(url, headers=headers, params=params)
+                print(result.url)
+                print(result)
+                temp = result.json()
+                prevLastId = lastId
+                if len(temp) > 0:
+                    lastId = cast(List[Dict[str, int]], temp)[-1]["id"]
+                print(lastId)
+    return ("data/", fileName[5:])
 
 
 if __name__ == "__main__":
     user_key: str = ujson.load(open("keys.json", "r"))["statink_key"]
-    initAll()
+    startFile = init("User", user_key)
     paths: List[str] = []
     dataFiles: List[str] = []
-    dataFile: str = "salmonAll.jl.gz"
     rotations: List[int] = findRotationByWeaponsAndStage(
-        "data/" + dataFile,
+        startFile[0] + startFile[1],
         ("Grizzco Charger", "Grizzco Brella", "Grizzco Blaster", "Grizzco Slosher"),
         "Ruins of Ark Polaris",
     )
     print(rotations)
-    jobs: Tuple[str, str] = duringRotationInt("data/", dataFile, rotations[1])
+    jobs: Tuple[str, str] = duringRotationInt(startFile[0], startFile[1], rotations[1])
     paths.append(jobs[0])
     dataFiles.append(jobs[1])
     jobs = dangerRate(jobs[0], jobs[1], "200.0")
