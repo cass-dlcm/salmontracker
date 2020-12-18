@@ -140,6 +140,16 @@ def sortSpecial(data: str, stat: str) -> None:
 
 
 def sortRotation(path: str, data: str, stat: str) -> None:
+    """
+    Print the sorted rotations by the average of the given stat.
+
+    :param path: the directory of the data file
+    :type path: str
+    :param data: the data file name
+    :type data: str
+    :param stat: the statistic to sort by
+    :type stat: str
+    """
     rotationList: List[int] = []
     rotationResultsList: List[
         Dict[str, Union[int, float, Union[None, Dict[str, Union[str, List[str]]]]]]
@@ -153,11 +163,12 @@ def sortRotation(path: str, data: str, stat: str) -> None:
         result: Dict[
             str, Union[int, float, Union[None, Dict[str, Union[str, List[str]]]]]
         ] = {}
-        withVal: Tuple[str, str] = core.duringRotationInt(path, data, rotation)
+        filters: Tuple[Tuple[str, str], Tuple[str, str]] = core.duringRotationInt(
+            path, data, rotation
+        )
+        withVal: Tuple[str, str] = filters[0]
+        withoutVal: Tuple[str, str] = filters[1]
         if hasJobs(withVal[0], withVal[1]):
-            withoutVal: Tuple[str, str] = core.notDuringRotationInt(
-                path, data, rotation
-            )
             if (hasJobs(withVal[0], withVal[1])) and (
                 hasJobs(withoutVal[0], withoutVal[1])
             ):
@@ -172,6 +183,7 @@ def sortRotation(path: str, data: str, stat: str) -> None:
                 rotationResultsList.append(result)
         elif not hasJobs(withVal[0], withVal[1]):
             os.remove(withVal[0] + withVal[1])
+            os.remove(withoutVal[0] + withoutVal[1])
     pprint.pprint(
         sorted(rotationResultsList, key=lambda val: cast(float, val["value"]))
     )
