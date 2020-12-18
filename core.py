@@ -144,7 +144,10 @@ def fetchNewUser(api_key: str, recentId: int) -> None:
         "http://stat.ink/api/v2/user-salmon", headers=headers, params=params
     ).json()
     if len(temp) > 0:
-        shutil.rmtree("data/salmon/")
+        try:
+            shutil.rmtree("data/salmon/")
+        except FileNotFoundError:
+            pass
         lastId: int = cast(List[Dict[str, int]], temp)[-1]["id"]
         print(lastId)
         with gzip.open("data/salmon.jl.gz", "at", encoding="utf8") as writer:
@@ -179,7 +182,10 @@ def fetchNewAll(recentId: int) -> None:
         "http://stat.ink/api/v2/salmon", params=params
     ).json()
     if len(temp) > 0:
-        shutil.rmtree("data/salmonAll/")
+        try:
+            shutil.rmtree("data/salmonAll/")
+        except FileNotFoundError:
+            pass
         lastId: int = cast(List[Dict[str, int]], temp)[-1]["id"]
         print(lastId)
         with gzip.open("data/salmonAll.jl.gz", "at", encoding="utf8") as writer:
@@ -369,7 +375,7 @@ def findRotationByWeaponsAndStage(
     :param data: str: the full path of the data file
     :type data: str
     :param weapons: the chosen weapons
-    :type weapons: Union[Tuple[str, str, str, str], List[str] 
+    :type weapons: Union[Tuple[str, str, str, str], List[str]]
     :param stage: str: the chosen stage
     :type stage: str
     :return: a list of rotation IDs
@@ -546,7 +552,8 @@ def findWeaponsAndStageByRotation(
     :type data: str
     :param rotation: the unix time of the rotation start
     :type rotation: int
-
+    :return: the weapons and stage for that rotation
+    :rtype: Dict[str, Union[str, List[str]]]
 
     """
     result: Dict[str, Union[str, List[str]]] = {}
@@ -579,10 +586,14 @@ def hasWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     """
     Filter the data file to only jobs that contain the chosen weapon.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param weapon: str: The name or ID of the chosen weapon
-    :returns Tuple[str, str]: The path and filename of the output data file
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param weapon: the name or ID of the chosen weapon
+    :type weapon: str
+    :return: the path and filename of the output data file
+    :rtype: Tuple[str, str]
 
     """
     if not os.path.exists(path + data[0:-6] + "/weapon/" + weapon + ".jl.gz"):
@@ -766,10 +777,14 @@ def doesntHaveWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     """
     Filter the data file to only jobs that do not contain the chosen weapon.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param weapon: str: The name or ID of the chosen weapon
-    :returns Tuple[str, str]: The path and filename of the output data file
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param weapon: the name or ID of the chosen weapon
+    :type weapon: str
+    :return: the path and filename of the output data file
+    :rtype: Tuple[str, str]
 
     """
     if not os.path.exists(path + data[0:-6] + "/notWeapon/" + weapon + ".jl.gz"):
@@ -953,10 +968,14 @@ def usesWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     """
     Filter the data file to only jobs where the player uses the chosen weapon.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param weapon: str: The name or ID of the chosen weapon
-    :returns Tuple[str, str]: The path and filename of the output data file
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param weapon: the name or ID of the chosen weapon
+    :type weapon: str
+    :return: the path and filename of the output data file
+    :rtype: Tuple[str, str]
 
     """
     if not os.path.exists(path + data[0:-6] + "/usesWeapon/" + weapon + ".jl.gz"):
@@ -1004,10 +1023,14 @@ def doesntUseWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     """
     Filter the data file to only jobs where the player doesn't use the chosen weapon.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param weapon: str: The name or ID of the chosen weapon
-    :returns Tuple[str, str]: The path and filename of the output data file
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param weapon: the name or ID of the chosen weapon
+    :type weapon: str
+    :return: the path and filename of the output data file
+    :rtype: Tuple[str, str]
 
     """
     if not os.path.exists(path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jl.gz"):
@@ -1055,10 +1078,14 @@ def findPlayerIdByName(path: str, data: str, player: str) -> List[str]:
     """
     Find all the recorded player IDs for a given player name.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param player: str: the player name to find
-    :returns List[str]: the list of found player IDs
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param player: the player name to find
+    :type player: str
+    :return: the list of found player IDs
+    :rtype: List[str]
 
     """
     foundIds: List[str] = []
@@ -1078,10 +1105,14 @@ def onStage(path: str, data: str, stage: str) -> Tuple[str, str]:
     """
     Filter the data file to only jobs on the chosen stage.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param stage: str: the name or ID of the chosen stage
-    :returns Tuple[str, str]: the path and filename of the output data file
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param stage: the name or ID of the chosen stage
+    :type stage: str
+    :return: the path and filename of the output data file
+    :rtype: Tuple[str, str]
 
     """
     if not os.path.exists(path + data[0:-6] + "/stage/" + stage + ".jl.gz"):
@@ -1108,10 +1139,14 @@ def notOnStage(path: str, data: str, stage: str) -> Tuple[str, str]:
     """
     Filter the data file to only jobs not on the chosen stage.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param stage: str: the name or ID of the chosen stage
-    :returns Tuple[str, str]: the path and filename of the output data file
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param stage: the name or ID of the chosen stage
+    :type stage: str
+    :returns: the path and filename of the output data file
+    :rtype: Tuple[str, str]
 
     """
     if not os.path.exists(path + data[0:-6] + "/notStage/" + stage + ".jl.gz"):
@@ -1803,65 +1838,23 @@ def getValMultiDimensional(
     return cast(Dict[str, str], data)[statArr[0]]
 
 
-def avgStat(data: str, stat: str) -> float:
+def statSummary(data: str, stat: str) -> Tuple[float, float, float, float]:
     """
-    Find the average value of a stat over a given data set.
+    Find the average, min, median, and max of a stat given a data file
 
     :param data: str: The full file path of the data file
-    :param stat: str: The stat to average
-    :returns float: The resulting average
+    :param stat: str: The stat
+    :return: The resulting average, min, median, and max
+    :rtype: Tuple[float, float, float, float]
 
     """
     with gzip.open(data) as reader:
         statArr: List[str] = stat.split()
         sumVal: float = 0.0
-        count: float = 0.0
-        for job in jsonlines.Reader(reader, ujson.loads):
-            sumVal += float(
-                getValMultiDimensional(
-                    job,
-                    list(map(lambda ele: int(ele) if ele.isdigit() else ele, statArr)),
-                )
-            )
-            count += 1.0
-        return sumVal / count
-
-
-def maxStat(data: str, stat: str) -> float:
-    """
-    Find the maximum value of a stat over a given data set.
-
-    :param data: str: The full file path of the data file
-    :param stat: str: The stat to find the max
-    :returns float: The resulting max value
-
-    """
-    maxVal: float = 0.0
-    statArr: List[str] = stat.split()
-    with gzip.open(data) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
-            val: float = float(
-                getValMultiDimensional(
-                    job,
-                    list(map(lambda ele: int(ele) if ele.isdigit() else ele, statArr)),
-                )
-            )
-            if maxVal < val:
-                maxVal = val
-    return maxVal
-
-
-def minStat(data: str, stat: str) -> float:
-    """
-
-    :param data: str:
-    :param stat: str:
-    :returns float:
-
-    """
-    with gzip.open(data) as reader:
-        statArr: List[str] = stat.split()
+        maxVal: float = 0.0
         minVal: float = sys.float_info.max
+        vals: List[float] = []
+        count: float = 0.0
         for job in jsonlines.Reader(reader, ujson.loads):
             val = float(
                 getValMultiDimensional(
@@ -1869,34 +1862,14 @@ def minStat(data: str, stat: str) -> float:
                     list(map(lambda ele: int(ele) if ele.isdigit() else ele, statArr)),
                 )
             )
+            sumVal += val
+            count += 1.0
+            if maxVal < val:
+                maxVal = val
             if minVal > val:
                 minVal = val
-    return minVal
-
-
-def medianStat(data: str, stat: str) -> float:
-    """
-
-    :param data: str:
-    :param stat: str:
-    :returns float:
-
-    """
-    vals: List[float] = []
-    statArr: List[str] = stat.split()
-    with gzip.open(data) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
-            vals.append(
-                float(
-                    getValMultiDimensional(
-                        job,
-                        list(
-                            map(lambda ele: int(ele) if ele.isdigit() else ele, statArr)
-                        ),
-                    )
-                )
-            )
-    return np.median(vals)
+            vals.append(val)
+        return (sumVal / count, minVal, np.median(vals), maxVal)
 
 
 def waveClearPercentageWithWeapon(data: str, weapon: str) -> float:
@@ -2013,26 +1986,6 @@ def waveOnePercentage(data: str) -> float:
         return sumVal / count
 
 
-def statSummary(data: str, stat: str) -> str:
-    """
-
-    :param data: str:
-    :param stat: str:
-    :returns str:
-
-    """
-    return (
-        str(avgStat(data, stat))
-        + " ("
-        + str(minStat(data, stat))
-        + ", "
-        + str(medianStat(data, stat))
-        + ", "
-        + str(maxStat(data, stat))
-        + ")"
-    )
-
-
 def sumStatWaves(data: jobType, stat: str) -> int:
     """
 
@@ -2099,23 +2052,51 @@ def getWavesAttribute(data: jobType, attr: str) -> str:
     return attrs
 
 
-def printOverview(path: str, data: str) -> None:
+def printOverview(data: str) -> None:
     """
 
-    :param path: str:
     :param data: str:
 
     """
-    print("Jobs: " + str(jobsCount(path + data)))
-    print("Average Waves: " + str(avgStat(path + data, "clear_waves")))
-    print("Clear %: " + str(clearPercentage(path + data)))
-    print("Wave 2 %: " + str(waveTwoPercentage(path + data)))
-    print("Wave 1 %: " + str(waveOnePercentage(path + data)))
-    print("Golden: " + statSummary(path + data, "my_data golden_egg_delivered"))
-    print("Power Eggs: " + statSummary(path + data, "my_data power_egg_collected"))
-    print("Rescued: " + statSummary(path + data, "my_data rescue"))
-    print("Deaths: " + statSummary(path + data, "my_data death"))
-    print("Hazard Level: " + statSummary(path + data, "danger_rate"))
+    stats = ["clear_waves", "my_data golden_egg_delivered", "my_data power_egg_collected", "my_data rescue", "my_data death", "danger_rate"]
+    with gzip.open(data) as reader:
+        clearCount: float = 0.0
+        waveTwoCount: float = 0.0
+        waveOneCount: float = 0.0
+        sumVal: List[float] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        maxVal: List[float] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        minVal: List[float] = [sys.float_info.max,  sys.float_info.max, sys.float_info.max, sys.float_info.max, sys.float_info.max, sys.float_info.max]
+        vals: List[List[float]] = [[], [], [], [], [], []]
+        medians: List[float] = []
+        count: int = 0
+        for job in jsonlines.Reader(reader, ujson.loads):
+            count += 1
+            clearCount += float(job["clear_waves"] == 3)
+            waveTwoCount += float(job["clear_waves"] >= 2)
+            waveOneCount += float(job["clear_waves"] >= 1)
+            for i in range(0, len(stats)):
+                val = float(
+                    getValMultiDimensional(
+                        job,
+                        cast(List[Union[str, int]], stats[i].split()),
+                    )
+                )
+                sumVal[i] += val
+                if maxVal[i] < val:
+                    maxVal[i] = val
+                if minVal[i] > val:
+                    minVal[i] = val
+                vals[i].append(val)
+    print("Jobs: " + str(count))
+    print("Average Waves: " + str(sumVal[0] / count))
+    print("Clear %: " + str(clearCount / count))
+    print("Wave 2 %: " + str(waveTwoCount / count))
+    print("Wave 1 %: " + str(waveOneCount / count))
+    print("Golden: {} ({}, {}, {}".format(sumVal[1] / count, minVal[1], np.median(vals[1]), maxVal[1]))
+    print("Power Eggs: {} ({}, {}, {})".format(sumVal[2] / count, minVal[2], np.median(vals[2]), maxVal[2]))
+    print("Rescued: {} ({}, {}, {})".format(sumVal[3] / count, minVal[3], np.median(vals[3]), maxVal[3]))
+    print("Deaths: {} ({}, {}, {})".format(sumVal[4] / count, minVal[4], np.median(vals[4]), maxVal[4]))
+    print("Hazard Level: {} ({}, {}, {})".format(sumVal[5] / count, minVal[5], np.median(vals[5]), maxVal[5]))
 
 
 def printGeneral(data: jobType) -> None:
@@ -2124,21 +2105,21 @@ def printGeneral(data: jobType) -> None:
     :param data: dict:
 
     """
-    print("Stat.ink Link: " + cast(Dict[str, str], data)["url"])
-    print("Splatnet #: {:<}".format(data["splatnet_number"]))
+    print("Stat.ink Link: {}".format(data["url"]))
+    print("Splatnet #: {}".format(data["splatnet_number"]))
     print(
-        "Stage: {:}".format(
+        "Stage: {}".format(
             cast(Dict[str, Dict[str, Dict[str, str]]], data)["stage"]["name"][locale]
         )
     )
     print(
-        "Rotation Start Date: "
-        + cast(Dict[str, Dict[str, str]], data)["shift_start_at"]["iso8601"]
-    )
-    print("Start Date: " + cast(Dict[str, Dict[str, str]], data)["start_at"]["iso8601"])
-    print("Result: {:}".format("Cleared" if data["clear_waves"] == 3 else "Failed"))
+        "Rotation Start Date: {}".format(
+        cast(Dict[str, Dict[str, str]], data)["shift_start_at"]["iso8601"]
+    ))
+    print("Start Date: {}".format(cast(Dict[str, Dict[str, str]], data)["start_at"]["iso8601"]))
+    print("Result: {}".format("Cleared" if data["clear_waves"] == 3 else "Failed"))
     print(
-        "Title: {:} {:<3} -> {:} {:<3}".format(
+        "Title: {} {:<3} -> {} {:<3}".format(
             cast(Dict[str, Dict[str, Dict[str, str]]], data)["title"]["name"][locale]
             if data["title"]
             else "",
@@ -2459,23 +2440,7 @@ def getArrayOfStat(data: str, stat: str) -> list:
     with gzip.open(data) as reader:
         results = []
         for job in jsonlines.Reader(reader, ujson.loads):
-            results.append(float(job[stat]))
-        return results
-
-
-def getArrayOfStat2D(data: str, firstD: str, secondD: Union[str, int]) -> list:
-    """
-
-    :param data: str:
-    :param firstD: str:
-    :param secondD: Union[str, int]:
-    :returns ;ost:
-
-    """
-    with gzip.open(data) as reader:
-        results = []
-        for job in jsonlines.Reader(reader, ujson.loads):
-            results.append(float(job[firstD][secondD]))
+            results.append(float(getValMultiDimensional(job, cast(List[Union[str, int]], stat.split()))))
         return results
 
 
@@ -2550,7 +2515,7 @@ if __name__ == "__main__":
     jobs = dangerRate(jobs[0], jobs[1], "200.0")
     paths.append(jobs[0])
     dataFiles.append(jobs[1])
-    printOverview(jobs[0], jobs[1])
+    printOverview(jobs[0] + jobs[1])
     print()
     for a in range(0, len(paths)):
         os.remove(paths[a] + dataFiles[a])

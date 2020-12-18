@@ -103,10 +103,10 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
             if mode == "With":
                 filters.append(hasWeapon(paths[i], dataFile[i], val))
             elif mode == "Without":
-                filters.append(doesntHaveWeapon(path[i], dataFile[i], val))
+                filters.append(doesntHaveWeapon(paths[i], dataFile[i], val))
             elif mode == "Both":
-                filters.append(hasWeapon(path[i], dataFile[i], val))
-                filters.append(doesntHaveWeapon(path, dataFile[i], val))
+                filters.append(hasWeapon(paths[i], dataFile[i], val))
+                filters.append(doesntHaveWeapon(paths[i], dataFile[i], val))
             else:
                 sys.exit()
             if clearAfter == "Y" and paths[i] != "data/":
@@ -119,10 +119,10 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
             if mode == "With":
                 filters.append(usesWeapon(paths[i], dataFile[i], val))
             elif mode == "Without":
-                filters.append(doesntUseWeapon(path[i], dataFile[i], val))
+                filters.append(doesntUseWeapon(paths[i], dataFile[i], val))
             elif mode == "Both":
-                filters.append(usesWeapon(path[i], dataFile[i], val))
-                filters.append(doesntUseWeapon(path, dataFile[i], val))
+                filters.append(usesWeapon(paths[i], dataFile[i], val))
+                filters.append(doesntUseWeapon(paths[i], dataFile[i], val))
             else:
                 sys.exit()
             if clearAfter == "Y" and paths[i] != "data/":
@@ -135,7 +135,7 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
             if mode == "With":
                 filters.append(onStage(paths[i], dataFile[i], val))
             elif mode == "Without":
-                filters.append(notOnStage(path[i], dataFile[i], val))
+                filters.append(notOnStage(paths[i], dataFile[i], val))
             elif mode == "Both":
                 filters.append(onStage(paths[i], dataFile[i], val))
                 filters.append(notOnStage(paths[i], dataFile[i], val))
@@ -248,12 +248,12 @@ def printOverview(paths: List[str], dataFile: List[str]):
     which: str = input("Would you like to print a [SpecificList/AllLists]: ")
     if which == "AllLists":
         for i in range(0, len(paths)):
-            core.printOverview(paths[i], dataFile[i])
+            core.printOverview(paths[i] + dataFile[i])
     elif which == "SpecificList":
         for i in range(0, len(paths)):
             print(paths[i] + dataFile[i])
         chosenList: int = int(input("Which list (by index): "))
-        core.printOverview(paths[chosenList], dataFile[chosenList])
+        core.printOverview(paths[chosenList] + dataFile[chosenList])
         print()
     else:
         sys.exit()
@@ -418,9 +418,9 @@ if __name__ == "__main__":
         data = dataFileStart[1]
     else:
         sys.exit()
-    currentPaths: List[str] = [path]
+    currentPaths: List[str] = ["data/"]
     allPaths: List[str] = []
-    dataFiles: List[str] = [data]
+    dataFiles: List[str] = ["salmonAll.jl.gz"]
     allFiles: List[str] = []
     while input("Add a filter [Y/N]: ") == "Y":
         filtered = filterBy(currentPaths, dataFiles)
