@@ -10,6 +10,11 @@ Welcome to Salmontracker's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+
+.. automodule:: core
+   :members:
+
+
 Indices and tables
 ==================
 

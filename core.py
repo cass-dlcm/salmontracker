@@ -71,7 +71,8 @@ jobType = Dict[
 def fetchAllUser(api_key: str) -> None:
     """Fetch all Salmon Run results for the authenticated user and store it in the "data/salmon.jl.gz" file.
 
-    :param api_key: str: the stat.ink API key for the user
+    :param api_key: the stat.ink API key for the user
+    :type api_key: str
 
     """
     headers: Dict[str, str] = {"Authorization": "Bearer {}".format(api_key)}
@@ -130,8 +131,10 @@ def fetchNewUser(api_key: str, recentId: int) -> None:
     """
     Fetch new Salmon Run results for authenticated user and store it in the "data/salmon.jl.gz" file.
 
-    :param api_key: str: the stat.ink API key for the user
-    :param recentId: int: the ID of the most recently retrieved job
+    :param api_key: the stat.ink API key for the user
+    :type api_key: str
+    :param recentId: the ID of the most recently retrieved job
+    :type recentId: int
 
     """
     headers: Dict[str, str] = {"Authorization": "Bearer {}".format(api_key)}
@@ -1743,20 +1746,28 @@ def jobsCount(data: str) -> int:
 
 def getValMultiDimensional(
     data: Union[list, Dict[str, Any]], statArr: List[Union[str, int]]
-):
+) -> str:
+    """
+    Retrieve the chosen stat from the provided data structure, using recursion.
+
+    :param data: the data structure to retrieve data from
+    :type data: Union[list, Dict[str, Any]]
+    :param statArr: the list of dimensions of the data structure needed to retrieve the stat
+    :type statArr: statArr: List[Union[str, int]
+    :return: the value retrieved
+    :rtype: str
+
+    """
     if len(statArr) > 1:
         if isinstance(statArr[0], int):
             return getValMultiDimensional(cast(list, data)[statArr[0]], statArr[1:])
-        else:
-            return getValMultiDimensional(
-                cast(Dict[str, Union[list, Dict[str, Any]]], data)[statArr[0]],
-                statArr[1:],
-            )
+        return getValMultiDimensional(
+            cast(Dict[str, Union[list, Dict[str, Any]]], data)[statArr[0]], statArr[1:]
+        )
     else:
         if isinstance(statArr[0], int):
             return cast(List[Union[str, int]], data)[statArr[0]]
-        else:
-            return cast(Dict[str, Union[str, int]], data)[statArr[0]]
+        return cast(Dict[str, Union[str, int]], data)[statArr[0]]
 
 
 def avgStat(data: str, stat: str) -> float:
