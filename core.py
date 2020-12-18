@@ -372,7 +372,7 @@ def hasWeapon(
     path: str, data: str, weapon: str
 ) -> Tuple[Tuple[str, str], Tuple[str, str]]:
     """
-    Filter the data file to only jobs that contain the chosen weapon.
+    Filter the data file to only jobs that contain the chosen weapon and jobs that don't.
 
     :param path: the directory path of the data file
     :type path: str
@@ -380,7 +380,7 @@ def hasWeapon(
     :type data: str
     :param weapon: the name or ID of the chosen weapon
     :type weapon: str
-    :return: the path and filename of the output data file
+    :return: the path and filename of the output data files
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
 
     """
@@ -590,7 +590,9 @@ def hasWeapon(
     )
 
 
-def usesWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
+def usesWeapon(
+    path: str, data: str, weapon: str
+) -> Tuple[Tuple[str, str], Tuple[str, str]]:
     """
     Filter the data file to only jobs where the player uses the chosen weapon.
 
@@ -600,8 +602,8 @@ def usesWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
     :type data: str
     :param weapon: the name or ID of the chosen weapon
     :type weapon: str
-    :return: the path and filename of the output data file
-    :rtype: Tuple[str, str]
+    :return: the path and filename of the output data files
+    :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
 
     """
     if not os.path.exists(path + data[0:-6] + "/usesWeapon/" + weapon + ".jl.gz"):
@@ -613,91 +615,53 @@ def usesWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/usesWeapon/")
         except FileExistsError:
             pass
-        with gzip.open(path + data) as reader:
-            with gzip.open(
-                path + data[0:-6] + "/usesWeapon/" + weapon + ".jl.gz",
-                "at",
-                encoding="utf8",
-            ) as writer:
-                for var in jsonlines.Reader(reader, ujson.loads):
-                    if (
-                        var["my_data"]["weapons"][0]["key"] == weapon
-                        or (
-                            len(var["my_data"]["weapons"]) > 1
-                            and var["my_data"]["weapons"][1]["key"] == weapon
-                        )
-                        or (
-                            len(var["my_data"]["weapons"]) > 2
-                            and var["my_data"]["weapons"][2]["key"] == weapon
-                        )
-                        or var["my_data"]["weapons"][0]["name"][locale] == weapon
-                        or (
-                            len(var["my_data"]["weapons"]) > 1
-                            and var["my_data"]["weapons"][1]["name"][locale] == weapon
-                        )
-                        or (
-                            len(var["my_data"]["weapons"]) > 2
-                            and var["my_data"]["weapons"][2]["name"][locale] == weapon
-                        )
-                    ):
-                        ujson.dump(var, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/usesWeapon/", weapon + ".jl.gz")
-
-
-def doesntUseWeapon(path: str, data: str, weapon: str) -> Tuple[str, str]:
-    """
-    Filter the data file to only jobs where the player doesn't use the chosen weapon.
-
-    :param path: the directory path of the data file
-    :type path: str
-    :param data: the file name of the data file
-    :type data: str
-    :param weapon: the name or ID of the chosen weapon
-    :type weapon: str
-    :return: the path and filename of the output data file
-    :rtype: Tuple[str, str]
-
-    """
-    if not os.path.exists(path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jl.gz"):
-        try:
-            os.mkdir(path + data[0:-6] + "/")
-        except FileExistsError:
-            pass
         try:
             os.mkdir(path + data[0:-6] + "/notUsesWeapon/")
         except FileExistsError:
             pass
         with gzip.open(path + data) as reader:
             with gzip.open(
-                path + data[0:-6] + "/notUsesWeapon/" + weapon + ".jl.gz",
+                path + data[0:-6] + "/usesWeapon/" + weapon + ".jl.gz",
                 "at",
                 encoding="utf8",
-            ) as writer:
-                for var in jsonlines.Reader(reader, ujson.loads):
-                    if not (
-                        var["my_data"]["weapons"][0]["key"] == weapon
-                        or (
-                            len(var["my_data"]["weapons"]) > 1
-                            and var["my_data"]["weapons"][1]["key"] == weapon
-                        )
-                        or (
-                            len(var["my_data"]["weapons"]) > 2
-                            and var["my_data"]["weapons"][2]["key"] == weapon
-                        )
-                        or var["my_data"]["weapons"][0]["name"][locale] == weapon
-                        or (
-                            len(var["my_data"]["weapons"]) > 1
-                            and var["my_data"]["weapons"][1]["name"][locale] == weapon
-                        )
-                        or (
-                            len(var["my_data"]["weapons"]) > 2
-                            and var["my_data"]["weapons"][2]["name"][locale] == weapon
-                        )
-                    ):
-                        ujson.dump(var, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/notUsesWeapon/", weapon + ".jl.gz")
+            ) as writerA:
+                with gzip.open(
+                    path + data[0:-6] + "/usesWeapon/" + weapon + ".jl.gz",
+                    "at",
+                    encoding="utf8",
+                ) as writerB:
+                    for var in jsonlines.Reader(reader, ujson.loads):
+                        if (
+                            var["my_data"]["weapons"][0]["key"] == weapon
+                            or (
+                                len(var["my_data"]["weapons"]) > 1
+                                and var["my_data"]["weapons"][1]["key"] == weapon
+                            )
+                            or (
+                                len(var["my_data"]["weapons"]) > 2
+                                and var["my_data"]["weapons"][2]["key"] == weapon
+                            )
+                            or var["my_data"]["weapons"][0]["name"][locale] == weapon
+                            or (
+                                len(var["my_data"]["weapons"]) > 1
+                                and var["my_data"]["weapons"][1]["name"][locale]
+                                == weapon
+                            )
+                            or (
+                                len(var["my_data"]["weapons"]) > 2
+                                and var["my_data"]["weapons"][2]["name"][locale]
+                                == weapon
+                            )
+                        ):
+                            ujson.dump(var, writerA)
+                            writerA.write("\n")
+                        else:
+                            ujson.dump(var, writerB)
+                            writerB.write("\n")
+    return (
+        (path + data[0:-6] + "/usesWeapon/", weapon + ".jl.gz"),
+        (path + data[0:-6] + "/notUsesWeapon/", weapon + ".jl.gz"),
+    )
 
 
 def findPlayerIdByName(data: str, player: str) -> List[str]:
@@ -1881,7 +1845,7 @@ def printPlayers(data: jobType) -> None:
             "Special",
             getPlayersAttribute(
                 data,
-                "special " + "name " + locale,
+                "special name " + locale,
             ),
         )
     )
