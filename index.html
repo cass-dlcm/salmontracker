@@ -151,58 +151,6 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="core.fetchAll">
-<code class="descclassname">core.</code><code class="descname">fetchAll</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.fetchAll" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fetch all Salmon Run results for all users and store it in the “data/salmonAll.jl.gz” file.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.fetchAllUser">
-<code class="descclassname">core.</code><code class="descname">fetchAllUser</code><span class="sig-paren">(</span><em>api_key: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.fetchAllUser" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fetch all Salmon Run results for the authenticated user and store it in the “data/salmon.jl.gz” file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>api_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the stat.ink API key for the user</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.fetchNewAll">
-<code class="descclassname">core.</code><code class="descname">fetchNewAll</code><span class="sig-paren">(</span><em>recentId: int</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.fetchNewAll" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fetch new Salmon Run results for all users and store it in the “data/salmonAll.jl.gz” file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>recentId</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the ID of the most recently retrieved jobs</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.fetchNewUser">
-<code class="descclassname">core.</code><code class="descname">fetchNewUser</code><span class="sig-paren">(</span><em>api_key: str</em>, <em>recentId: int</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.fetchNewUser" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fetch new Salmon Run results for authenticated user and store it in the “data/salmon.jl.gz” file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>api_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the stat.ink API key for the user</li>
-<li><strong>recentId</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the ID of the most recently retrieved job</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
 <dt id="core.findPlayerIdByName">
 <code class="descclassname">core.</code><code class="descname">findPlayerIdByName</code><span class="sig-paren">(</span><em>data: str</em>, <em>player: str</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.findPlayerIdByName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find all the recorded player IDs for a given player name.</p>
@@ -486,36 +434,6 @@
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.initAll">
-<code class="descclassname">core.</code><code class="descname">initAll</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.initAll" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.initUser">
-<code class="descclassname">core.</code><code class="descname">initUser</code><span class="sig-paren">(</span><em>api_key: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.initUser" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>api_key</strong> – str:</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"></td>
 </tr>
 </tbody>
 </table>
