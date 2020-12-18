@@ -101,7 +101,7 @@ def hasPlayer(
     :param player: the Splatnet ID of the chosen player
     :type player: str
     :return: the path and file name of the paired filtered files
-    :rtype: Tuple[Tuple[str, str], Tuple[str, str]
+    :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
 
     """
     if not (
@@ -709,8 +709,8 @@ def onStage(
     :type data: str
     :param stage: the name or ID of the chosen stage
     :type stage: str
-    :return: the path and filename of the output data file
-    :rtype: Tuple[str, str]
+    :return: the path and filename of the output data files
+    :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
 
     """
     if not (
@@ -751,17 +751,26 @@ def onStage(
     )
 
 
-def withSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
+def withSpecial(
+    path: str, data: str, special: str
+) -> Tuple[Tuple[str, str], Tuple[str, str]]:
     """
     Filter the data file to only jobs where the player had the chosen special.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param special: str: the name or ID of the chosen special
-    :returns Tuple[str, str]: the path and filename of the output data file
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param special: the name or ID of the chosen special
+    :type special: str
+    :return: the path and filename of the output data file
+    :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
 
     """
-    if not os.path.exists(path + data[0:-6] + "/special/" + special + ".jl.gz"):
+    if not (
+        os.path.exists(path + data[0:-6] + "/special/" + special + ".jl.gz")
+        and os.path.exists(path + data[0:-6] + "/notSpecial/" + special + ".jl.gz")
+    ):
         try:
             os.mkdir(path + data[0:-6] + "/")
         except FileExistsError:
@@ -770,58 +779,35 @@ def withSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/special/")
         except FileExistsError:
             pass
-        with gzip.open(path + data) as reader:
-            with gzip.open(
-                path + data[0:-6] + "/special/" + special + ".jl.gz",
-                "at",
-                encoding="utf8",
-            ) as writer:
-                for var in jsonlines.Reader(reader, ujson.loads):
-                    if special in (
-                        var["my_data"]["special"]["key"],
-                        var["my_data"]["special"]["name"][locale],
-                    ):
-                        ujson.dump(var, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/special/", special + ".jl.gz")
-
-
-def withoutSpecial(path: str, data: str, special: str) -> Tuple[str, str]:
-    """
-    Filter the data file to only jobs where the player didn't have the chosen special.
-
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param special: str: the name or ID of the chosen special
-    :returns Tuple[str, str]: the path and filename of the output data file
-
-    """
-    if not os.path.exists(path + data[0:-6] + "/notSpecial/" + special + ".jl.gz"):
-        try:
-            os.mkdir(path + data[0:-6] + "/")
-        except FileExistsError:
-            pass
         try:
             os.mkdir(path + data[0:-6] + "/notSpecial/")
         except FileExistsError:
             pass
         with gzip.open(path + data) as reader:
             with gzip.open(
-                path + data[0:-6] + "/notSpecial/" + special + ".jl.gz",
+                path + data[0:-6] + "/special/" + special + ".jl.gz",
                 "at",
                 encoding="utf8",
-            ) as writer:
-                for var in jsonlines.Reader(reader, ujson.loads):
-                    if not (
-                        special
-                        in (
+            ) as writerA:
+                with gzip.open(
+                    path + data[0:-6] + "/notSpecial/" + special + ".jl.gz",
+                    "at",
+                    encoding="utf8",
+                ) as writerB:
+                    for var in jsonlines.Reader(reader, ujson.loads):
+                        if special in (
                             var["my_data"]["special"]["key"],
                             var["my_data"]["special"]["name"][locale],
-                        )
-                    ):
-                        ujson.dump(var, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/notSpecial/", special + ".jl.gz")
+                        ):
+                            ujson.dump(var, writerA)
+                            writerA.write("\n")
+                        else:
+                            ujson.dump(var, writerB)
+                            writerB.write("\n")
+    return (
+        (path + data[0:-6] + "/special/", special + ".jl.gz"),
+        (path + data[0:-6] + "/notSpecial/", special + ".jl.gz"),
+    )
 
 
 def failReason(path: str, data: str, reason: str) -> Tuple[str, str]:

@@ -22,7 +22,6 @@ from core import (
     lessThanClearWave,
     notLessThanClearWave,
     withSpecial,
-    withoutSpecial,
 )
 import ujson
 from typing import List, Tuple
@@ -229,12 +228,13 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
         clearAfter = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(paths)):
             if mode == "With":
-                filters.append(withSpecial(paths[i], dataFile[i], val))
+                filters.append(withSpecial(paths[i], dataFile[i], val)[0])
             elif mode == "Without":
-                filters.append(withoutSpecial(paths[i], dataFile[i], val))
+                filters.append(withSpecial(paths[i], dataFile[i], val)[0])
             elif mode == "Both":
-                filters.append(withSpecial(paths[i], dataFile[i], val))
-                filters.append(withoutSpecial(paths[i], dataFile[i], val))
+                result = withSpecial(paths[i], dataFile[i], val)
+                filters.append(result[0])
+                filters.append(result[1])
             else:
                 sys.exit()
             if clearAfter == "Y" and paths[i] != "data/":
