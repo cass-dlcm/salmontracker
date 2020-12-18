@@ -67,6 +67,7 @@ jobType = Dict[
     ],
 ]
 
+
 def hasJobs(path: str, data: str) -> bool:
     """
     Check if a given data file has data.
