@@ -28,6 +28,7 @@ import jsonlines
 from scipy.stats import ttest_ind
 import numpy as np
 import matplotlib.pyplot as plt
+import gzip
 
 
 def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
@@ -77,7 +78,7 @@ def filterBy(paths: List[str], dataFile: List[str]) -> List[Tuple[str, str]]:
         print(rotations)
         rot: int = rotations[int(input("Pick the rotation id by index: "))]
         mode = input("Choose whether you want [With/Without/Both]: ")
-        clearAfter = input("Choose whether you would like to clear after [Y/N]:")
+        clearAfter = input("Choose whether you would like to clear after [Y/N]: ")
         for i in range(0, len(paths)):
             if mode == "With":
                 filters.append(duringRotationInt(paths[i], dataFile[i], rot)[0])
@@ -294,8 +295,8 @@ def printOverview(paths: List[str], dataFile: List[str]):
 
 
 def printAllJobs(dataFile: str):
-    with jsonlines.open(dataFile, mode="r") as reader:
-        for job in reader:
+    with gzip.open(dataFile) as reader:
+        for job in jsonlines.Reader(reader, loads=ujson.loads):
             core.printGeneral(job)
             print()
             core.printWaves(job)
@@ -445,9 +446,9 @@ if __name__ == "__main__":
     )
     path: str = dataFileStart[0]
     data: str = dataFileStart[1]
-    currentPaths: List[str] = ["data/"]
+    currentPaths: List[str] = [path]
     allPaths: List[str] = []
-    dataFiles: List[str] = ["salmonAll.jl.gz"]
+    dataFiles: List[str] = [data]
     allFiles: List[str] = []
     while input("Add a filter [Y/N]: ") == "Y":
         filtered = filterBy(currentPaths, dataFiles)

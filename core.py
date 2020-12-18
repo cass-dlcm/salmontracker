@@ -883,8 +883,10 @@ def duringRotationInt(
 
     """
     if not (
-        os.path.exists(path + data[0:-6] + "/rotation/" + str(rotation) + ".jl.gz"),
-        os.path.exists(path + data[0:-6] + "/notRotation/" + str(rotation) + ".jl.gz"),
+        os.path.exists(path + data[0:-6] + "/rotation/" + str(rotation) + ".jl.gz")
+        and os.path.exists(
+            path + data[0:-6] + "/notRotation/" + str(rotation) + ".jl.gz"
+        )
     ):
         try:
             os.mkdir(path + data[0:-6])
@@ -1341,14 +1343,20 @@ def getValMultiDimensional(
     :rtype: str
 
     """
+    if data is None:
+        return ""
     if len(statArr) > 1:
         if isinstance(statArr[0], int):
-            return getValMultiDimensional(cast(list, data)[statArr[0]], statArr[1:])
+            if len(data) > statArr[0]:
+                return getValMultiDimensional(cast(list, data)[statArr[0]], statArr[1:])
+            return ""
         return getValMultiDimensional(
             cast(Dict[str, Union[list, Dict[str, Any]]], data)[statArr[0]], statArr[1:]
         )
     if isinstance(statArr[0], int):
-        return cast(List[str], data)[statArr[0]]
+        if len(data) > statArr[0]:
+            return cast(List[str], data)[statArr[0]]
+        return ""
     return cast(Dict[str, str], data)[statArr[0]]
 
 
@@ -1486,28 +1494,29 @@ def sumStatWaves(data: jobType, stat: str) -> int:
     return sumVal
 
 
-def getPlayersAttribute(data: jobType, attr: str) -> str:
+def getPlayersAttribute(data: jobType, attr: str) -> List[str]:
     """
 
-    :param data: dict:
-    :param attr: str:
-    :returns str:
+    :param data:
+    :type data: jobType
+    :param attr:
+    :type attr: str
+    :return:
+    :rtype: List[float]
 
     """
     attrsList: List[str] = attr.split()
-    attrs: str = "{:<16}\t".format(
+    attrs: List[str] = [
         getValMultiDimensional(
             cast(Dict[str, Union[list, Dict[str, Any]]], data)["my_data"],
             list(map(lambda ele: int(ele) if ele.isdigit() else ele, attrsList)),
         )
-        or 0
-    )
+    ]
     for p in cast(Dict[str, List[Dict[str, Any]]], data)["teammates"]:
-        attrs += "{:<16}\t".format(
+        attrs.append(
             getValMultiDimensional(
                 p, list(map(lambda ele: int(ele) if ele.isdigit() else ele, attrsList))
             )
-            or 0
         )
     return attrs
 
@@ -1526,7 +1535,7 @@ def getWavesAttribute(data: jobType, attr: str) -> str:
         if i < len(cast(Dict[str, List[Dict[str, Any]]], data)["waves"]):
             attrs += "{:<16}\t".format(
                 getValMultiDimensional(
-                    cast(Dict[str, List[Dict[str, Any]]], data)["waves"],
+                    cast(Dict[str, List[Dict[str, Any]]], data)["waves"][i],
                     list(
                         map(lambda ele: int(ele) if ele.isdigit() else ele, attrsList)
                     ),
@@ -1717,12 +1726,14 @@ def printWeapons(data: jobType) -> None:
         0,
         len(cast(Dict[str, Dict[str, list]], data)["my_data"]["weapons"]),
     ):
+        weapons = getPlayersAttribute(data, "weapons " + str(i) + " name " + locale)
         print(
-            "{:16}\t{:}".format(
+            "{:16}".format(
                 "Wave {:1} Weapon".format(i + 1),
-                getPlayersAttribute(data, "weapons " + str(i) + " name " + locale),
             )
         )
+        for player in weapons:
+            print("\t{:16}".format(player))
 
 
 def printSpecials(data: jobType) -> None:
@@ -1818,8 +1829,10 @@ def printPlayers(data: jobType) -> None:
 def getBosses(data: jobType) -> List[Union[Dict[str, str], Dict[str, int]]]:
     """
 
-    :param data: dict:
-    :returns list:
+    :param data:
+    :type data: jobType
+    :return:
+    :rtype: List[Union[Dict[str, str], Dict[str, int]]]
 
     """
     results: List[Union[Dict[str, str], Dict[str, int]]] = []
@@ -1951,12 +1964,16 @@ def printBosses(data: jobType) -> None:
             )
 
 
-def getArrayOfStat(data: str, stat: str) -> list:
+def getArrayOfStat(data: str, stat: str) -> List[float]:
     """
+    Collect all the values of a single stat for a given list of jobs.
 
-    :param data: str:
-    :param stat: str:
-    :returns list:
+    :param data: the full path to the data file
+    :type data: str
+    :param stat: the stat to retrieve
+    :type stat: str
+    :return: the stat for each job in the data
+    :rtype: List[float]
 
     """
     with gzip.open(data) as reader:
@@ -2057,7 +2074,9 @@ if __name__ == "__main__":
         "Ruins of Ark Polaris",
     )
     print(rotations)
-    jobs: Tuple[str, str] = duringRotationInt(startFile[0], startFile[1], rotations[1])[0]
+    jobs: Tuple[str, str] = duringRotationInt(startFile[0], startFile[1], rotations[1])[
+        0
+    ]
     paths.append(jobs[0])
     dataFiles.append(jobs[1])
     jobs = dangerRate(jobs[0], jobs[1], "200.0")
