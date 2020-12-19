@@ -83,9 +83,7 @@ def hasJobs(data: str) -> bool:
     :Example:
 
     >>> import core
-    >>> core.hasJobs(
-    ...     "data/salmon.jl.gz"
-    ... )
+    >>> core.hasJobs("data/salmon.jl.gz")
     True
 
     """
@@ -101,7 +99,7 @@ def hasPlayer(
     path: str, data: str, player: str
 ) -> Tuple[Tuple[str, str], Tuple[str, str]]:
     """
-    Filter the jobs in the given data file to jobs that contain the chosen player and jobs that don't.
+    Filter the jobs in the given data file to jobs that contain the chosen player.
 
     :param path: the directory path of the data file
     :type path: str
@@ -118,11 +116,11 @@ def hasPlayer(
     :Example:
 
     >>> import core
-    >>> core.hasPlayer("data/",
-    ...     "salmonAll.jl.gz",
-    ...     "aeda69d2070fafb6"
-    ... )
-    (('data/salmonAll/playerId/', 'aeda69d2070fafb6.jl.gz'), ('data/salmonAll/notPlayerId/', 'aeda69d2070fafb6.jl.gz'))
+    >>> core.hasPlayer("data/", "salmonAll.jl.gz", "aeda69d2070fafb6")
+    (
+        ('data/salmonAll/playerId/', 'aeda69d2070fafb6.jl.gz'),
+        ('data/salmonAll/notPlayerId/', 'aeda69d2070fafb6.jl.gz')
+    )
 
     """
     if not (
@@ -387,6 +385,23 @@ def findWeaponsAndStageByRotation(
     :raises FileNotFoundError: if the file doesn't exist
     :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
+    :Example:
+
+    >>> import core
+    >>> core.findWeaponsAndStageByRotation(
+    ...     "data/salmonAll.jl.gz",
+    ...     1607752800
+    ... )
+    {
+        'stage': 'Ruins of Ark Polaris',
+        'weapons': [
+            'Grizzco Brella',
+            'Grizzco Blaster',
+            'Grizzco Charger',
+            'Grizzco Slosher'
+        ]
+    }
+
     """
     result: Dict[str, Union[str, List[str]]] = {}
     with gzip.open(data) as reader:
@@ -394,23 +409,25 @@ def findWeaponsAndStageByRotation(
             if job["shift_start_at"]["time"] == rotation:
                 result["stage"] = job["stage"]["name"][locale]
                 result["weapons"] = []
-                for i in range(0, len(job["my_data"]["weapons"])):
-                    if (
-                        job["my_data"]["weapons"][i]["name"][locale]
-                        not in result["weapons"]
-                    ):
-                        cast(Dict[str, List[str]], result)["weapons"].append(
-                            job["my_data"]["weapons"][i]["name"][locale]
-                        )
-                for i in range(0, len(job["teammates"])):
-                    for j in range(0, len(job["teammates"][i]["weapons"])):
+                if job["my_data"]["weapons"] is not None:
+                    for i in range(0, len(job["my_data"]["weapons"])):
                         if (
-                            job["teammates"][i]["weapons"][j]["name"][locale]
+                            job["my_data"]["weapons"][i]["name"][locale]
                             not in result["weapons"]
                         ):
                             cast(Dict[str, List[str]], result)["weapons"].append(
-                                job["teammates"][i]["weapons"][j]["name"][locale]
+                                job["my_data"]["weapons"][i]["name"][locale]
                             )
+                for i in range(0, len(job["teammates"])):
+                    if job["teammates"][i]["weapons"] is not None:
+                        for j in range(0, len(job["teammates"][i]["weapons"])):
+                            if (
+                                job["teammates"][i]["weapons"][j]["name"][locale]
+                                not in result["weapons"]
+                            ):
+                                cast(Dict[str, List[str]], result)["weapons"].append(
+                                    job["teammates"][i]["weapons"][j]["name"][locale]
+                                )
     return result
 
 
@@ -418,7 +435,7 @@ def hasWeapon(
     path: str, data: str, weapon: str
 ) -> Tuple[Tuple[str, str], Tuple[str, str]]:
     """
-    Filter the data file to only jobs that contain the chosen weapon and jobs that don't.
+    Filter the data file to only jobs that contain the chosen weapon.
 
     :param path: the directory path of the data file
     :type path: str
@@ -431,6 +448,15 @@ def hasWeapon(
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
     :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
+
+    :Example:
+
+    >>> import core
+    >>> core.hasWeapon("data/", "salmonAll.jl.gz", "Grizzco Charger")
+    (
+        ('data/salmonAll/weapon/', 'Grizzco Charger.jl.gz'),
+        ('data/salmonAll/notWeapon', 'Grizzco Charger.jl.gz')
+    )
 
     """
     if not (
@@ -660,6 +686,15 @@ def usesWeapon(
     :raises FileNotFoundError: if the file doesn't exist
     :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
+    :Example:
+
+    >>> import core
+    >>> usesWeapon("data/", "salmonAll.jl.gz", "Grizzco Charger")
+    (
+        ('data/salmonAll/usesWeapon/', 'Grizzco Charger.jl.gz'),
+        ('data/salmonAll/notUsesWeapon/', 'Grizzco Charger.jl.gz')
+    )
+
     """
     if not (
         os.path.exists(path + data[0:-6] + "/usesWeapon/" + weapon + ".jl.gz")
@@ -736,6 +771,10 @@ def findPlayerIdByName(data: str, player: str) -> List[str]:
     :raises FileNotFoundError: if the file doesn't exist
     :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
+    >>> import core
+    >>> core.findPlayerIdByName("data/salmonAll.jl.gz", "CassTheFae")
+    ['aeda69d2070fafb6']
+
     """
     foundIds: List[str] = []
     with gzip.open(data) as reader:
@@ -745,7 +784,7 @@ def findPlayerIdByName(data: str, player: str) -> List[str]:
                 and job["my_data"]["splatnet_id"] not in foundIds
             ):
                 foundIds.append(job["my_data"]["splatnet_id"])
-            elif job["teammates"] is not None:
+            if job["teammates"] is not None:
                 for teammate in job["teammates"]:
                     if (
                         teammate["name"] == player
@@ -772,6 +811,15 @@ def onStage(
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
     :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
+
+    :Example:
+
+    >>> import core
+    >>> core.onStage("data/", "salmonAll.jl.gz", "Ruins of Ark Polaris")
+    (
+        ('data/salmonAll/stage/', 'Ruins of Ark Polaris.jl.gz'),
+        ('data/salmonAll/notStage/', 'Ruins of Ark Polaris.jl.gz')
+    )
 
     """
     if not (
@@ -800,7 +848,10 @@ def onStage(
                     encoding="utf8",
                 ) as writerB:
                     for var in jsonlines.Reader(reader, ujson.loads):
-                        if stage in (var["stage"]["key"], var["stage"]["name"][locale]):
+                        if var["stage"] is not None and stage in (
+                            var["stage"]["key"],
+                            var["stage"]["name"][locale],
+                        ):
                             ujson.dump(var, writerA)
                             writerA.write("\n")
                         else:
@@ -829,6 +880,15 @@ def withSpecial(
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
     :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
+
+    :Example:
+
+    >>> import core
+    >>> core.withSpecial("data/", "salmonAll.jl.gz", "Splashdown")
+    (
+        ('data/salmonAll/special/', 'Splashdown.jl.gz'),
+        ('data/salmonAll/notSpecial/', 'Splashdown.jl.gz')
+    )
 
     """
     if not (
@@ -1124,21 +1184,32 @@ def greaterThanClearWave(
     )
 
 
-def lessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
+def lessThanClearWave(
+    path: str, data: str, wave: int
+) -> Tuple[Tuple[str, str], Tuple[str, str]]:
     """
     Filter the data file to only jobs where the clear wave was less than the chosen clear wave.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param wave: int: the chosen clear wave
-    :returns Tuple[str, str]: the path and filename of the output data file
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param wave: the chosen clear wave
+    :type wave: int
+    :return: the path and filename of the output data files
+    :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
     :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
-    if not os.path.exists(
-        path + data[0:-6] + "/clearWaves/lessThan/" + str(wave) + ".jl.gz"
+    if not (
+        os.path.exists(
+            path + data[0:-6] + "/clearWaves/lessThan/" + str(wave) + ".jl.gz"
+        )
+        and os.path.exists(
+            path + data[0:-6] + "/clearWaves/notLessThan/" + str(wave) + ".jl.gz"
+        )
     ):
         try:
             os.mkdir(path + data[0:-6] + "/")
@@ -1152,260 +1223,231 @@ def lessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
             os.mkdir(path + data[0:-6] + "/clearWaves/lessThan/")
         except FileExistsError:
             pass
-        with gzip.open(path + data) as reader:
-            with gzip.open(
-                path + data[0:-6] + "/clearWaves/lessThan/" + str(wave) + ".jl.gz",
-                "at",
-                encoding="utf8",
-            ) as writer:
-                for job in jsonlines.Reader(reader, ujson.loads):
-                    if job["clear_waves"] < wave:
-                        ujson.dump(job, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/clearWaves/lessThan/", str(wave) + ".jl.gz")
-
-
-def notLessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
-    """
-    Filter the data file to only jobs where the clear wave was not less than the chosen clear wave.
-
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param wave: int: the chosen clear wave
-    :returns Tuple[str, str]: the path and filename of the output data file
-
-    """
-    if not os.path.exists(
-        path + data[0:-6] + "/clearWaves/notLessThan/" + str(wave) + ".jl.gz"
-    ):
-        try:
-            os.mkdir(path + data[0:-6] + "/")
-        except FileExistsError:
-            pass
-        try:
-            os.mkdir(path + data[0:-6] + "/clearWaves/")
-        except FileExistsError:
-            pass
         try:
             os.mkdir(path + data[0:-6] + "/clearWaves/notLessThan/")
         except FileExistsError:
             pass
         with gzip.open(path + data) as reader:
             with gzip.open(
-                path + data[0:-6] + "/clearWaves/notLessThan/" + str(wave) + ".jl.gz",
+                path + data[0:-6] + "/clearWaves/lessThan/" + str(wave) + ".jl.gz",
                 "at",
                 encoding="utf8",
-            ) as writer:
-                for job in jsonlines.Reader(reader, ujson.loads):
-                    if not job["clear_waves"] < wave:
-                        ujson.dump(job, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/clearWaves/notLessThan/", str(wave) + ".jl.gz")
+            ) as writerA:
+                with gzip.open(
+                    path
+                    + data[0:-6]
+                    + "/clearWaves/notLessThan/"
+                    + str(wave)
+                    + ".jl.gz",
+                    "at",
+                    encoding="utf8",
+                ) as writerB:
+                    for job in jsonlines.Reader(reader, ujson.loads):
+                        if job["clear_waves"] < wave:
+                            ujson.dump(job, writerA)
+                            writerA.write("\n")
+                        else:
+                            ujson.dump(job, writerB)
+                            writerB.write("\n")
+    return (
+        (path + data[0:-6] + "/clearWaves/lessThan/", str(wave) + ".jl.gz"),
+        (path + data[0:-6] + "/clearWaves/notLessThan/", str(wave) + ".jl.gz"),
+    )
 
 
-def dangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
+def dangerRate(
+    path: str, data: str, rate: str
+) -> Tuple[Tuple[str, str], Tuple[str, str]]:
     """
     Filter the data file to only jobs where the danger rate was the chosen danger rate.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param rate: int: the chosen danger rate
-    :returns Tuple[str, str]: the path and filename of the output data file
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param rate: the chosen danger rate
+    :type rate: int
+    :return: the path and filename of the output data files
+    :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
-    if not os.path.exists(path + data[0:-6] + "/dangerRate/equal/" + rate + ".jl.gz"):
-        if not os.path.exists(path + data[0:-6]):
+    if not (
+        os.path.exists(path + data[0:-6] + "/dangerRate/equal/" + rate + ".jl.gz")
+        and os.path.exists(
+            path + data[0:-6] + "/dangerRate/notEqual/" + rate + ".jl.gz"
+        )
+    ):
+        try:
             os.mkdir(path + data[0:-6])
-        if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
+        except FileExistsError:
+            pass
+        try:
             os.mkdir(path + data[0:-6] + "/dangerRate/")
-        if not os.path.exists(path + data[0:-6] + "/dangerRate/equals/"):
+        except FileExistsError:
+            pass
+        try:
             os.mkdir(path + data[0:-6] + "/dangerRate/equals/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/dangerRate/notEquals/")
+        except FileExistsError:
+            pass
         with gzip.open(path + data) as reader:
             with gzip.open(
                 path + data[0:-6] + "/dangerRate/equals/" + rate + ".jl.gz",
                 "at",
                 encoding="utf8",
-            ) as writer:
-                for job in jsonlines.Reader(reader, ujson.loads):
-                    if job["danger_rate"] == rate:
-                        ujson.dump(job, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/dangerRate/equals/", rate + ".jl.gz")
+            ) as writerA:
+                with gzip.open(
+                    path + data[0:-6] + "/dangerRate/notEquals/" + rate + ".jl.gz",
+                    "at",
+                    encoding="utf8",
+                ) as writerB:
+                    for job in jsonlines.Reader(reader, ujson.loads):
+                        if job["danger_rate"] == rate:
+                            ujson.dump(job, writerA)
+                            writerA.write("\n")
+                        else:
+                            ujson.dump(job, writerB)
+                            writerB.write("\n")
+    return (
+        (path + data[0:-6] + "/dangerRate/equals/", rate + ".jl.gz"),
+        (path + data[0:-6] + "/dangerRate/notEquals/", rate + ".jl.gz"),
+    )
 
 
-def notDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
-    """
-    Filter the data file to only jobs where the danger rate was not the chosen danger rate.
-
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param rate: int: the chosen danger rate
-    :returns Tuple[str, str]: the path and filename of the output data file
-
-    """
-    if not os.path.exists(
-        path + data[0:-6] + "/dangerRate/notEqual/" + rate + ".jl.gz"
-    ):
-        if not os.path.exists(path + data[0:-6]):
-            os.mkdir(path + data[0:-6])
-        if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
-            os.mkdir(path + data[0:-6] + "/dangerRate/")
-        if not os.path.exists(path + data[0:-6] + "/dangerRate/notEquals/"):
-            os.mkdir(path + data[0:-6] + "/dangerRate/notEquals/")
-        with gzip.open(path + data) as reader:
-            with gzip.open(
-                path + data[0:-6] + "/dangerRate/notEquals/" + rate + ".jl.gz",
-                "at",
-                encoding="utf8",
-            ) as writer:
-                for job in jsonlines.Reader(reader, ujson.loads):
-                    if not job["danger_rate"] == rate:
-                        ujson.dump(job, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/dangerRate/notEquals/", rate + ".jl.gz")
-
-
-def greaterThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
+def greaterThanDangerRate(
+    path: str, data: str, rate: str
+) -> Tuple[Tuple[str, str], Tuple[str, str]]:
     """
     Filter the data file to only jobs where the danger rate was greater than the chosen danger rate.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param rate: int: the chosen danger rate
-    :returns Tuple[str, str]: the path and filename of the output data file
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param rate: the chosen danger rate
+    :type rate: str
+    :return: the path and filename of the output data files
+    :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
-    if not os.path.exists(
-        path + data[0:-6] + "/dangerRate/greaterThan/" + rate + ".jl.gz"
+    if not (
+        os.path.exists(path + data[0:-6] + "/dangerRate/greaterThan/" + rate + ".jl.gz")
+        and os.path.exists(
+            path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jl.gz"
+        )
     ):
-        if not os.path.exists(path + data[0:-6]):
+        try:
             os.mkdir(path + data[0:-6])
-        if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
+        except FileExistsError:
+            pass
+        try:
             os.mkdir(path + data[0:-6] + "/dangerRate/")
-        if not os.path.exists(path + data[0:-6] + "/dangerRate/greaterThan/"):
+        except FileExistsError:
+            pass
+        try:
             os.mkdir(path + data[0:-6] + "/dangerRate/greaterThan/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/dangerRate/notGreaterThan/")
+        except FileExistsError:
+            pass
         with gzip.open(path + data) as reader:
             with gzip.open(
                 path + data[0:-6] + "/dangerRate/greaterThan/" + rate + ".jl.gz",
                 "at",
                 encoding="utf8",
-            ) as writer:
-                for job in jsonlines.Reader(reader, ujson.loads):
-                    if float(job["danger_rate"]) > float(rate):
-                        ujson.dump(job, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/dangerRate/greaterThan/", rate + ".jl.gz")
+            ) as writerA:
+                with gzip.open(
+                    path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jl.gz",
+                    "at",
+                    encoding="utf8",
+                ) as writerB:
+                    for job in jsonlines.Reader(reader, ujson.loads):
+                        if float(job["danger_rate"]) > float(rate):
+                            ujson.dump(job, writerA)
+                            writerA.write("\n")
+                        else:
+                            ujson.dump(job, writerB)
+                            writerB.write("\n")
+    return (
+        (path + data[0:-6] + "/dangerRate/greaterThan/", rate + ".jl.gz"),
+        (path + data[0:-6] + "/dangerRate/notGreaterThan/", rate + ".jl.gz"),
+    )
 
 
-def notGreaterThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
-    """
-    Filter the data file to only jobs where the danger rate was not greater than the chosen danger rate.
-
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param rate: int: the chosen danger rate
-    :returns Tuple[str, str]: the path and filename of the output data file
-
-    """
-    if not os.path.exists(
-        path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jl.gz"
-    ):
-        if not os.path.exists(path + data[0:-6]):
-            os.mkdir(path + data[0:-6])
-        if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
-            os.mkdir(path + data[0:-6] + "/dangerRate/")
-        if not os.path.exists(path + data[0:-6] + "/dangerRate/notGreaterThan/"):
-            os.mkdir(path + data[0:-6] + "/dangerRate/notGreaterThan/")
-        with gzip.open(path + data) as reader:
-            with gzip.open(
-                path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jl.gz",
-                "at",
-                encoding="utf8",
-            ) as writer:
-                for job in jsonlines.Reader(reader, ujson.loads):
-                    if float(job["danger_rate"]) <= float(rate):
-                        ujson.dump(job, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/dangerRate/notGreaterThan/", rate + ".jl.gz")
-
-
-def lessThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
+def lessThanDangerRate(
+    path: str, data: str, rate: str
+) -> Tuple[Tuple[str, str], Tuple[str, str]]:
     """
     Filter the data file to only jobs where the danger rate was less than the chosen danger rate.
 
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param rate: int: the chosen danger rate
-    :returns Tuple[str, str]: the path and filename of the output data file
+    :param path: the directory path of the data file
+    :type path: str
+    :param data: the file name of the data file
+    :type data: str
+    :param rate: the chosen danger rate
+    :type rate: str
+    :return: the path and filename of the output data files
+    :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
-    if not os.path.exists(
-        path + data[0:-6] + "/dangerRate/notGreaterThan/" + rate + ".jl.gz"
+    if not (
+        os.path.exists(path + data[0:-6] + "/dangerRate/lessThan/" + rate + ".jl.gz")
+        and os.path.exists(
+            path + data[0:-6] + "/dangerRate/notLessThan/" + rate + ".jl.gz"
+        )
     ):
-        if not os.path.exists(path + data[0:-6]):
+        try:
             os.mkdir(path + data[0:-6])
-        if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
+        except FileExistsError:
+            pass
+        try:
             os.mkdir(path + data[0:-6] + "/dangerRate/")
-        if not os.path.exists(path + data[0:-6] + "/dangerRate/lessThan/"):
+        except FileExistsError:
+            pass
+        try:
             os.mkdir(path + data[0:-6] + "/dangerRate/lessThan/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(path + data[0:-6] + "/dangerRate/notLessThan/")
+        except FileExistsError:
+            pass
         with gzip.open(path + data) as reader:
             with gzip.open(
                 path + data[0:-6] + "/dangerRate/lessThan/" + rate + ".jl.gz",
                 "at",
                 encoding="utf8",
-            ) as writer:
-                for job in jsonlines.Reader(reader, ujson.loads):
-                    if float(job["danger_rate"]) < float(rate):
-                        ujson.dump(job, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/dangerRate/lessThan/", rate + ".jl.gz")
-
-
-def notLessThanDangerRate(path: str, data: str, rate: str) -> Tuple[str, str]:
-    """
-    Filter the data file to only jobs where the danger rate was not less than the chosen danger rate.
-
-    :param path: str: the directory path of the data file
-    :param data: str: the file name of the data file
-    :param rate: int: the chosen danger rate
-    :returns Tuple[str, str]: the path and filename of the output data file
-
-    """
-    if not os.path.exists(
-        path + data[0:-6] + "/dangerRate/notLessThan/" + rate + ".jl.gz"
-    ):
-        if not os.path.exists(path + data[0:-6]):
-            os.mkdir(path + data[0:-6])
-        if not os.path.exists(path + data[0:-6] + "/dangerRate/"):
-            os.mkdir(path + data[0:-6] + "/dangerRate/")
-        if not os.path.exists(path + data[0:-6] + "/dangerRate/lessThan/"):
-            os.mkdir(path + data[0:-6] + "/dangerRate/lessThan/")
-        with gzip.open(path + data) as reader:
-            with gzip.open(
-                path + data[0:-6] + "/dangerRate/notLessThan/" + rate + ".jl.gz",
-                "at",
-                encoding="utf8",
-            ) as writer:
-                for job in jsonlines.Reader(reader, ujson.loads):
-                    if float(job["danger_rate"]) >= float(rate):
-                        ujson.dump(job, writer)
-                        writer.write("\n")
-    return (path + data[0:-6] + "/dangerRate/lessThan/", rate + ".jl.gz")
-
-
-def jobsCount(data: str) -> int:
-    """
-    Find the total number of jobs in a given data set.
-
-    :param data: str: The full file path of the data file
-    :returns int: The number of jobs in the file
-
-    """
-    with gzip.open(data) as reader:
-        count: int = 0
-        for _unused in jsonlines.Reader(reader, ujson.loads):
-            count += 1
-        return count
+            ) as writerA:
+                with gzip.open(
+                    path + data[0:-6] + "/dangerRate/notLessThan/" + rate + ".jl.gz",
+                    "at",
+                    encoding="utf8",
+                ) as writerB:
+                    for job in jsonlines.Reader(reader, ujson.loads):
+                        if float(job["danger_rate"]) < float(rate):
+                            ujson.dump(job, writerA)
+                            writerA.write("\n")
+                        else:
+                            ujson.dump(job, writerB)
+                            writerB.write("\n")
+    return (
+        (path + data[0:-6] + "/dangerRate/lessThan/", rate + ".jl.gz"),
+        (path + data[0:-6] + "/dangerRate/notLessThan/", rate + ".jl.gz"),
+    )
 
 
 def getValMultiDimensional(
@@ -1535,28 +1577,6 @@ def waveClearPercentageWithWeapon(data: str, weapon: str) -> float:
                 )
             )
         return sumVal / count
-
-
-def wavePercentages(data: str) -> Tuple[float, float, float]:
-    """
-
-    :param data:
-    :type data: str
-    :return:
-    :rtype: Tuple[float, float, float]
-
-    """
-    with gzip.open(data) as reader:
-        clearCount: float = 0.0
-        waveTwoCount: float = 0.0
-        waveOneCount: float = 0.0
-        count: float = 0.0
-        for job in jsonlines.Reader(reader, ujson.loads):
-            clearCount += int(job["clear_waves"] == 3)
-            waveTwoCount += int(job["clear_waves"] >= 2)
-            waveOneCount += int(job["clear_waves"] >= 1)
-            count += 1.0
-        return (clearCount / count, waveTwoCount / count, waveOneCount / count)
 
 
 def sumStatWaves(data: jobType, stat: str) -> int:
@@ -2199,7 +2219,7 @@ if __name__ == "__main__":
     ]
     paths.append(jobs[0])
     dataFiles.append(jobs[1])
-    jobs = dangerRate(jobs[0], jobs[1], "200.0")
+    jobs = dangerRate(jobs[0], jobs[1], "200.0")[0]
     paths.append(jobs[0])
     dataFiles.append(jobs[1])
     printOverview(jobs[0] + jobs[1])
