@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0,'.')
 import core
 from scipy.stats import ttest_ind
 import numpy as np

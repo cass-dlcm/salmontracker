@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0,'.')
 import core
 import matplotlib.pyplot as plt
 import numpy
@@ -8,7 +10,7 @@ import gzip
 
 
 if __name__ == "__main__":
-    # core.init("All")
+    core.init("All")
     with gzip.open("data/salmonAll.jl.gz") as reader:
         dangerRates: List[float] = []
         quotas: Tuple[List[float], List[float], List[float]] = ([], [], [])
