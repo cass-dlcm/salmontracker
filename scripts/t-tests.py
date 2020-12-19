@@ -12,8 +12,7 @@ import gzip
 import jsonlines
 
 if __name__ == "__main__":
-    core.init("User", json.load(open("keys.json", "r"))["statink_key"])
-    data: str = "data/salmon.jsonl"
+    data: str = core.init("User", json.load(open("keys.json", "r"))["statink_key"])
     print("Rotation")
     print("Player")
     print("Weapon")
