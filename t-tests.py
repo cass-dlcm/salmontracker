@@ -1,12 +1,4 @@
-from core import (
-    init,
-    findPlayerIdByName,
-    hasPlayer,
-    findRotationByWeaponsAndStage,
-    duringRotationInt,
-    hasWeapon,
-    onStage,
-)
+import core
 from scipy.stats import ttest_ind
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,7 +10,7 @@ import gzip
 import jsonlines
 
 if __name__ == "__main__":
-    init("User", json.load(open("keys.json", "r"))["statink_key"])
+    core.init("User", json.load(open("keys.json", "r"))["statink_key"])
     data: str = "data/salmon.jsonl"
     print("Rotation")
     print("Player")
@@ -26,27 +18,27 @@ if __name__ == "__main__":
     print("Stage")
     stat: str = input("Choose a stat to run analysis on: ")
     if stat == "Player":
-        playerId: List[str] = findPlayerIdByName(
+        playerId: List[str] = core.findPlayerIdByName(
             data, input("Enter a player name to run analysis on: ")
         )
         print(playerId)
         val: str = playerId[int(input("Pick the player id by index: "))]
-        result: Tuple[str, str] = hasPlayer(data, val)
+        result: Tuple[str, str] = core.hasPlayer(data, val)
     elif stat == "Rotation":
         weapons: List[str] = []
         for i in range(0, 4):
             weapons.append(input("Enter a weapon: "))
         stageChoice: str = input("Enter the stage: ")
-        rotations: List[int] = findRotationByWeaponsAndStage(data, weapons, stageChoice)
+        rotations: List[int] = core.findRotationByWeaponsAndStage(data, weapons, stageChoice)
         print(rotations)
         rot: int = rotations[int(input("Pick the rotation id by index: "))]
-        result = duringRotationInt(data, rot)
+        result = core.duringRotationInt(data, rot)
     elif stat == "Weapon":
         val = input("Enter a weapon: ")
-        result = hasWeapon(data, val)
+        result = core.hasWeapon(data, val)
     elif stat == "Stage":
         val = input("Enter a stage: ")
-        result = onStage(data, val)
+        result = core.onStage(data, val)
     else:
         sys.exit()
     withVal: str = result[0]
