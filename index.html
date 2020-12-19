@@ -51,7 +51,14 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data files</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -99,7 +106,14 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data files</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -124,7 +138,14 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data file</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -148,7 +169,14 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the list of found player IDs</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -173,11 +201,34 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a list of rotation IDs</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">List[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a>]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">List[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a>]</p>
 </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
 </tr>
 </tbody>
 </table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">core</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">findRotationByWeaponsAndStage</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;data/salmon.jl.gz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">(</span>
+<span class="gp">... </span>        <span class="s2">&quot;Grizzco Charger&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;Grizzco Blaster&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;Grizzco Slosher&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;Grizzco Brella&quot;</span>
+<span class="gp">... </span>    <span class="p">),</span>
+<span class="gp">... </span>    <span class="s2">&quot;Ruins of Ark Polaris&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">[1563537600, 1607752800]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -197,7 +248,14 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the weapons and stage for that rotation</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Dict[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, Union[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Dict[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, Union[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -300,12 +358,16 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> – dict:</li>
-<li><strong>attr</strong> – str:</li>
+<li><strong>data</strong> (<em>jobType</em>) – </li>
+<li><strong>attr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns str:</th><td class="field-body"></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -329,7 +391,14 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data files</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -361,26 +430,39 @@
 
 <dl class="function">
 <dt id="core.hasJobs">
-<code class="descclassname">core.</code><code class="descname">hasJobs</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.hasJobs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">hasJobs</code><span class="sig-paren">(</span><em>data: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.hasJobs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if a given data file has data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
-<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the full path of the data file</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">whether the file has jobs or not</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
 </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
 </tr>
 </tbody>
 </table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">core</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">core</span><span class="o">.</span><span class="n">hasJobs</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;data/salmon.jl.gz&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -401,11 +483,28 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and file name of the paired filtered files</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
 </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
 </tr>
 </tbody>
 </table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">core</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">core</span><span class="o">.</span><span class="n">hasPlayer</span><span class="p">(</span><span class="s2">&quot;data/&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;salmonAll.jl.gz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;aeda69d2070fafb6&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">((&#39;data/salmonAll/playerId/&#39;, &#39;aeda69d2070fafb6.jl.gz&#39;), (&#39;data/salmonAll/notPlayerId/&#39;, &#39;aeda69d2070fafb6.jl.gz&#39;))</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -426,11 +525,60 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data files</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.init">
+<code class="descclassname">core.</code><code class="descname">init</code><span class="sig-paren">(</span><em>mode: str</em>, <em>api_key: str = None</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch the data sets from stat.ink</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – whether to fetch data for all users or a single user</li>
+<li><strong>api_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the stat.ink API key for the user to fetch</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the resulting data file path</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">core</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">core</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="s2">&quot;All&quot;</span><span class="p">)</span>
+<span class="go">(&quot;data/&quot;, &quot;salmonAll.jl.gz&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ujson</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">core</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;User&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">ujson</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="nb">open</span><span class="p">(</span>
+<span class="gp">... </span>            <span class="s2">&quot;keys.json&quot;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s2">&quot;r&quot;</span>
+<span class="gp">... </span>        <span class="p">)</span>
+<span class="gp">... </span>    <span class="p">)[</span><span class="s2">&quot;statink_key&quot;</span><span class="p">]</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">(&quot;data/&quot;, &quot;salmon.jl.gz&quot;)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -465,7 +613,14 @@
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first">the path and filename of the output data file</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -605,7 +760,14 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data files</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -619,7 +781,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – dict:</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>jobType</em>) – </td>
 </tr>
 </tbody>
 </table>
@@ -632,7 +794,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – dict:</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>jobType</em>) – </td>
 </tr>
 </tbody>
 </table>
@@ -645,7 +807,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – str:</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </td>
 </tr>
 </tbody>
 </table>
@@ -658,7 +820,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – dict:</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>jobType</em>) – </td>
 </tr>
 </tbody>
 </table>
@@ -671,7 +833,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – dict:</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>jobType</em>) – </td>
 </tr>
 </tbody>
 </table>
@@ -684,7 +846,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – dict:</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>jobType</em>) – </td>
 </tr>
 </tbody>
 </table>
@@ -697,7 +859,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – dict:</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>jobType</em>) – </td>
 </tr>
 </tbody>
 </table>
@@ -735,12 +897,16 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> – dict:</li>
-<li><strong>stat</strong> – str:</li>
+<li><strong>data</strong> (<em>jobType</em>) – </li>
+<li><strong>stat</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns int:</th><td class="field-body"></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -764,7 +930,14 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data files</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -825,7 +998,14 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data file</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
 </td>
 </tr>
 </tbody>
