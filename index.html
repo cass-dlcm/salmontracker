@@ -67,21 +67,30 @@
 
 <dl class="function">
 <dt id="core.dangerRate">
-<code class="descclassname">core.</code><code class="descname">dangerRate</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rate: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.dangerRate" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">dangerRate</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rate: str</em><span class="sig-paren">)</span> &#x2192; Tuple[Tuple[str, str], Tuple[str, str]]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.dangerRate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter the data file to only jobs where the danger rate was the chosen danger rate.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – str: the directory path of the data file</li>
-<li><strong>data</strong> – str: the file name of the data file</li>
-<li><strong>rate</strong> – int: the chosen danger rate</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
+<li><strong>rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the chosen danger rate</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data files</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -181,6 +190,11 @@
 </tr>
 </tbody>
 </table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">core</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">core</span><span class="o">.</span><span class="n">findPlayerIdByName</span><span class="p">(</span><span class="s2">&quot;data/salmonAll.jl.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;CassTheFae&quot;</span><span class="p">)</span>
+<span class="go">[&#39;aeda69d2070fafb6&#39;]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -251,15 +265,33 @@
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Dict[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, Union[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]]</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
 <li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
 <li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
 <li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
 </ul>
 </td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
 </tbody>
 </table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">core</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">core</span><span class="o">.</span><span class="n">findWeaponsAndStageByRotation</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;data/salmonAll.jl.gz&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mi">1607752800</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">{</span>
+<span class="go">    &#39;stage&#39;: &#39;Ruins of Ark Polaris&#39;,</span>
+<span class="go">    &#39;weapons&#39;: [</span>
+<span class="go">        &#39;Grizzco Brella&#39;,</span>
+<span class="go">        &#39;Grizzco Blaster&#39;,</span>
+<span class="go">        &#39;Grizzco Charger&#39;,</span>
+<span class="go">        &#39;Grizzco Slosher&#39;</span>
+<span class="go">    ]</span>
+<span class="go">}</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -407,21 +439,30 @@
 
 <dl class="function">
 <dt id="core.greaterThanDangerRate">
-<code class="descclassname">core.</code><code class="descname">greaterThanDangerRate</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rate: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.greaterThanDangerRate" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">greaterThanDangerRate</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rate: str</em><span class="sig-paren">)</span> &#x2192; Tuple[Tuple[str, str], Tuple[str, str]]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.greaterThanDangerRate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter the data file to only jobs where the danger rate was greater than the chosen danger rate.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – str: the directory path of the data file</li>
-<li><strong>data</strong> – str: the file name of the data file</li>
-<li><strong>rate</strong> – int: the chosen danger rate</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
+<li><strong>rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the chosen danger rate</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data files</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -457,9 +498,7 @@
 </tbody>
 </table>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">core</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">core</span><span class="o">.</span><span class="n">hasJobs</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="s2">&quot;data/salmon.jl.gz&quot;</span>
-<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">core</span><span class="o">.</span><span class="n">hasJobs</span><span class="p">(</span><span class="s2">&quot;data/salmon.jl.gz&quot;</span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>
 </div>
@@ -468,7 +507,7 @@
 <dl class="function">
 <dt id="core.hasPlayer">
 <code class="descclassname">core.</code><code class="descname">hasPlayer</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>player: str</em><span class="sig-paren">)</span> &#x2192; Tuple[Tuple[str, str], Tuple[str, str]]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.hasPlayer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter the jobs in the given data file to jobs that contain the chosen player and jobs that don’t.</p>
+<dd><p>Filter the jobs in the given data file to jobs that contain the chosen player.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -498,11 +537,11 @@
 </tbody>
 </table>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">core</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">core</span><span class="o">.</span><span class="n">hasPlayer</span><span class="p">(</span><span class="s2">&quot;data/&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="s2">&quot;salmonAll.jl.gz&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="s2">&quot;aeda69d2070fafb6&quot;</span>
-<span class="gp">... </span><span class="p">)</span>
-<span class="go">((&#39;data/salmonAll/playerId/&#39;, &#39;aeda69d2070fafb6.jl.gz&#39;), (&#39;data/salmonAll/notPlayerId/&#39;, &#39;aeda69d2070fafb6.jl.gz&#39;))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">core</span><span class="o">.</span><span class="n">hasPlayer</span><span class="p">(</span><span class="s2">&quot;data/&quot;</span><span class="p">,</span> <span class="s2">&quot;salmonAll.jl.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;aeda69d2070fafb6&quot;</span><span class="p">)</span>
+<span class="go">(</span>
+<span class="go">    (&#39;data/salmonAll/playerId/&#39;, &#39;aeda69d2070fafb6.jl.gz&#39;),</span>
+<span class="go">    (&#39;data/salmonAll/notPlayerId/&#39;, &#39;aeda69d2070fafb6.jl.gz&#39;)</span>
+<span class="go">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -510,7 +549,7 @@
 <dl class="function">
 <dt id="core.hasWeapon">
 <code class="descclassname">core.</code><code class="descname">hasWeapon</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>weapon: str</em><span class="sig-paren">)</span> &#x2192; Tuple[Tuple[str, str], Tuple[str, str]]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.hasWeapon" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter the data file to only jobs that contain the chosen weapon and jobs that don’t.</p>
+<dd><p>Filter the data file to only jobs that contain the chosen weapon.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -528,15 +567,25 @@
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
 <li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
 <li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
 <li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
 </ul>
 </td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
 </tbody>
 </table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">core</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">core</span><span class="o">.</span><span class="n">hasWeapon</span><span class="p">(</span><span class="s2">&quot;data/&quot;</span><span class="p">,</span> <span class="s2">&quot;salmonAll.jl.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;Grizzco Charger&quot;</span><span class="p">)</span>
+<span class="go">(</span>
+<span class="go">    (&#39;data/salmonAll/weapon/&#39;, &#39;Grizzco Charger.jl.gz&#39;),</span>
+<span class="go">    (&#39;data/salmonAll/notWeapon&#39;, &#39;Grizzco Charger.jl.gz&#39;)</span>
+<span class="go">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -582,41 +631,27 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="core.jobsCount">
-<code class="descclassname">core.</code><code class="descname">jobsCount</code><span class="sig-paren">(</span><em>data: str</em><span class="sig-paren">)</span> &#x2192; int<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.jobsCount" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find the total number of jobs in a given data set.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – str: The full file path of the data file</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns int:</th><td class="field-body">The number of jobs in the file</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
 <dt id="core.lessThanClearWave">
-<code class="descclassname">core.</code><code class="descname">lessThanClearWave</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>wave: int</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.lessThanClearWave" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">lessThanClearWave</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>wave: int</em><span class="sig-paren">)</span> &#x2192; Tuple[Tuple[str, str], Tuple[str, str]]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.lessThanClearWave" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter the data file to only jobs where the clear wave was less than the chosen clear wave.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – str: the directory path of the data file</li>
-<li><strong>data</strong> – str: the file name of the data file</li>
-<li><strong>wave</strong> – int: the chosen clear wave</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
+<li><strong>wave</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the chosen clear wave</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first">the path and filename of the output data file</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data files</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
 <li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
 <li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
 <li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
@@ -629,113 +664,30 @@
 
 <dl class="function">
 <dt id="core.lessThanDangerRate">
-<code class="descclassname">core.</code><code class="descname">lessThanDangerRate</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rate: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.lessThanDangerRate" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">lessThanDangerRate</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rate: str</em><span class="sig-paren">)</span> &#x2192; Tuple[Tuple[str, str], Tuple[str, str]]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.lessThanDangerRate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter the data file to only jobs where the danger rate was less than the chosen danger rate.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – str: the directory path of the data file</li>
-<li><strong>data</strong> – str: the file name of the data file</li>
-<li><strong>rate</strong> – int: the chosen danger rate</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the directory path of the data file</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the file name of the data file</li>
+<li><strong>rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the chosen danger rate</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the path and filename of the output data files</p>
 </td>
 </tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.notDangerRate">
-<code class="descclassname">core.</code><code class="descname">notDangerRate</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rate: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.notDangerRate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter the data file to only jobs where the danger rate was not the chosen danger rate.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – str: the directory path of the data file</li>
-<li><strong>data</strong> – str: the file name of the data file</li>
-<li><strong>rate</strong> – int: the chosen danger rate</li>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
+<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.notGreaterThanDangerRate">
-<code class="descclassname">core.</code><code class="descname">notGreaterThanDangerRate</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rate: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.notGreaterThanDangerRate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter the data file to only jobs where the danger rate was not greater than the chosen danger rate.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – str: the directory path of the data file</li>
-<li><strong>data</strong> – str: the file name of the data file</li>
-<li><strong>rate</strong> – int: the chosen danger rate</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.notLessThanClearWave">
-<code class="descclassname">core.</code><code class="descname">notLessThanClearWave</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>wave: int</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.notLessThanClearWave" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter the data file to only jobs where the clear wave was not less than the chosen clear wave.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – str: the directory path of the data file</li>
-<li><strong>data</strong> – str: the file name of the data file</li>
-<li><strong>wave</strong> – int: the chosen clear wave</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.notLessThanDangerRate">
-<code class="descclassname">core.</code><code class="descname">notLessThanDangerRate</code><span class="sig-paren">(</span><em>path: str</em>, <em>data: str</em>, <em>rate: str</em><span class="sig-paren">)</span> &#x2192; Tuple[str, str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.notLessThanDangerRate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter the data file to only jobs where the danger rate was not less than the chosen danger rate.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> – str: the directory path of the data file</li>
-<li><strong>data</strong> – str: the file name of the data file</li>
-<li><strong>rate</strong> – int: the chosen danger rate</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Returns Tuple[str, str]:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">the path and filename of the output data file</p>
 </td>
 </tr>
 </tbody>
@@ -763,15 +715,25 @@
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
 <li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
 <li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
 <li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
 </ul>
 </td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
 </tbody>
 </table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">core</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">core</span><span class="o">.</span><span class="n">onStage</span><span class="p">(</span><span class="s2">&quot;data/&quot;</span><span class="p">,</span> <span class="s2">&quot;salmonAll.jl.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;Ruins of Ark Polaris&quot;</span><span class="p">)</span>
+<span class="go">(</span>
+<span class="go">    (&#39;data/salmonAll/stage/&#39;, &#39;Ruins of Ark Polaris.jl.gz&#39;),</span>
+<span class="go">    (&#39;data/salmonAll/notStage/&#39;, &#39;Ruins of Ark Polaris.jl.gz&#39;)</span>
+<span class="go">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -933,15 +895,25 @@
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
 <li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
 <li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
 <li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
 </ul>
 </td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
 </tbody>
 </table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">core</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">usesWeapon</span><span class="p">(</span><span class="s2">&quot;data/&quot;</span><span class="p">,</span> <span class="s2">&quot;salmonAll.jl.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;Grizzco Charger&quot;</span><span class="p">)</span>
+<span class="go">(</span>
+<span class="go">    (&#39;data/salmonAll/usesWeapon/&#39;, &#39;Grizzco Charger.jl.gz&#39;),</span>
+<span class="go">    (&#39;data/salmonAll/notUsesWeapon/&#39;, &#39;Grizzco Charger.jl.gz&#39;)</span>
+<span class="go">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -958,23 +930,6 @@
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns float:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="core.wavePercentages">
-<code class="descclassname">core.</code><code class="descname">wavePercentages</code><span class="sig-paren">(</span><em>data: str</em><span class="sig-paren">)</span> &#x2192; Tuple[float, float, float]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.wavePercentages" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Tuple[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a>]</td>
 </tr>
 </tbody>
 </table>
@@ -1001,15 +956,25 @@
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Tuple[Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>], Tuple[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]]</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
 <li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
 <li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
 <li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
 </ul>
 </td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
 </tbody>
 </table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">core</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">core</span><span class="o">.</span><span class="n">withSpecial</span><span class="p">(</span><span class="s2">&quot;data/&quot;</span><span class="p">,</span> <span class="s2">&quot;salmonAll.jl.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;Splashdown&quot;</span><span class="p">)</span>
+<span class="go">(</span>
+<span class="go">    (&#39;data/salmonAll/special/&#39;, &#39;Splashdown.jl.gz&#39;),</span>
+<span class="go">    (&#39;data/salmonAll/notSpecial/&#39;, &#39;Splashdown.jl.gz&#39;)</span>
+<span class="go">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
