@@ -101,6 +101,15 @@ def hasJobs(data: str) -> bool:
         return False
 
 
+def listAllUsers(data: str) -> List[str]:
+    result: List[str] = []
+    with gzip.open(data) as reader:
+        for job in jsonlines.Reader(reader, ujson.loads):
+            if job["my_data"]["splatnet_id"] not in result:
+                result.append(job["my_data"]["splatnet_id"])
+    return result
+
+
 def hasPlayer(data: str, player: str) -> Tuple[str, str]:
     """
     Filter the jobs in the given data file to jobs that contain the chosen player.
@@ -1664,13 +1673,14 @@ def getWavesAttribute(data: jobType, attr: str) -> str:
     return attrs
 
 
-def printOverview(data: str) -> None:
+def getOverview(data: str) -> str:
     """
 
     :param data:
     :type data: str
 
     """
+    result = data + "\n"
     stats = [
         "clear_waves",
         "my_data golden_egg_delivered",
@@ -1711,36 +1721,27 @@ def printOverview(data: str) -> None:
                 maxVal[i] = max(maxVal[i], val)
                 minVal[i] = min(minVal[i], val)
                 vals[i].append(val)
-    print("Jobs: " + str(count))
-    print("Average Waves: " + str(sumVal[0] / count))
-    print("Clear %: " + str(clearCount / count))
-    print("Wave 2 %: " + str(waveTwoCount / count))
-    print("Wave 1 %: " + str(waveOneCount / count))
-    print(
-        "Golden: {} ({}, {}, {}".format(
-            sumVal[1] / count, minVal[1], np.median(vals[1]), maxVal[1]
-        )
+    result += "Jobs: " + str(count) + "\n"
+    result += "Average Waves: " + str(sumVal[0] / count) + "\n"
+    result += "Clear %: " + str(clearCount / count) + "\n"
+    result += "Wave 2 %: " + str(waveTwoCount / count) + "\n"
+    result += "Wave 1 %: " + str(waveOneCount / count) + "\n"
+    result += "Golden: {} ({}, {}, {}\n".format(
+        sumVal[1] / count, minVal[1], np.median(vals[1]), maxVal[1]
     )
-    print(
-        "Power Eggs: {} ({}, {}, {})".format(
-            sumVal[2] / count, minVal[2], np.median(vals[2]), maxVal[2]
-        )
+    result += "Power Eggs: {} ({}, {}, {})\n".format(
+        sumVal[2] / count, minVal[2], np.median(vals[2]), maxVal[2]
     )
-    print(
-        "Rescued: {} ({}, {}, {})".format(
-            sumVal[3] / count, minVal[3], np.median(vals[3]), maxVal[3]
-        )
+    result += "Rescued: {} ({}, {}, {})\n".format(
+        sumVal[3] / count, minVal[3], np.median(vals[3]), maxVal[3]
     )
-    print(
-        "Deaths: {} ({}, {}, {})".format(
-            sumVal[4] / count, minVal[4], np.median(vals[4]), maxVal[4]
-        )
+    result += "Deaths: {} ({}, {}, {})\n".format(
+        sumVal[4] / count, minVal[4], np.median(vals[4]), maxVal[4]
     )
-    print(
-        "Hazard Level: {} ({}, {}, {})".format(
-            sumVal[5] / count, minVal[5], np.median(vals[5]), maxVal[5]
-        )
+    result += "Hazard Level: {} ({}, {}, {})\n".format(
+        sumVal[5] / count, minVal[5], np.median(vals[5]), maxVal[5]
     )
+    return result
 
 
 def printGeneral(data: jobType) -> None:
@@ -2302,7 +2303,7 @@ if __name__ == "__main__":
     dataFiles.append(jobs)
     jobs = dangerRate(jobs, "200.0")[0]
     dataFiles.append(jobs)
-    printOverview(jobs)
+    print(getOverview(jobs))
     print()
     for a in range(0, len(dataFiles)):
         os.remove(dataFiles[a])
