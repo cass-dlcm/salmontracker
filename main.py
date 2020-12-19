@@ -300,12 +300,12 @@ def printOverview(dataFile: List[str]):
     which: str = input("Would you like to print a [SpecificList/AllLists]: ")
     if which == "AllLists":
         for i in range(0, len(dataFile)):
-            core.printOverview(dataFile[i])
+            print(core.getOverview(dataFile[i]))
     elif which == "SpecificList":
         for i in range(0, len(dataFile)):
             print(dataFile[i])
         chosenList: int = int(input("Which list (by index): "))
-        core.printOverview(dataFile[chosenList])
+        print(core.getOverview(dataFile[chosenList]))
         print()
     else:
         sys.exit()
