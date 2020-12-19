@@ -103,7 +103,9 @@ if __name__ == "__main__":
     plt.hist(withoutValGoldenTotal, density=True)
     plt.xlabel("Golden Eggs")
     plt.ylabel("Probability")
-    print("a - b = " + str(np.mean(withValGoldenTotal) - np.mean(withoutValGoldenTotal)))
+    print(
+        "a - b = " + str(np.mean(withValGoldenTotal) - np.mean(withoutValGoldenTotal))
+    )
     print("t = " + str(t))
     print("p = " + str(p))
     print()

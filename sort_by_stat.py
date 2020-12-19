@@ -50,11 +50,11 @@ def sortWeapons(path: str, data: str, stat: str) -> None:
         )
         withVal: Tuple[str, str] = filters[0]
         withoutVal: Tuple[str, str] = filters[1]
-        if hasJobs(withVal[0], withVal[1]) and not hasVal(
+        if hasJobs(withVal[0] + withVal[1]) and not hasVal(
             cast(List[Dict[str, str]], results), cast(str, weapon["main_ref"])
         ):
-            if (hasJobs(withVal[0], withVal[1])) and (
-                hasJobs(withoutVal[0], withoutVal[1])
+            if (hasJobs(withVal[0] + withVal[1])) and (
+                hasJobs(withoutVal[0] + withoutVal[1])
             ):
                 result["key"] = cast(str, weapon["main_ref"])
                 result["name"] = cast(Dict[str, str], weapon["name"])[locale]
@@ -63,7 +63,7 @@ def sortWeapons(path: str, data: str, stat: str) -> None:
                     - statSummary(withoutVal[0] + withoutVal[1], stat)[0]
                 )
                 results.append(result)
-        elif not hasJobs(withVal[0], withVal[1]):
+        elif not hasJobs(withVal[0] + withVal[1]):
             os.remove(withVal[0] + withVal[1])
             os.remove(withoutVal[0] + withoutVal[1])
     pprint.pprint(sorted(results, key=lambda val: val["value"]))
@@ -168,9 +168,9 @@ def sortRotation(path: str, data: str, stat: str) -> None:
         )
         withVal: Tuple[str, str] = filters[0]
         withoutVal: Tuple[str, str] = filters[1]
-        if hasJobs(withVal[0], withVal[1]):
-            if (hasJobs(withVal[0], withVal[1])) and (
-                hasJobs(withoutVal[0], withoutVal[1])
+        if hasJobs(withVal[0] + withVal[1]):
+            if (hasJobs(withVal[0] + withVal[1])) and (
+                hasJobs(withoutVal[0] + withoutVal[1])
             ):
                 result["name"] = rotation
                 result["data"] = core.findWeaponsAndStageByRotation(
@@ -181,7 +181,7 @@ def sortRotation(path: str, data: str, stat: str) -> None:
                     - statSummary(withoutVal[0] + withoutVal[1], stat)[0]
                 )
                 rotationResultsList.append(result)
-        elif not hasJobs(withVal[0], withVal[1]):
+        elif not hasJobs(withVal[0] + withVal[1]):
             os.remove(withVal[0] + withVal[1])
             os.remove(withoutVal[0] + withoutVal[1])
     pprint.pprint(

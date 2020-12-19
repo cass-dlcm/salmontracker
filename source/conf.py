@@ -60,8 +60,6 @@ intersphinx_mapping = {
     "numpy": ("https://numpy.org/doc/stable/", None),
     "jsonlines": ("https://jsonlines.readthedocs.io/en/latest/", None),
     "requests": ("https://requests.readthedocs.io/en/master/", None),
-    "matplotlib": ("https://matplotlib.org/contents.html", None),
-    "ujson": ("https://github.com/ultrajson/ultrajson", None),
 }
 
 

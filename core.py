@@ -68,24 +68,33 @@ jobType = Dict[
 ]
 
 
-def hasJobs(path: str, data: str) -> bool:
+def hasJobs(data: str) -> bool:
     """
     Check if a given data file has data.
 
-    :param path: the directory path of the data file
-    :type path: str
-    :param data: the file name of the data file
+    :param data: the full path of the data file
     :type data: str
     :return: whether the file has jobs or not
     :rtype: bool
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
+
+    :Example:
+
+    >>> import core
+    >>> core.hasJobs(
+    ...     "data/salmon.jl.gz"
+    ... )
+    True
 
     """
-    with gzip.open(path + data) as reader:
-        try:
+    try:
+        with gzip.open(data) as reader:
             jsonlines.Reader(reader, ujson.loads).read()
             return True
-        except EOFError:
-            return False
+    except EOFError:
+        return False
 
 
 def hasPlayer(
@@ -102,6 +111,18 @@ def hasPlayer(
     :type player: str
     :return: the path and file name of the paired filtered files
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
+
+    :Example:
+
+    >>> import core
+    >>> core.hasPlayer("data/",
+    ...     "salmonAll.jl.gz",
+    ...     "aeda69d2070fafb6"
+    ... )
+    (('data/salmonAll/playerId/', 'aeda69d2070fafb6.jl.gz'), ('data/salmonAll/notPlayerId/', 'aeda69d2070fafb6.jl.gz'))
 
     """
     if not (
@@ -121,7 +142,7 @@ def hasPlayer(
         except FileExistsError:
             pass
         with gzip.open(path + data) as reader:
-            if hasJobs(path, data):
+            if hasJobs(path + data):
                 with gzip.open(
                     path + data[0:-6] + "/playerId/" + player + ".jl.gz",
                     "at",
@@ -134,7 +155,8 @@ def hasPlayer(
                     ) as writerB:
                         for var in jsonlines.Reader(reader, ujson.loads):
                             if (
-                                var["teammates"][0]["splatnet_id"] == player
+                                var["my_data"]["splatnet_id"] == player
+                                or var["teammates"][0]["splatnet_id"] == player
                                 or (
                                     len(var["teammates"]) > 1
                                     and var["teammates"][1]["splatnet_id"] == player
@@ -169,6 +191,24 @@ def findRotationByWeaponsAndStage(
     :type stage: str
     :return: a list of rotation IDs
     :rtype: List[int]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
+
+    :Example:
+
+    >>> import core
+    >>> findRotationByWeaponsAndStage(
+    ...     "data/salmon.jl.gz",
+    ...     (
+    ...         "Grizzco Charger",
+    ...         "Grizzco Blaster",
+    ...         "Grizzco Slosher",
+    ...         "Grizzco Brella"
+    ...     ),
+    ...     "Ruins of Ark Polaris"
+    ... )
+    [1563537600, 1607752800]
 
     """
     foundRotations: List[int] = []
@@ -343,6 +383,9 @@ def findWeaponsAndStageByRotation(
     :type rotation: int
     :return: the weapons and stage for that rotation
     :rtype: Dict[str, Union[str, List[str]]]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
     result: Dict[str, Union[str, List[str]]] = {}
@@ -385,6 +428,9 @@ def hasWeapon(
     :type weapon: str
     :return: the path and filename of the output data files
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
     if not (
@@ -610,6 +656,9 @@ def usesWeapon(
     :type weapon: str
     :return: the path and filename of the output data files
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
     if not (
@@ -683,17 +732,26 @@ def findPlayerIdByName(data: str, player: str) -> List[str]:
     :type player: str
     :return: the list of found player IDs
     :rtype: List[str]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
     foundIds: List[str] = []
     with gzip.open(data) as reader:
         for job in jsonlines.Reader(reader, ujson.loads):
-            for teammate in job["teammates"]:
-                if (
-                    teammate["name"] == player
-                    and teammate["splatnet_id"] not in foundIds
-                ):
-                    foundIds.append(teammate["splatnet_id"])
+            if (
+                job["my_data"]["name"] == player
+                and job["my_data"]["splatnet_id"] not in foundIds
+            ):
+                foundIds.append(job["my_data"]["splatnet_id"])
+            elif job["teammates"] is not None:
+                for teammate in job["teammates"]:
+                    if (
+                        teammate["name"] == player
+                        and teammate["splatnet_id"] not in foundIds
+                    ):
+                        foundIds.append(teammate["splatnet_id"])
     return foundIds
 
 
@@ -711,6 +769,9 @@ def onStage(
     :type stage: str
     :return: the path and filename of the output data files
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
     if not (
@@ -765,6 +826,9 @@ def withSpecial(
     :type special: str
     :return: the path and filename of the output data file
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
     if not (
@@ -824,6 +888,9 @@ def failReason(
     :type reason: str
     :return: the path and filename of the output data file
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
     if not (
@@ -880,6 +947,9 @@ def duringRotationInt(
     :type rotation: int
     :return: the path and filename of the output data files
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
     if not (
@@ -938,6 +1008,9 @@ def clearWave(
     :type wave: int
     :return: the path and filename of the output data files
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
     if not os.path.exists(
@@ -998,6 +1071,9 @@ def greaterThanClearWave(
     :type wave: int
     :return: the path and filename of the output data files
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
     if not os.path.exists(
@@ -1056,6 +1132,9 @@ def lessThanClearWave(path: str, data: str, wave: int) -> Tuple[str, str]:
     :param data: str: the file name of the data file
     :param wave: int: the chosen clear wave
     :returns Tuple[str, str]: the path and filename of the output data file
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
     if not os.path.exists(
@@ -1483,9 +1562,12 @@ def wavePercentages(data: str) -> Tuple[float, float, float]:
 def sumStatWaves(data: jobType, stat: str) -> int:
     """
 
-    :param data: dict:
-    :param stat: str:
-    :returns int:
+    :param data:
+    :type data: jobType
+    :param stat:
+    :type stat: str
+    :return:
+    :rtype: int
 
     """
     sumVal: int = 0
@@ -1524,9 +1606,12 @@ def getPlayersAttribute(data: jobType, attr: str) -> List[str]:
 def getWavesAttribute(data: jobType, attr: str) -> str:
     """
 
-    :param data: dict:
-    :param attr: str:
-    :returns str:
+    :param data:
+    :type data: jobType
+    :param attr:
+    :type attr: str
+    :return:
+    :rtype: str
 
     """
     attrs: str = ""
@@ -1550,7 +1635,8 @@ def getWavesAttribute(data: jobType, attr: str) -> str:
 def printOverview(data: str) -> None:
     """
 
-    :param data: str:
+    :param data:
+    :type data: str
 
     """
     stats = [
@@ -1628,7 +1714,8 @@ def printOverview(data: str) -> None:
 def printGeneral(data: jobType) -> None:
     """
 
-    :param data: dict:
+    :param data:
+    :type data: jobType
 
     """
     print("Stat.ink Link: {}".format(data["url"]))
@@ -1668,7 +1755,8 @@ def printGeneral(data: jobType) -> None:
 def printWaves(data: jobType) -> None:
     """
 
-    :param data: dict:
+    :param data:
+    :type data: jobType
 
     """
     print(
@@ -1719,7 +1807,8 @@ def printWaves(data: jobType) -> None:
 def printWeapons(data: jobType) -> None:
     """
 
-    :param data: dict:
+    :param data:
+    :type data: jobType
 
     """
     for i in range(
@@ -1739,7 +1828,8 @@ def printWeapons(data: jobType) -> None:
 def printSpecials(data: jobType) -> None:
     """
 
-    :param data: dict:
+    :param data:
+    :type data: jobType
 
     """
     for i in range(
@@ -1756,7 +1846,8 @@ def printSpecials(data: jobType) -> None:
 def printPlayers(data: jobType) -> None:
     """
 
-    :param data: dict:
+    :param data:
+    :type data: jobType
 
     """
     print(
@@ -1925,7 +2016,8 @@ def getBosses(data: jobType) -> List[Union[Dict[str, str], Dict[str, int]]]:
 def printBosses(data: jobType) -> None:
     """
 
-    :param data: dict:
+    :param data:
+    :type data: jobType
 
     """
     print(
@@ -1990,6 +2082,34 @@ def getArrayOfStat(data: str, stat: str) -> List[float]:
 
 
 def init(mode: str, api_key: str = None) -> Tuple[str, str]:
+    """
+    Fetch the data sets from stat.ink
+
+    :param mode: whether to fetch data for all users or a single user
+    :type mode: str
+    :param api_key: the stat.ink API key for the user to fetch
+    :type api_key: str
+    :return: the resulting data file path
+    :rtype: Tuple[str, str]
+
+    :Example:
+
+    >>> import core
+    >>> core.init("All")
+    ("data/", "salmonAll.jl.gz")
+    >>> import ujson
+    >>> core.init(
+    ...     "User",
+    ...     ujson.load(
+    ...         open(
+    ...             "keys.json",
+    ...             "r"
+    ...         )
+    ...     )["statink_key"]
+    ... )
+    ("data/", "salmon.jl.gz")
+
+    """
     headers: Dict[str, str] = {}
     if mode == "All":
         fileName: str = "data/salmonAll.jl.gz"
@@ -2002,6 +2122,10 @@ def init(mode: str, api_key: str = None) -> Tuple[str, str]:
         recentId = 0
         try:
             with gzip.open(fileName) as reader:
+                try:
+                    os.remove(fileName[0:-6] + "Temp.jl.gz")
+                except FileNotFoundError:
+                    pass
                 with gzip.open(
                     fileName[0:-6] + "Temp.jl.gz", "at", encoding="utf8"
                 ) as writer:
@@ -2021,25 +2145,21 @@ def init(mode: str, api_key: str = None) -> Tuple[str, str]:
             except FileNotFoundError:
                 pass
             lastId: int = cast(List[Dict[str, int]], temp)[-1]["id"]
-            print(lastId)
-            with gzip.open("data/salmon.jl.gz", "at", encoding="utf8") as writer:
+            with gzip.open(fileName, "at", encoding="utf8") as writer:
                 while lastId != prevLastId:
                     for job in temp:
                         ujson.dump(job, writer)
                         writer.write("\n")
                     params["newer_than"] = str(lastId)
                     result = requests.get(
-                        "http://stat.ink/api/v2/user-salmon",
+                        url,
                         headers=headers,
                         params=params,
                     )
-                    print(result.url)
-                    print(result)
                     temp = result.json()
                     prevLastId = lastId
                     if len(temp) > 0:
                         lastId = cast(List[Dict[str, int]], temp)[-1]["id"]
-                    print(lastId)
     else:
         prevLastId = 0
         params = {"order": "asc"}
