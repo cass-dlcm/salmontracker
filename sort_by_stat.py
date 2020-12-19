@@ -2,9 +2,7 @@ import core
 from core import (
     hasJobs,
     locale,
-    hasWeapon,
     statSummary,
-    grizzcoWeapons,
 )
 import jsonlines
 import requests
@@ -31,7 +29,7 @@ def sortWeapons(data: str, stat: str) -> None:
     weaponsList: List[Dict[str, Union[str, Dict[str, str]]]] = requests.get(
         "https://stat.ink/api/v2/weapon"
     ).json()
-    for grizzWeapon in grizzcoWeapons:
+    for grizzWeapon in core.grizzcoWeapons:
         new = {
             "name": {locale: grizzWeapon[0]},
             "key": grizzWeapon[1],
@@ -44,7 +42,7 @@ def sortWeapons(data: str, stat: str) -> None:
     for weapon in weaponsList:
         print(weapon["key"])
         result: Dict[str, Union[str, float]] = {}
-        filters: Tuple[str, str] = hasWeapon(data, cast(str, weapon["main_ref"]))
+        filters: Tuple[str, str] = core.hasWeapon(data, cast(str, weapon["main_ref"]))
         withVal: str = filters[0]
         withoutVal: str = filters[1]
         if hasJobs(withVal) and not hasVal(
