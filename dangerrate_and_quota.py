@@ -13,20 +13,8 @@ if __name__ == "__main__":
         quotas: List[float] = []
         count = 0
         for job in jsonlines.Reader(reader, ujson.loads):
-            dangerRates.append(
-                float(
-                    core.getValMultiDimensional(
-                        job, cast(List[Union[str, int]], ["danger_rate"])
-                    )
-                )
-            )
-            quotas.append(
-                float(
-                    core.getValMultiDimensional(
-                        job, cast(List[Union[str, int]], ["quota", 2])
-                    )
-                )
-            )
+            dangerRates.append(float(job["danger_rate"]))
+            quotas.append(float(job["quota"][2]))
             count += 1
     plt.figure(1)
     plt.scatter(quotas, dangerRates)

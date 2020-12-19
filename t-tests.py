@@ -19,8 +19,7 @@ import jsonlines
 
 if __name__ == "__main__":
     init("User", json.load(open("keys.json", "r"))["statink_key"])
-    path: str = "data/"
-    data: str = "salmon.jsonl"
+    data: str = "data/salmon.jsonl"
     print("Rotation")
     print("Player")
     print("Weapon")
@@ -28,47 +27,45 @@ if __name__ == "__main__":
     stat: str = input("Choose a stat to run analysis on: ")
     if stat == "Player":
         playerId: List[str] = findPlayerIdByName(
-            path + data, input("Enter a player name to run analysis on: ")
+            data, input("Enter a player name to run analysis on: ")
         )
         print(playerId)
         val: str = playerId[int(input("Pick the player id by index: "))]
-        result: Tuple[Tuple[str, str], Tuple[str, str]] = hasPlayer(path, data, val)
+        result: Tuple[str, str] = hasPlayer(data, val)
     elif stat == "Rotation":
         weapons: List[str] = []
         for i in range(0, 4):
             weapons.append(input("Enter a weapon: "))
         stageChoice: str = input("Enter the stage: ")
-        rotations: List[int] = findRotationByWeaponsAndStage(
-            path + data, weapons, stageChoice
-        )
+        rotations: List[int] = findRotationByWeaponsAndStage(data, weapons, stageChoice)
         print(rotations)
         rot: int = rotations[int(input("Pick the rotation id by index: "))]
-        result = duringRotationInt(path, data, rot)
+        result = duringRotationInt(data, rot)
     elif stat == "Weapon":
         val = input("Enter a weapon: ")
-        result = hasWeapon(path, data, val)
+        result = hasWeapon(data, val)
     elif stat == "Stage":
         val = input("Enter a stage: ")
-        result = onStage(path, data, val)
+        result = onStage(data, val)
     else:
         sys.exit()
-    withVal = result[0]
-    withoutVal = result[1]
+    withVal: str = result[0]
+    withoutVal: str = result[1]
     withValClearWaves: List[float] = []
     withValDangerRate: List[float] = []
-    withValGoldenTotal = []
-    withValPowerTotal = []
-    withoutValClearWaves = []
-    withoutValDangerRate = []
-    withoutValGoldenTotal = []
-    withoutValPowerTotal = []
-    with gzip.open(withVal[0] + withVal[1]) as reader:
+    withValGoldenTotal: List[float] = []
+    withValPowerTotal: List[float] = []
+    withoutValClearWaves: List[float] = []
+    withoutValDangerRate: List[float] = []
+    withoutValGoldenTotal: List[float] = []
+    withoutValPowerTotal: List[float] = []
+    with gzip.open(withVal) as reader:
         for job in jsonlines.Reader(reader, ujson.loads):
             withValClearWaves.append(float(job["clear_waves"]))
             withValDangerRate.append(float(job["danger_rate"]))
             withValGoldenTotal.append(float(job["my_data"]["golden_egg_delivered"]))
             withValPowerTotal.append(float(job["my_data"]["power_egg_collected"]))
-    with gzip.open(withoutVal[0] + withoutVal[1]) as reader:
+    with gzip.open(withoutVal) as reader:
         for job in jsonlines.Reader(reader, ujson.loads):
             withoutValClearWaves.append(float(job["clear_waves"]))
             withoutValDangerRate.append(float(job["danger_rate"]))

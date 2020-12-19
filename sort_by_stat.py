@@ -21,10 +21,9 @@ def hasVal(var: List[Dict[str, str]], val: str):
             return True
 
 
-def sortWeapons(path: str, data: str, stat: str) -> None:
+def sortWeapons(data: str, stat: str) -> None:
     """
 
-    :param path: str:
     :param data: str:
     :param stat: str:
 
@@ -45,27 +44,22 @@ def sortWeapons(path: str, data: str, stat: str) -> None:
     for weapon in weaponsList:
         print(weapon["key"])
         result: Dict[str, Union[str, float]] = {}
-        filters: Tuple[Tuple[str, str], Tuple[str, str]] = hasWeapon(
-            path, data, cast(str, weapon["main_ref"])
-        )
-        withVal: Tuple[str, str] = filters[0]
-        withoutVal: Tuple[str, str] = filters[1]
-        if hasJobs(withVal[0] + withVal[1]) and not hasVal(
+        filters: Tuple[str, str] = hasWeapon(data, cast(str, weapon["main_ref"]))
+        withVal: str = filters[0]
+        withoutVal: str = filters[1]
+        if hasJobs(withVal) and not hasVal(
             cast(List[Dict[str, str]], results), cast(str, weapon["main_ref"])
         ):
-            if (hasJobs(withVal[0] + withVal[1])) and (
-                hasJobs(withoutVal[0] + withoutVal[1])
-            ):
+            if (hasJobs(withVal)) and (hasJobs(withoutVal)):
                 result["key"] = cast(str, weapon["main_ref"])
                 result["name"] = cast(Dict[str, str], weapon["name"])[locale]
                 result["value"] = (
-                    statSummary(withVal[0] + withVal[1], stat)[0]
-                    - statSummary(withoutVal[0] + withoutVal[1], stat)[0]
+                    statSummary(withVal, stat)[0] - statSummary(withoutVal, stat)[0]
                 )
                 results.append(result)
-        elif not hasJobs(withVal[0] + withVal[1]):
-            os.remove(withVal[0] + withVal[1])
-            os.remove(withoutVal[0] + withoutVal[1])
+        elif not hasJobs(withVal):
+            os.remove(withVal)
+            os.remove(withoutVal)
     pprint.pprint(sorted(results, key=lambda val: val["value"]))
 
 
@@ -139,7 +133,7 @@ def sortSpecial(data: str, stat: str) -> None:
         pprint.pprint(sorted(specialList, key=lambda val: val["value"]))
 
 
-def sortRotation(path: str, data: str, stat: str) -> None:
+def sortRotation(data: str, stat: str) -> None:
     """
     Print the sorted rotations by the average of the given stat.
 
@@ -154,7 +148,7 @@ def sortRotation(path: str, data: str, stat: str) -> None:
     rotationResultsList: List[
         Dict[str, Union[int, float, Union[None, Dict[str, Union[str, List[str]]]]]]
     ] = []
-    with gzip.open(path + data) as reader:
+    with gzip.open(data) as reader:
         for job in jsonlines.Reader(reader, ujson.loads):
             if job["shift_start_at"]["time"] not in rotationList:
                 rotationList.append(job["shift_start_at"]["time"])
@@ -163,38 +157,29 @@ def sortRotation(path: str, data: str, stat: str) -> None:
         result: Dict[
             str, Union[int, float, Union[None, Dict[str, Union[str, List[str]]]]]
         ] = {}
-        filters: Tuple[Tuple[str, str], Tuple[str, str]] = core.duringRotationInt(
-            path, data, rotation
-        )
-        withVal: Tuple[str, str] = filters[0]
-        withoutVal: Tuple[str, str] = filters[1]
-        if hasJobs(withVal[0] + withVal[1]):
-            if (hasJobs(withVal[0] + withVal[1])) and (
-                hasJobs(withoutVal[0] + withoutVal[1])
-            ):
+        filters: Tuple[str, str] = core.duringRotationInt(data, rotation)
+        withVal: str = filters[0]
+        withoutVal: str = filters[1]
+        if hasJobs(withVal):
+            if (hasJobs(withVal)) and (hasJobs(withoutVal)):
                 result["name"] = rotation
-                result["data"] = core.findWeaponsAndStageByRotation(
-                    withVal[0] + withVal[1], rotation
-                )
+                result["data"] = core.findWeaponsAndStageByRotation(withVal, rotation)
                 result["value"] = (
-                    statSummary(withVal[0] + withVal[1], stat)[0]
-                    - statSummary(withoutVal[0] + withoutVal[1], stat)[0]
+                    statSummary(withVal, stat)[0] - statSummary(withoutVal, stat)[0]
                 )
                 rotationResultsList.append(result)
-        elif not hasJobs(withVal[0] + withVal[1]):
-            os.remove(withVal[0] + withVal[1])
-            os.remove(withoutVal[0] + withoutVal[1])
+        elif not hasJobs(withVal):
+            os.remove(withVal)
+            os.remove(withoutVal)
     pprint.pprint(
         sorted(rotationResultsList, key=lambda val: cast(float, val["value"]))
     )
 
 
 if __name__ == "__main__":
-    # fullPath: Tuple[str, str] = core.initUser(ujson.load(open("keys.json", "r"))["statink_key"])
-    fullPath: Tuple[str, str] = core.init("All")
-    filePath: str = fullPath[0]
-    dataFile: str = fullPath[1]
-    # sortStages(filePath + dataFile, "clear_waves")
-    sortWeapons(filePath, dataFile, "clear_waves")
-    # sortSpecial(filePath + dataFile, "clear_waves")
-    # sortRotation(filePath, dataFile, "clear_waves")
+    # fullPath: str = core.initUser(ujson.load(open("keys.json", "r"))["statink_key"])
+    fullPath: str = core.init("All")
+    # sortStages(fullPath, "clear_waves")
+    sortWeapons(fullPath, "clear_waves")
+    # sortSpecial(fullPath, "clear_waves")
+    # sortRotation(fullPath, "clear_waves")
