@@ -29,7 +29,9 @@ if __name__ == "__main__":
         for i in range(0, 4):
             weapons.append(input("Enter a weapon: "))
         stageChoice: str = input("Enter the stage: ")
-        rotations: List[int] = core.findRotationByWeaponsAndStage(data, weapons, stageChoice)
+        rotations: List[int] = core.findRotationByWeaponsAndStage(
+            data, weapons, stageChoice
+        )
         print(rotations)
         rot: int = rotations[int(input("Pick the rotation id by index: "))]
         result = core.duringRotationInt(data, rot)
