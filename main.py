@@ -11,7 +11,6 @@ from core import (
     dangerRate,
     greaterThanDangerRate,
     lessThanDangerRate,
-    notLessThanDangerRate,
     clearWave,
     greaterThanClearWave,
     lessThanClearWave,
