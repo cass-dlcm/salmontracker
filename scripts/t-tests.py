@@ -1,18 +1,17 @@
 import sys
-sys.path.insert(0,'.')
+
+sys.path.insert(0, ".")
 import core
 from scipy.stats import ttest_ind
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
-import json
 from typing import List, Union, Tuple
 import ujson
 import gzip
 import jsonlines
 
 if __name__ == "__main__":
-    data: str = core.init("User", json.load(open("keys.json", "r"))["statink_key"])
+    data: str = core.init("User", ujson.load(open("keys.json", "r"))["statink_key"])
     print("Rotation")
     print("Player")
     print("Weapon")

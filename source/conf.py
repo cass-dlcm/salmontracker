@@ -73,10 +73,11 @@ def linkcode_resolve(domain, info):
         "https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/%s.py" % filename
     )
 
+
 import guzzle_sphinx_theme
 
 html_theme_path = guzzle_sphinx_theme.html_theme_path()
-html_theme = 'guzzle_sphinx_theme'
+html_theme = "guzzle_sphinx_theme"
 
 # Register the theme as an extension to generate a sitemap.xml
 extensions.append("guzzle_sphinx_theme")
