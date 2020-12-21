@@ -153,154 +153,164 @@ def findRotationByWeaponsAndStage(data: str, **kargs) -> List[int]:
                     job["stage"]["name"][locale],
                 )
             )
-            for weapon in kargs.get("weapons"):
-                found = found and (
-                    job["my_data"]["weapons"][0]["key"] == weapon
-                    or (
-                        len(job["my_data"]["weapons"]) > 1
-                        and job["my_data"]["weapons"][1]["key"] == weapon
-                    )
-                    or (
-                        len(job["my_data"]["weapons"]) > 2
-                        and job["my_data"]["weapons"][2]["key"] == weapon
-                    )
-                    or (
-                        job["teammates"] is not None
-                        and (
-                            (
-                                len(job["teammates"]) > 0
-                                and job["teammates"][0]["weapons"] is not None
-                                and (
-                                    job["teammates"][0]["weapons"][0]["key"] == weapon
-                                    or (
-                                        len(job["teammates"][0]["weapons"]) > 1
-                                        and job["teammates"][0]["weapons"][1]["key"]
+            if kargs.get("weapons") is not None:
+                for weapon in cast(List[str], kargs.get("weapons")):
+                    found = found and (
+                        job["my_data"]["weapons"][0]["key"] == weapon
+                        or (
+                            len(job["my_data"]["weapons"]) > 1
+                            and job["my_data"]["weapons"][1]["key"] == weapon
+                        )
+                        or (
+                            len(job["my_data"]["weapons"]) > 2
+                            and job["my_data"]["weapons"][2]["key"] == weapon
+                        )
+                        or (
+                            job["teammates"] is not None
+                            and (
+                                (
+                                    len(job["teammates"]) > 0
+                                    and job["teammates"][0]["weapons"] is not None
+                                    and (
+                                        job["teammates"][0]["weapons"][0]["key"]
                                         == weapon
+                                        or (
+                                            len(job["teammates"][0]["weapons"]) > 1
+                                            and job["teammates"][0]["weapons"][1]["key"]
+                                            == weapon
+                                        )
+                                        or (
+                                            len(job["teammates"][0]["weapons"]) > 2
+                                            and job["teammates"][0]["weapons"][2]["key"]
+                                            == weapon
+                                        )
                                     )
-                                    or (
-                                        len(job["teammates"][0]["weapons"]) > 2
-                                        and job["teammates"][0]["weapons"][2]["key"]
+                                )
+                                or (
+                                    len(job["teammates"]) > 1
+                                    and job["teammates"][1]["weapons"] is not None
+                                    and (
+                                        job["teammates"][1]["weapons"][0]["key"]
                                         == weapon
+                                        or (
+                                            len(job["teammates"][1]["weapons"]) > 1
+                                            and job["teammates"][1]["weapons"][1]["key"]
+                                            == weapon
+                                        )
+                                        or (
+                                            len(job["teammates"][1]["weapons"]) > 2
+                                            and job["teammates"][1]["weapons"][2]["key"]
+                                            == weapon
+                                        )
+                                    )
+                                )
+                                or (
+                                    len(job["teammates"]) > 2
+                                    and job["teammates"][2]["weapons"] is not None
+                                    and (
+                                        job["teammates"][2]["weapons"][0]["key"]
+                                        == weapon
+                                        or (
+                                            len(job["teammates"][2]["weapons"]) > 1
+                                            and job["teammates"][2]["weapons"][1]["key"]
+                                            == weapon
+                                        )
+                                        or (
+                                            len(job["teammates"][2]["weapons"]) > 2
+                                            and job["teammates"][2]["weapons"][2]["key"]
+                                            == weapon
+                                        )
                                     )
                                 )
                             )
-                            or (
-                                len(job["teammates"]) > 1
-                                and job["teammates"][1]["weapons"] is not None
-                                and (
-                                    job["teammates"][1]["weapons"][0]["key"] == weapon
-                                    or (
-                                        len(job["teammates"][1]["weapons"]) > 1
-                                        and job["teammates"][1]["weapons"][1]["key"]
+                        )
+                        or job["my_data"]["weapons"][0]["name"][locale] == weapon
+                        or (
+                            len(job["my_data"]["weapons"]) > 1
+                            and job["my_data"]["weapons"][1]["name"][locale] == weapon
+                        )
+                        or (
+                            len(job["my_data"]["weapons"]) > 2
+                            and job["my_data"]["weapons"][2]["name"][locale] == weapon
+                        )
+                        or (
+                            job["teammates"] is not None
+                            and (
+                                (
+                                    len(job["teammates"]) > 0
+                                    and job["teammates"][0]["weapons"] is not None
+                                    and (
+                                        job["teammates"][0]["weapons"][0]["name"][
+                                            locale
+                                        ]
                                         == weapon
-                                    )
-                                    or (
-                                        len(job["teammates"][1]["weapons"]) > 2
-                                        and job["teammates"][1]["weapons"][2]["key"]
-                                        == weapon
+                                        or (
+                                            len(job["teammates"][0]["weapons"]) > 1
+                                            and job["teammates"][0]["weapons"][1][
+                                                "name"
+                                            ][locale]
+                                            == weapon
+                                        )
+                                        or (
+                                            len(job["teammates"][0]["weapons"]) > 2
+                                            and job["teammates"][0]["weapons"][2][
+                                                "name"
+                                            ][locale]
+                                            == weapon
+                                        )
                                     )
                                 )
-                            )
-                            or (
-                                len(job["teammates"]) > 2
-                                and job["teammates"][2]["weapons"] is not None
-                                and (
-                                    job["teammates"][2]["weapons"][0]["key"] == weapon
-                                    or (
-                                        len(job["teammates"][2]["weapons"]) > 1
-                                        and job["teammates"][2]["weapons"][1]["key"]
+                                or (
+                                    len(job["teammates"]) > 1
+                                    and job["teammates"][1]["weapons"] is not None
+                                    and (
+                                        job["teammates"][1]["weapons"][0]["name"][
+                                            locale
+                                        ]
                                         == weapon
+                                        or (
+                                            len(job["teammates"][1]["weapons"]) > 1
+                                            and job["teammates"][1]["weapons"][1][
+                                                "name"
+                                            ][locale]
+                                            == weapon
+                                        )
+                                        or (
+                                            len(job["teammates"][1]["weapons"]) > 2
+                                            and job["teammates"][1]["weapons"][2][
+                                                "name"
+                                            ][locale]
+                                            == weapon
+                                        )
                                     )
-                                    or (
-                                        len(job["teammates"][2]["weapons"]) > 2
-                                        and job["teammates"][2]["weapons"][2]["key"]
+                                )
+                                or (
+                                    len(job["teammates"]) > 2
+                                    and job["teammates"][2]["weapons"] is not None
+                                    and (
+                                        job["teammates"][2]["weapons"][0]["name"][
+                                            locale
+                                        ]
                                         == weapon
+                                        or (
+                                            len(job["teammates"][2]["weapons"]) > 1
+                                            and job["teammates"][2]["weapons"][1][
+                                                "name"
+                                            ][locale]
+                                            == weapon
+                                        )
+                                        or (
+                                            len(job["teammates"][2]["weapons"]) > 2
+                                            and job["teammates"][2]["weapons"][2][
+                                                "name"
+                                            ][locale]
+                                            == weapon
+                                        )
                                     )
                                 )
                             )
                         )
                     )
-                    or job["my_data"]["weapons"][0]["name"][locale] == weapon
-                    or (
-                        len(job["my_data"]["weapons"]) > 1
-                        and job["my_data"]["weapons"][1]["name"][locale] == weapon
-                    )
-                    or (
-                        len(job["my_data"]["weapons"]) > 2
-                        and job["my_data"]["weapons"][2]["name"][locale] == weapon
-                    )
-                    or (
-                        job["teammates"] is not None
-                        and (
-                            (
-                                len(job["teammates"]) > 0
-                                and job["teammates"][0]["weapons"] is not None
-                                and (
-                                    job["teammates"][0]["weapons"][0]["name"][locale]
-                                    == weapon
-                                    or (
-                                        len(job["teammates"][0]["weapons"]) > 1
-                                        and job["teammates"][0]["weapons"][1]["name"][
-                                            locale
-                                        ]
-                                        == weapon
-                                    )
-                                    or (
-                                        len(job["teammates"][0]["weapons"]) > 2
-                                        and job["teammates"][0]["weapons"][2]["name"][
-                                            locale
-                                        ]
-                                        == weapon
-                                    )
-                                )
-                            )
-                            or (
-                                len(job["teammates"]) > 1
-                                and job["teammates"][1]["weapons"] is not None
-                                and (
-                                    job["teammates"][1]["weapons"][0]["name"][locale]
-                                    == weapon
-                                    or (
-                                        len(job["teammates"][1]["weapons"]) > 1
-                                        and job["teammates"][1]["weapons"][1]["name"][
-                                            locale
-                                        ]
-                                        == weapon
-                                    )
-                                    or (
-                                        len(job["teammates"][1]["weapons"]) > 2
-                                        and job["teammates"][1]["weapons"][2]["name"][
-                                            locale
-                                        ]
-                                        == weapon
-                                    )
-                                )
-                            )
-                            or (
-                                len(job["teammates"]) > 2
-                                and job["teammates"][2]["weapons"] is not None
-                                and (
-                                    job["teammates"][2]["weapons"][0]["name"][locale]
-                                    == weapon
-                                    or (
-                                        len(job["teammates"][2]["weapons"]) > 1
-                                        and job["teammates"][2]["weapons"][1]["name"][
-                                            locale
-                                        ]
-                                        == weapon
-                                    )
-                                    or (
-                                        len(job["teammates"][2]["weapons"]) > 2
-                                        and job["teammates"][2]["weapons"][2]["name"][
-                                            locale
-                                        ]
-                                        == weapon
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
             if found and job["shift_start_at"]["time"] not in foundRotations:
                 foundRotations.append(job["shift_start_at"]["time"])
     return foundRotations
