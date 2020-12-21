@@ -1,6 +1,6 @@
 jsonlines==1.2.0
 matplotlib==3.3.3
-numpy==1.19.3
+numpy==1.19.4
 requests==2.25.1
 scipy==1.5.4
 ujson==4.0.1
