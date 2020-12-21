@@ -12,7 +12,7 @@ import gzip
 import filters
 
 if __name__ == "__main__":
-    data = "data/salmonAll.jl.gz" # core.init("All")
+    data = "data/salmonAll.jl.gz"  # core.init("All")
     grizzcoRotationsInts: List[int] = core.findRotationByWeaponsAndStage(
         data,
         weapons=(
