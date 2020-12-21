@@ -12,7 +12,7 @@ import gzip
 import filters
 
 if __name__ == "__main__":
-    data = core.init("All")
+    data = "data/salmonAll.jl.gz" # core.init("All")
     grizzcoRotationsInts: List[int] = core.findRotationByWeaponsAndStage(
         data,
         weapons=(
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     print("n_1 = " + str(len(withValClearWaves)))
     print("n_2 = " + str(len(withoutValClearWaves)))
     print()
-    print("a - b = " + str(diffMeansClearWaves))
+    print("x\u0304_1 - x\u0304_2 = " + str(diffMeansClearWaves))
     print("d = " + str(diffMeansClearWaves / np.std(clearWaves)))
     print("t = " + str(t))
     print("p = " + str(p))
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     diffMeansDangerRate: float = np.mean(withValDangerRate) - np.mean(
         withoutValDangerRate
     )
-    print("a - b = " + str(diffMeansDangerRate))
+    print("x\u0304_1 - x\u0304_2 = " + str(diffMeansDangerRate))
     print("d = " + str(diffMeansDangerRate / np.std(dangerRate)))
     print("t = " + str(t))
     print("p = " + str(p))
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     diffMeansGoldenTotal: float = np.mean(withValGoldenTotal) - np.mean(
         withoutValGoldenTotal
     )
-    print("a - b = " + str(diffMeansGoldenTotal))
+    print("x\u0304_1 - x\u0304_2 = " + str(diffMeansGoldenTotal))
     print("d = " + str(diffMeansGoldenTotal / np.std(goldenTotal)))
     print("t = " + str(t))
     print("p = " + str(p))
@@ -116,7 +116,7 @@ if __name__ == "__main__":
     plt.xlabel("Power Eggs")
     plt.ylabel("Probability")
     diffMeansPowerEggs = np.mean(withValPowerTotal) - np.mean(withoutValPowerTotal)
-    print("a - b = " + str(diffMeansPowerEggs))
+    print("x\u0304_1 - x\u0304_2 = " + str(diffMeansPowerEggs))
     print("d = " + str(diffMeansPowerEggs / np.std(powerTotal)))
     print("t = " + str(t))
     print("p = " + str(p))
