@@ -3,17 +3,18 @@ import sort_by_stat
 from core import (
     findPlayerIdByName,
     findRotationByWeaponsAndStage,
-    duringRotationInt,
-    onStage,
-    dangerRate,
-    greaterThanDangerRate,
-    lessThanDangerRate,
-    clearWave,
-    greaterThanClearWave,
-    lessThanClearWave,
-    withSpecial,
 )
-from filters import hasPlayers, hasWeapons, usesWeapons
+from filters import (
+    hasPlayers,
+    hasWeapons,
+    usesWeapons,
+    onStages,
+    withSpecial,
+    failReasons,
+    duringRotationInts,
+    dangerRate,
+    clearWave,
+)
 import ujson
 from typing import List, Tuple
 import sys
@@ -47,7 +48,7 @@ def filterBy(dataFile: List[str]) -> List[str]:
         for i in range(0, len(dataFile)):
             if mode == "With":
                 filters.append(hasPlayers(dataFile[i], [val])[0])
-                os.remove(dataFile[i][:-6] + "/notPlayer/" + val + ".jl.gz")
+                os.remove(dataFile[i][:-6] + "/notplayer/" + val + ".jl.gz")
             elif mode == "Without":
                 filters.append(hasPlayers(dataFile[i], [val])[1])
                 os.remove(dataFile[i][:-6] + "/player/" + val + ".jl.gz")
@@ -73,13 +74,13 @@ def filterBy(dataFile: List[str]) -> List[str]:
         clearAfter = input("Choose whether you would like to clear after [Y/N]: ")
         for i in range(0, len(dataFile)):
             if mode == "With":
-                filters.append(duringRotationInt(dataFile[i], rot)[0])
-                os.remove(dataFile[i][:-6] + "/notRotation/" + str(rot) + ".jl.gz")
+                filters.append(duringRotationInts(dataFile[i], [rot])[0])
+                os.remove(dataFile[i][:-6] + "/notrotations/" + str(rot) + ".jl.gz")
             elif mode == "Without":
-                filters.append(duringRotationInt(dataFile[i], rot)[1])
-                os.remove(dataFile[i][:-6] + "/rotation/" + str(rot) + ".jl.gz")
+                filters.append(duringRotationInts(dataFile[i], [rot])[1])
+                os.remove(dataFile[i][:-6] + "/rotations/" + str(rot) + ".jl.gz")
             elif mode == "Both":
-                result = duringRotationInt(dataFile[i], rot)
+                result = duringRotationInts(dataFile[i], [rot])
                 filters.append(result[0])
                 filters.append(result[1])
             else:
@@ -93,7 +94,7 @@ def filterBy(dataFile: List[str]) -> List[str]:
         for i in range(0, len(dataFile)):
             if mode == "With":
                 filters.append(hasWeapons(dataFile[i], [val])[0])
-                os.remove(dataFile[i][:-6] + "/notWeapon/" + val + ".jl.gz")
+                os.remove(dataFile[i][:-6] + "/notweapon/" + val + ".jl.gz")
             elif mode == "Without":
                 filters.append(hasWeapons(dataFile[i], [val])[1])
                 os.remove(dataFile[i][:-6] + "/weapon/" + val + ".jl.gz")
@@ -112,7 +113,7 @@ def filterBy(dataFile: List[str]) -> List[str]:
         for i in range(0, len(dataFile)):
             if mode == "With":
                 filters.append(usesWeapons(dataFile[i], [val])[0])
-                os.remove(dataFile[i][:-6] + "/notUsesWeapon/" + val + ".jl.gz")
+                os.remove(dataFile[i][:-6] + "/notusesWeapon/" + val + ".jl.gz")
             elif mode == "Without":
                 filters.append(usesWeapons(dataFile[i], [val])[1])
                 os.remove(dataFile[i][:-6] + "/usesWeapon/" + val + ".jl.gz")
@@ -130,13 +131,13 @@ def filterBy(dataFile: List[str]) -> List[str]:
         clearAfter = input("Choose whether you would like to clear after [Y/N]: ")
         for i in range(0, len(dataFile)):
             if mode == "With":
-                filters.append(onStage(dataFile[i], val)[0])
-                os.remove(dataFile[i][:-6] + "/notStage/" + val + ".jl.gz")
+                filters.append(onStages(dataFile[i], [val])[0])
+                os.remove(dataFile[i][:-6] + "/notstage/" + val + ".jl.gz")
             elif mode == "Without":
-                filters.append(onStage(dataFile[i], val)[1])
+                filters.append(onStages(dataFile[i], [val])[1])
                 os.remove(dataFile[i][:-6] + "/stage/" + val + ".jl.gz")
             elif mode == "Both":
-                result = onStage(dataFile[i], val)
+                result = onStages(dataFile[i], [val])
                 filters.append(result[0])
                 filters.append(result[1])
             else:
@@ -150,48 +151,37 @@ def filterBy(dataFile: List[str]) -> List[str]:
         clearAfter = input("Choose whether you would like to clear after [Y/N]: ")
         for i in range(0, len(dataFile)):
             if mode == "With":
+                filters.append(dangerRate(dataFile[i], val, comparison)[0])
                 if comparison == "=":
-                    filters.append(dangerRate(dataFile[i], val)[0])
                     os.remove(
                         dataFile[i][:-6] + "dangerRate/notEquals/" + val + ".jl.gz"
                     )
                 elif comparison == ">":
-                    filters.append(greaterThanDangerRate(dataFile[i], val)[0])
                     os.remove(
                         dataFile[i][:-6] + "dangerRate/notGreaterThan/" + val + ".jl.gz"
                     )
                 elif comparison == "<":
-                    filters.append(lessThanDangerRate(dataFile[i], val)[0])
                     os.remove(
                         dataFile[i][:-6] + "dangerRate/notLessThan/" + val + ".jl.gz"
                     )
                 else:
                     sys.exit()
             elif mode == "Without":
+                filters.append(dangerRate(dataFile[i], val, comparison)[1])
                 if comparison == "=":
-                    filters.append(dangerRate(dataFile[i], val)[1])
                     os.remove(dataFile[i][:-6] + "dangerRate/equals/" + val + ".jl.gz")
                 elif comparison == ">":
-                    filters.append(greaterThanDangerRate(dataFile[i], val)[1])
                     os.remove(
                         dataFile[i][:-6] + "dangerRate/greaterThan/" + val + ".jl.gz"
                     )
                 elif comparison == "<":
-                    filters.append(lessThanDangerRate(dataFile[i], val)[1])
                     os.remove(
                         dataFile[i][:-6] + "dangerRate/lessThan/" + val + ".jl.gz"
                     )
                 else:
                     sys.exit()
             elif mode == "Both":
-                if comparison == "=":
-                    result = dangerRate(dataFile[i], val)
-                elif comparison == ">":
-                    result = greaterThanDangerRate(dataFile[i], val)
-                elif comparison == "<":
-                    result = lessThanDangerRate(dataFile[i], val)
-                else:
-                    sys.exit()
+                result = dangerRate(dataFile[i], val, comparison)
                 filters.append(result[0])
                 filters.append(result[1])
             else:
@@ -205,40 +195,37 @@ def filterBy(dataFile: List[str]) -> List[str]:
         clearAfter = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(dataFile)):
             if mode == "With":
+                filters.append(clearWave(dataFile[i], wave, comparison)[0])
                 if comparison == "=":
-                    filters.append(clearWave(dataFile[i], wave)[0])
                     os.remove(
                         dataFile[i][:-6]
-                        + "/clearWaves/notEqual/"
+                        + "/clearWaves/notequal/"
                         + str(wave)
                         + ".jl.gz"
                     )
                 elif comparison == ">":
-                    filters.append(greaterThanClearWave(dataFile[i], wave)[0])
                     os.remove(
                         dataFile[i][:-6]
-                        + "/clearWaves/notGreaterThan/"
+                        + "/clearWaves/notgreaterThan/"
                         + str(wave)
                         + ".jl.gz"
                     )
                 elif comparison == "<":
-                    filters.append(lessThanClearWave(dataFile[i], wave)[0])
                     os.remove(
                         dataFile[i][:-6]
-                        + "/clearWaves/notLessThan/"
+                        + "/clearWaves/notlessThan/"
                         + str(wave)
                         + ".jl.gz"
                     )
                 else:
                     sys.exit()
             elif mode == "Without":
+                filters.append(clearWave(dataFile[i], wave, comparison)[1])
                 if comparison == "=":
-                    filters.append(clearWave(dataFile[i], wave)[1])
                     os.remove(
                         dataFile[i][:-6] + "/clearWaves/equal/" + str(wave) + ".jl.gz"
                     )
                 elif comparison == ">":
-                    filters.append(greaterThanClearWave(dataFile[i], wave)[1])
                     os.remove(
                         dataFile[i][:-6]
                         + "/clearWaves/greaterThan/"
@@ -246,7 +233,6 @@ def filterBy(dataFile: List[str]) -> List[str]:
                         + ".jl.gz"
                     )
                 elif comparison == "<":
-                    filters.append(lessThanClearWave(dataFile[i], wave)[1])
                     os.remove(
                         dataFile[i][:-6]
                         + "/clearWaves/lessThan/"
@@ -256,14 +242,7 @@ def filterBy(dataFile: List[str]) -> List[str]:
                 else:
                     sys.exit()
             elif mode == "Both":
-                if comparison == "=":
-                    result = clearWave(dataFile[i], wave)
-                elif comparison == ">":
-                    result = greaterThanClearWave(dataFile[i], wave)
-                elif comparison == "<":
-                    result = lessThanClearWave(dataFile[i], wave)
-                else:
-                    sys.exit()
+                result = clearWave(dataFile[i], wave, comparison)
                 filters.append(result[0])
                 filters.append(result[1])
             else:
@@ -277,7 +256,7 @@ def filterBy(dataFile: List[str]) -> List[str]:
         for i in range(0, len(dataFile)):
             if mode == "With":
                 filters.append(withSpecial(dataFile[i], val)[0])
-                os.remove(data[:-6] + "/notSpecial/" + val + ".jl.gz")
+                os.remove(data[:-6] + "/notspecial/" + val + ".jl.gz")
             elif mode == "Without":
                 filters.append(withSpecial(dataFile[i], val)[0])
                 os.remove(data[:-6] + "/special/" + val + ".jl.gz")

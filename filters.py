@@ -125,8 +125,8 @@ def hasPlayers(data: str, players: List[str], mode: str = None) -> Tuple[str, st
     >>> import core
     >>> core.hasPlayer("data/salmonAll.jl.gz", ["aeda69d2070fafb6"])
     (
-        ('data/salmonAll/playerId/', 'aeda69d2070fafb6.jl.gz'),
-        ('data/salmonAll/notPlayerId/', 'aeda69d2070fafb6.jl.gz')
+        ('data/salmonAll/playerIds/', 'aeda69d2070fafb6.jl.gz'),
+        ('data/salmonAll/notplayerIds/', 'aeda69d2070fafb6.jl.gz')
     )
 
     """
@@ -135,14 +135,14 @@ def hasPlayers(data: str, players: List[str], mode: str = None) -> Tuple[str, st
     except FileExistsError:
         pass
     try:
-        os.mkdir(data[0:-6] + "/playerId/")
+        os.mkdir(data[0:-6] + "/playerIds/")
     except FileExistsError:
         pass
     try:
-        os.mkdir(data[0:-6] + "/notplayerId")
+        os.mkdir(data[0:-6] + "/notplayerIds/")
     except FileExistsError:
         pass
-    outPath = "playerId"
+    outPath = "playerIds/"
     filterFunctions: List[Callable] = []
     for player in players:
         filterFunctions.append(
@@ -197,8 +197,8 @@ def hasWeapons(data: str, weapons: List[str], mode: str = None) -> Tuple[str, st
     >>> import core
     >>> core.hasWeapon("data/salmonAll.jl.gz", ["Grizzco Charger"])
     (
-        'data/salmonAll/weapon/Grizzco Charger.jl.gz',
-        'data/salmonAll/notWeapon/Grizzco Charger.jl.gz'
+        'data/salmonAll/weapons/Grizzco Charger.jl.gz',
+        'data/salmonAll/notweapons/Grizzco Charger.jl.gz'
     )
 
     """
@@ -457,3 +457,341 @@ def usesWeapons(data: str, weapons: List[str], mode: str = None) -> Tuple[str, s
             filterFunctions,
         )
     return filterJobs(data, outPath, filterFunctions[0])
+
+
+def onStages(data: str, stages: List[str], mode: str = None) -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs on the chosen stage(s).
+
+    :param data: the file name of the data file
+    :type data: str
+    :param stage: the name(s) or ID(s) of the chosen stage(s)
+    :type stage: str
+    :return: the full names of the paired filtered files
+    :rtype: Tuple[str, str]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
+
+    :Example:
+
+    >>> import core
+    >>> core.onStage("data/", "salmonAll.jl.gz", "Ruins of Ark Polaris")
+    (
+        'data/salmonAll/stages/Ruins of Ark Polaris.jl.gz',
+        'data/salmonAll/notstages/Ruins of Ark Polaris.jl.gz'
+    )
+
+    """
+    try:
+        os.mkdir(data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/stages/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/notstages/")
+    except FileExistsError:
+        pass
+    outPath = "stages/"
+    filterFunctions = []
+    for stage in stages:
+        filterFunctions.append(
+            lambda var: var["stage"] is not None
+            and stage
+            in (
+                var["stage"]["key"],
+                var["stage"]["name"][locale],
+            )
+        )
+        outPath += stage + (mode if mode is not None else "")
+    if mode == "or":
+        return filterJobsOr(
+            data,
+            outPath,
+            filterFunctions,
+        )
+    return filterJobs(data, outPath, filterFunctions[0])
+
+
+def withSpecial(data: str, special: str) -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs where the player had the chosen special.
+
+    :param data: the full name of the data file
+    :type data: str
+    :param special: the name or ID of the chosen special
+    :type special: str
+    :return: the full names of the paired filtered files
+    :rtype: Tuple[str, str]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
+
+    :Example:
+
+    >>> import core
+    >>> core.withSpecial("data/salmonAll.jl.gz", "Splashdown")
+    (
+        'data/salmonAll/special/Splashdown.jl.gz',
+        'data/salmonAll/notspecial/Splashdown.jl.gz'
+    )
+
+    """
+    try:
+        os.mkdir(data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/special/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/notspecial/")
+    except FileExistsError:
+        pass
+    return filterJobs(
+        data,
+        "special/" + special,
+        lambda var: special
+        in (
+            var["my_data"]["special"]["key"],
+            var["my_data"]["special"]["name"][locale],
+        ),
+    )
+
+
+def failReasons(data: str, reasons: List[str], mode: str = None) -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs where the fail reason was the chosen reason.
+
+    :param data: the file name of the data file
+    :type data: str
+    :param reason: the chosen reason
+    :type reason: str
+    :return: the path and filename of the output data file
+    :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
+
+    :Example:
+
+    >>> import core
+    >>> core.failReason("data/", "salmonAll.jl.gz", ["None"])
+    (
+        'data/salmonAll/failReasons/None.jl.gz',
+        'data/salmonAll/notfailReasons/None.jl.gz'
+    )
+
+    """
+    try:
+        os.mkdir(data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/failReasons/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/notfailReasons/")
+    except FileExistsError:
+        pass
+    filterFunctions: List[Callable] = []
+    outPath = "failReasons/"
+    for reason in reasons:
+        filterFunctions.append(lambda var: var["fail_reason"] == reason)
+        outPath += reason + (mode if mode is not None else "")
+    if mode == "or":
+        return filterJobsOr(
+            data,
+            outPath,
+            filterFunctions,
+        )
+    return filterJobs(data, outPath, filterFunctions[0])
+
+
+def duringRotationInts(
+    data: str, rotations: List[int], mode: str = None
+) -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs where the rotation was the chosen rotation.
+
+    :param data: the full name of the data file
+    :type data: str
+    :param rotation: the ID of the chosen rotation
+    :type rotation: int
+    :return: the full name of the output data files
+    :rtype: Tuple[str, str]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
+
+    >>> import core
+    >>> core.duringRotationInt("data/salmonAll.jl.gz", [1607752800])
+    (
+        'data/salmonAll/rotations/1607752800.jl.gz',
+        'data/salmonAll/notRotations/1607752800.jl.gz'
+    )
+
+    """
+    try:
+        os.mkdir(data[0:-6])
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/rotations/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/notRotations/")
+    except FileExistsError:
+        pass
+    filterFunctions: List[Callable] = []
+    outPath = "rotations/"
+    for rotation in rotations:
+        filterFunctions.append(lambda var: var["shift_start_at"]["time"] == rotation)
+        outPath += str(rotation) + (mode if mode is not None else "")
+    if mode == "or":
+        return filterJobsOr(
+            data,
+            outPath,
+            filterFunctions,
+        )
+    return filterJobs(data, outPath, filterFunctions[0])
+
+
+def clearWave(data: str, wave: int, comparison: str = "=") -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs where the clear wave was the chosen clear wave.
+
+    :param data: the full name of the data file
+    :type data: str
+    :param wave: the chosen clear wave
+    :type wave: int
+    :return: the full name of the output data files
+    :rtype: Tuple[str, str]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
+
+    :Example:
+
+    >>> import core
+    >>> core.clearWave("data/salmonAll.jl.gz", 3)
+    (
+        ('data/salmonAll/clearWaves/equal/3.jl.gz'),
+        ('data/salmonAll/clearWaves/notEqual/3.jl.gz')
+    )
+
+    """
+    try:
+        os.mkdir(data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/clearWaves/")
+    except FileExistsError:
+        pass
+    outPath = "clearWaves/"
+    if comparison == ">":
+        outPath += "greaterThan" + str(wave)
+        try:
+            os.mkdir(data[0:-6] + "/clearWaves/greaterThan/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/clearWaves/notgreaterThan/")
+        except FileExistsError:
+            pass
+        return filterJobs(data, outPath, lambda job: job["clear_waves"] > wave)
+    if comparison == "<":
+        outPath += "lessThan" + str(wave)
+        try:
+            os.mkdir(data[0:-6] + "/clearWaves/lessThan/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/clearWaves/notlessThan/")
+        except FileExistsError:
+            pass
+        return filterJobs(data, outPath, lambda job: job["clear_waves"] < wave)
+    outPath += "equal" + str(wave)
+    try:
+        os.mkdir(data[0:-6] + "/clearWaves/equal/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/clearWaves/notequal/")
+    except FileExistsError:
+        pass
+    return filterJobs(data, outPath, lambda job: job["clear_waves"] == wave)
+
+
+def dangerRate(data: str, rate: str, comparison: str = "=") -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs where the danger rate was the chosen danger rate.
+
+    :param data: the full name of the data file
+    :type data: str
+    :param rate: the chosen danger rate
+    :type rate: int
+    :return: the full names of the paired filtered files
+    :rtype: Tuple[str, str]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
+
+    :Example:
+
+    >>> import core
+    >>> core.dangerRate("data/salmonAll.jl.gz", "200.0")
+    (
+        'data/salmonAll/dangerRate/equal/200.0.jl.gz',
+        'data/salmonAll/dangerRate/notEqual/200.0.jl.gz'
+    )
+
+    """
+    try:
+        os.mkdir(data[0:-6] + "/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/dangerRate/")
+    except FileExistsError:
+        pass
+    outPath = "dangerRate/"
+    if comparison == ">":
+        outPath += "greaterThan" + rate
+        try:
+            os.mkdir(data[0:-6] + "/dangerRate/greaterThan/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/dangerRate/notgreaterThan/")
+        except FileExistsError:
+            pass
+        return filterJobs(data, outPath, lambda job: job["danger_rate"] > rate)
+    if comparison == "<":
+        outPath += "lessThan" + rate
+        try:
+            os.mkdir(data[0:-6] + "/dangerRate/lessThan/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/dangerRate/notlessThan/")
+        except FileExistsError:
+            pass
+        return filterJobs(data, outPath, lambda job: job["danger_rate"] < rate)
+    outPath += "equal" + rate
+    try:
+        os.mkdir(data[0:-6] + "/dangerRate/equal/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/dangerRate/notequal/")
+    except FileExistsError:
+        pass
+    return filterJobs(data, outPath, lambda job: job["danger_rate"] == rate)
