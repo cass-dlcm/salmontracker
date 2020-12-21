@@ -2,12 +2,9 @@ import core
 import sort_by_stat
 from core import (
     findPlayerIdByName,
-    hasPlayer,
     findRotationByWeaponsAndStage,
     duringRotationInt,
-    hasWeapon,
     onStage,
-    usesWeapon,
     dangerRate,
     greaterThanDangerRate,
     lessThanDangerRate,
@@ -16,6 +13,7 @@ from core import (
     lessThanClearWave,
     withSpecial,
 )
+from filters import hasPlayers, hasWeapons, usesWeapons
 import ujson
 from typing import List, Tuple
 import sys
@@ -48,13 +46,13 @@ def filterBy(dataFile: List[str]) -> List[str]:
         clearAfter: str = input("Choose whether you would like to clear after [Y/N]: ")
         for i in range(0, len(dataFile)):
             if mode == "With":
-                filters.append(hasPlayer(dataFile[i], val)[0])
+                filters.append(hasPlayers(dataFile[i], [val])[0])
                 os.remove(dataFile[i][:-6] + "/notPlayer/" + val + ".jl.gz")
             elif mode == "Without":
-                filters.append(hasPlayer(dataFile[i], val)[1])
+                filters.append(hasPlayers(dataFile[i], [val])[1])
                 os.remove(dataFile[i][:-6] + "/player/" + val + ".jl.gz")
             elif mode == "Both":
-                result: Tuple[str, str] = hasPlayer(dataFile[i], val)
+                result: Tuple[str, str] = hasPlayers(dataFile[i], [val])
                 filters.append(result[0])
                 filters.append(result[1])
             else:
@@ -67,7 +65,7 @@ def filterBy(dataFile: List[str]) -> List[str]:
             weapons.append(input("Enter a weapon: "))
         stageChoice: str = input("Enter the stage: ")
         rotations: List[int] = findRotationByWeaponsAndStage(
-            dataFile[0], weapons, stageChoice
+            dataFile[0], weapons=weapons, stage=stageChoice
         )
         print(rotations)
         rot: int = rotations[int(input("Pick the rotation id by index: "))]
@@ -94,13 +92,13 @@ def filterBy(dataFile: List[str]) -> List[str]:
         clearAfter = input("Choose whether you would like to clear after [Y/N]: ")
         for i in range(0, len(dataFile)):
             if mode == "With":
-                filters.append(hasWeapon(dataFile[i], val)[0])
+                filters.append(hasWeapons(dataFile[i], [val])[0])
                 os.remove(dataFile[i][:-6] + "/notWeapon/" + val + ".jl.gz")
             elif mode == "Without":
-                filters.append(hasWeapon(dataFile[i], val)[1])
+                filters.append(hasWeapons(dataFile[i], [val])[1])
                 os.remove(dataFile[i][:-6] + "/weapon/" + val + ".jl.gz")
             elif mode == "Both":
-                result = hasWeapon(dataFile[i], val)
+                result = hasWeapons(dataFile[i], [val])
                 filters.append(result[0])
                 filters.append(result[1])
             else:
@@ -113,13 +111,13 @@ def filterBy(dataFile: List[str]) -> List[str]:
         clearAfter = input("Choose whether you would like to clear after [Y/N]: ")
         for i in range(0, len(dataFile)):
             if mode == "With":
-                filters.append(usesWeapon(dataFile[i], val)[0])
+                filters.append(usesWeapons(dataFile[i], [val])[0])
                 os.remove(dataFile[i][:-6] + "/notUsesWeapon/" + val + ".jl.gz")
             elif mode == "Without":
-                filters.append(usesWeapon(dataFile[i], val)[1])
+                filters.append(usesWeapons(dataFile[i], [val])[1])
                 os.remove(dataFile[i][:-6] + "/usesWeapon/" + val + ".jl.gz")
             elif mode == "Both":
-                result = usesWeapon(dataFile[i], val)
+                result = usesWeapons(dataFile[i], [val])
                 filters.append(result[0])
                 filters.append(result[1])
             else:
