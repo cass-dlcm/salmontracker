@@ -2,6 +2,7 @@ import sys
 
 sys.path.insert(0, ".")
 import core
+import filters
 from scipy.stats import ttest_ind
 import numpy as np
 import matplotlib.pyplot as plt
@@ -23,24 +24,24 @@ if __name__ == "__main__":
         )
         print(playerId)
         val: str = playerId[int(input("Pick the player id by index: "))]
-        result: Tuple[str, str] = core.hasPlayer(data, val)
+        result: Tuple[str, str] = filters.hasPlayers(data, [val])
     elif stat == "Rotation":
         weapons: List[str] = []
         for i in range(0, 4):
             weapons.append(input("Enter a weapon: "))
         stageChoice: str = input("Enter the stage: ")
         rotations: List[int] = core.findRotationByWeaponsAndStage(
-            data, weapons, stageChoice
+            data, weapons=weapons, stage=stageChoice
         )
         print(rotations)
         rot: int = rotations[int(input("Pick the rotation id by index: "))]
-        result = core.duringRotationInt(data, rot)
+        result = filters.duringRotationInts(data, [rot])
     elif stat == "Weapon":
         val = input("Enter a weapon: ")
-        result = core.hasWeapon(data, val)
+        result = filters.hasWeapons(data, [val])
     elif stat == "Stage":
         val = input("Enter a stage: ")
-        result = core.onStage(data, val)
+        result = filters.onStages(data, [val])
     else:
         sys.exit()
     withVal: str = result[0]

@@ -145,15 +145,15 @@ def findRotationByWeaponsAndStage(data: str, **kargs) -> List[int]:
     foundRotations: List[int] = []
     with gzip.open(data) as reader:
         for job in jsonlines.Reader(reader, ujson.loads):
-            found = kargs.get("stage", None) is None or (
+            found = kargs.get("stage") is None or (
                 job["stage"] is not None
-                and kargs.get("stage", None)
+                and kargs.get("stage")
                 in (
                     job["stage"]["key"],
                     job["stage"]["name"][locale],
                 )
             )
-            for weapon in kargs.get("weapons", None):
+            for weapon in kargs.get("weapons"):
                 found = found and (
                     job["my_data"]["weapons"][0]["key"] == weapon
                     or (

@@ -10,7 +10,7 @@ import ujson
 import gzip
 
 if __name__ == "__main__":
-    data = "data/salmonAll.jl.gz"  # core.init("All")
+    data = core.init("All")
     x = []
     y = []
     with gzip.open(data) as reader:

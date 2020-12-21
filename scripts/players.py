@@ -7,7 +7,6 @@ import gzip
 import jsonlines
 import os
 import ujson
-import sys
 import numpy as np
 from typing import List, Dict, Union, cast
 

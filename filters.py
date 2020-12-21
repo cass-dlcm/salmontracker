@@ -1,5 +1,5 @@
 from core import hasJobs, locale
-import os.path.exists
+import os.path
 from typing import Tuple, List, Callable
 import gzip
 import jsonlines
@@ -146,7 +146,7 @@ def hasPlayers(data: str, players: List[str], mode: str = None) -> Tuple[str, st
     filterFunctions: List[Callable] = []
     for player in players:
         filterFunctions.append(
-            lambda var: var["my_data"]["splatnet_id"] == player
+            lambda var, player=player: var["my_data"]["splatnet_id"] == player
             or (
                 var["teammates"] is not None
                 and (
@@ -218,7 +218,7 @@ def hasWeapons(data: str, weapons: List[str], mode: str = None) -> Tuple[str, st
     filterFunctions = []
     for weapon in weapons:
         filterFunctions.append(
-            lambda var: (
+            lambda var, weapon=weapon: (
                 var["my_data"]["weapons"][0]["key"] == weapon
                 or (
                     len(var["my_data"]["weapons"]) > 1
@@ -422,7 +422,7 @@ def usesWeapons(data: str, weapons: List[str], mode: str = None) -> Tuple[str, s
     filterFunctions = []
     for weapon in weapons:
         filterFunctions.append(
-            lambda var: (
+            lambda var, weapon=weapon: (
                 var["my_data"]["weapons"][0]["key"] == weapon
                 or (
                     len(var["my_data"]["weapons"]) > 1
@@ -499,7 +499,7 @@ def onStages(data: str, stages: List[str], mode: str = None) -> Tuple[str, str]:
     filterFunctions = []
     for stage in stages:
         filterFunctions.append(
-            lambda var: var["stage"] is not None
+            lambda var, stage=stage: var["stage"] is not None
             and stage
             in (
                 var["stage"]["key"],
@@ -602,7 +602,7 @@ def failReasons(data: str, reasons: List[str], mode: str = None) -> Tuple[str, s
     filterFunctions: List[Callable] = []
     outPath = "failReasons/"
     for reason in reasons:
-        filterFunctions.append(lambda var: var["fail_reason"] == reason)
+        filterFunctions.append(lambda var, reason=reason: var["fail_reason"] == reason)
         outPath += reason + (mode if mode is not None else "")
     if mode == "or":
         return filterJobsOr(
@@ -652,7 +652,9 @@ def duringRotationInts(
     filterFunctions: List[Callable] = []
     outPath = "rotations/"
     for rotation in rotations:
-        filterFunctions.append(lambda var: var["shift_start_at"]["time"] == rotation)
+        filterFunctions.append(
+            lambda var, rotation=rotation: var["shift_start_at"]["time"] == rotation
+        )
         outPath += str(rotation) + (mode if mode is not None else "")
     if mode == "or":
         return filterJobsOr(
