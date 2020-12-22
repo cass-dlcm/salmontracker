@@ -865,7 +865,7 @@ def hasEvents(data: str, events: List[str], mode: str = None) -> Tuple[str, str]
 
     :param data: the full name of the data file
     :type data: str
-    :param rotation: the chosen event (None, "mothership", "fog", "rush", "cohock_charge", "griller", "goldie_seeking")
+    :param rotation: the chosen event ("mothership", "fog", "rush", "cohock_charge", "griller", "goldie_seeking")
     :type rotation: int
     :return: the full name of the output data files
     :rtype: Tuple[str, str]
@@ -897,10 +897,10 @@ def hasEvents(data: str, events: List[str], mode: str = None) -> Tuple[str, str]
     outPath = "events/"
     for event in events:
         filterFunctions.append(
-            lambda var, tide=event: (
-                var["waves"][0]["water_level"] == tide
-                or (len(var["waves"]) > 1 and var["waves"][1]["water_level"] == tide)
-                or (len(var["waves"]) > 2 and var["waves"][2]["water_level"] == tide)
+            lambda var, event=event: (
+                (var["waves"][0]["known_occurrence"] is not None and var["waves"][0]["known_occurrence"]["key"] == event)
+                or (len(var["waves"]) > 1 and var["waves"][1]["known_occurrence"] is not None and var["waves"][1]["known_occurrence"] == event)
+                or (len(var["waves"]) > 2 and var["waves"][2]["known_occurrence"] is not None and var["waves"][2]["known_occurrence"] == event)
             )
         )
         outPath += event + (mode if mode is not None else "")
