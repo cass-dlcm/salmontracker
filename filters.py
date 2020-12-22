@@ -646,7 +646,7 @@ def duringRotationInts(
     except FileExistsError:
         pass
     try:
-        os.mkdir(data[0:-6] + "/notRotations/")
+        os.mkdir(data[0:-6] + "/notrotations/")
     except FileExistsError:
         pass
     filterFunctions: List[Callable] = []
@@ -797,3 +797,123 @@ def dangerRate(data: str, rate: str, comparison: str = "=") -> Tuple[str, str]:
     except FileExistsError:
         pass
     return filterJobs(data, outPath, lambda job: job["danger_rate"] == rate)
+
+
+def hasTides(data: str, tides: List[str], mode: str = None) -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs where the tide of at least one wave is the chosen tide.
+
+    :param data: the full name of the data file
+    :type data: str
+    :param rotation: the chosen tide (as either "normal", "low", or "high")
+    :type rotation: int
+    :return: the full name of the output data files
+    :rtype: Tuple[str, str]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
+
+    >>> import core
+    >>> core.hasTides("data/salmonAll.jl.gz", ["high"])
+    (
+        "data/salmonAll/tides/high.jl.gz",
+        "data/salmonAll/nottides/high.jl.gz"
+    )
+
+    """
+    try:
+        os.mkdir(data[0:-6])
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/tides/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/nottides/")
+    except FileExistsError:
+        pass
+    filterFunctions: List[Callable] = []
+    outPath = "tides/"
+    for tide in tides:
+        filterFunctions.append(
+            lambda var, tide=tide: (
+                var["waves"][0]["water_level"] == tide
+                or (len(var["waves"]) > 1 and var["waves"][1]["water_level"] == tide)
+                or (len(var["waves"]) > 2 and var["waves"][2]["water_level"] == tide)
+            )
+        )
+        outPath += tide + (mode if mode is not None else "")
+    if mode == "and":
+        return filterJobsAnd(
+            data,
+            outPath,
+            filterFunctions,
+        )
+    if mode == "or":
+        return filterJobsOr(
+            data,
+            outPath,
+            filterFunctions,
+        )
+    return filterJobs(data, outPath, filterFunctions[0])
+
+
+def hasEvents(data: str, events: List[str], mode: str = None) -> Tuple[str, str]:
+    """
+    Filter the data file to only jobs where the event of at least one wave is the chosen event.
+
+    :param data: the full name of the data file
+    :type data: str
+    :param rotation: the chosen event (None, "mothership", "fog", "rush", "cohock_charge", "griller", "goldie_seeking")
+    :type rotation: int
+    :return: the full name of the output data files
+    :rtype: Tuple[str, str]
+    :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
+    :raises FileNotFoundError: if the file doesn't exist
+    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
+
+    >>> import core
+    >>> core.hasEvents("data/salmonAll.jl.gz", ["fog"])
+    (
+        "data/salmonAll/tides/fog.jl.gz",
+        "data/salmonAll/nottides/fog.jl.gz"
+    )
+
+    """
+    try:
+        os.mkdir(data[0:-6])
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/events/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/notevents/")
+    except FileExistsError:
+        pass
+    filterFunctions: List[Callable] = []
+    outPath = "events/"
+    for event in events:
+        filterFunctions.append(
+            lambda var, tide=event: (
+                var["waves"][0]["water_level"] == tide
+                or (len(var["waves"]) > 1 and var["waves"][1]["water_level"] == tide)
+                or (len(var["waves"]) > 2 and var["waves"][2]["water_level"] == tide)
+            )
+        )
+        outPath += event + (mode if mode is not None else "")
+    if mode == "and":
+        return filterJobsAnd(
+            data,
+            outPath,
+            filterFunctions,
+        )
+    if mode == "or":
+        return filterJobsOr(
+            data,
+            outPath,
+            filterFunctions,
+        )
+    return filterJobs(data, outPath, filterFunctions[0])
