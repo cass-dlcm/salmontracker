@@ -43,9 +43,9 @@ def sortWeapons(data: str, stat: str) -> None:
     for weapon in weaponsList:
         print(weapon["key"])
         result: Dict[str, Union[str, float]] = {}
-        filters: Tuple[str, str] = filters.hasWeapons(data, cast(List[str], [weapon["main_ref"]]))
-        withVal: str = filters[0]
-        withoutVal: str = filters[1]
+        filterPaths: Tuple[str, str] = filters.hasWeapons(data, cast(List[str], [weapon["main_ref"]]))
+        withVal: str = filterPaths[0]
+        withoutVal: str = filterPaths[1]
         if hasJobs(withVal) and not hasVal(
             cast(List[Dict[str, str]], results), cast(str, weapon["main_ref"])
         ):
@@ -156,9 +156,9 @@ def sortRotation(data: str, stat: str) -> None:
         result: Dict[
             str, Union[int, float, Union[None, Dict[str, Union[str, List[str]]]]]
         ] = {}
-        filters: Tuple[str, str] = filters.duringRotationInts(data, [rotation])
-        withVal: str = filters[0]
-        withoutVal: str = filters[1]
+        filterPaths: Tuple[str, str] = filters.duringRotationInts(data, [rotation])
+        withVal: str = filterPaths[0]
+        withoutVal: str = filterPaths[1]
         if hasJobs(withVal):
             if (hasJobs(withVal)) and (hasJobs(withoutVal)):
                 result["name"] = rotation
