@@ -43,7 +43,9 @@ def sortWeapons(data: str, stat: str) -> None:
     for weapon in weaponsList:
         print(weapon["key"])
         result: Dict[str, Union[str, float]] = {}
-        filterPaths: Tuple[str, str] = filters.hasWeapons(data, cast(List[str], [weapon["main_ref"]]))
+        filterPaths: Tuple[str, str] = filters.hasWeapons(
+            data, cast(List[str], [weapon["main_ref"]])
+        )
         withVal: str = filterPaths[0]
         withoutVal: str = filterPaths[1]
         if hasJobs(withVal) and not hasVal(

@@ -19,7 +19,7 @@ if __name__ == "__main__":
         for job in jsonlines.Reader(reader, ujson.loads):
             if job["stage"] is not None:
                 if not (job["stage"]["name"][locale] in stageList):
-                        stageList.append(job["stage"]["name"][locale])
+                    stageList.append(job["stage"]["name"][locale])
     listOfFiles: List[Tuple[str, str]] = []
     for stage in stageList:
         listOfFiles.append(filters.onStages(data, [stage]))
@@ -45,14 +45,22 @@ if __name__ == "__main__":
                 for job in jsonlines.Reader(reader, ujson.loads):
                     withValClearWaves.append(float(job["clear_waves"]))
                     withValDangerRate.append(float(job["danger_rate"]))
-                    withValGoldenTotal.append(float(job["my_data"]["golden_egg_delivered"]))
-                    withValPowerTotal.append(float(job["my_data"]["power_egg_collected"]))
+                    withValGoldenTotal.append(
+                        float(job["my_data"]["golden_egg_delivered"])
+                    )
+                    withValPowerTotal.append(
+                        float(job["my_data"]["power_egg_collected"])
+                    )
             with gzip.open(withoutVal) as reader:
                 for job in jsonlines.Reader(reader, ujson.loads):
                     withoutValClearWaves.append(float(job["clear_waves"]))
                     withoutValDangerRate.append(float(job["danger_rate"]))
-                    withoutValGoldenTotal.append(float(job["my_data"]["golden_egg_delivered"]))
-                    withoutValPowerTotal.append(float(job["my_data"]["power_egg_collected"]))
+                    withoutValGoldenTotal.append(
+                        float(job["my_data"]["golden_egg_delivered"])
+                    )
+                    withoutValPowerTotal.append(
+                        float(job["my_data"]["power_egg_collected"])
+                    )
             with gzip.open(data) as reader:
                 for job in jsonlines.Reader(reader, ujson.loads):
                     clearWaves.append(float(job["clear_waves"]))
@@ -103,7 +111,9 @@ if __name__ == "__main__":
                 withoutValGoldenTotal
             )
             writer.write("x\u0304_1 - x\u0304_2 = " + str(diffMeansGoldenTotal) + "\n")
-            writer.write("d = " + str(diffMeansGoldenTotal / np.std(goldenTotal)) + "\n")
+            writer.write(
+                "d = " + str(diffMeansGoldenTotal / np.std(goldenTotal)) + "\n"
+            )
             writer.write("t = " + str(t) + "\n")
             writer.write("p = " + str(p) + "\n")
             writer.write("\n")
