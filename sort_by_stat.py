@@ -4,6 +4,7 @@ from core import (
     locale,
     statSummary,
 )
+import filters
 import jsonlines
 import requests
 import pprint
@@ -42,7 +43,7 @@ def sortWeapons(data: str, stat: str) -> None:
     for weapon in weaponsList:
         print(weapon["key"])
         result: Dict[str, Union[str, float]] = {}
-        filters: Tuple[str, str] = core.hasWeapon(data, cast(str, weapon["main_ref"]))
+        filters: Tuple[str, str] = filters.hasWeapons(data, cast(List[str], [weapon["main_ref"]]))
         withVal: str = filters[0]
         withoutVal: str = filters[1]
         if hasJobs(withVal) and not hasVal(
@@ -76,7 +77,7 @@ def sortStages(data: str, stat: str) -> None:
                 if not (job["stage"]["name"][locale] in stageDict):
                     stageDict[job["stage"]["name"][locale]] = {
                         "name": job["stage"]["name"][locale],
-                        "clear_waves": 0.0,
+                        stat: 0.0,
                         "count": 0.0,
                     }
                 cast(Dict[str, float], stageDict[job["stage"]["name"][locale]])[
@@ -155,7 +156,7 @@ def sortRotation(data: str, stat: str) -> None:
         result: Dict[
             str, Union[int, float, Union[None, Dict[str, Union[str, List[str]]]]]
         ] = {}
-        filters: Tuple[str, str] = core.duringRotationInt(data, rotation)
+        filters: Tuple[str, str] = filters.duringRotationInts(data, [rotation])
         withVal: str = filters[0]
         withoutVal: str = filters[1]
         if hasJobs(withVal):
