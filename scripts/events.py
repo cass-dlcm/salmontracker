@@ -8,7 +8,7 @@ import gzip
 from typing import Dict
 
 if __name__ == "__main__":
-    data = "data/salmonAll.jl.gz"   # core.init("All")
+    data = "data/salmonAll.jl.gz"  # core.init("All")
     eventDict: Dict[str, dict] = {
         "None": {"key": "none", "count": 0.0},
         "mothership": {"key": "mothership", "count": 0.0},
