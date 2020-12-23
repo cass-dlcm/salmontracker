@@ -79,9 +79,9 @@ if __name__ == "__main__":
                 + str(100.0 * event["count"] / total)
                 + "%% occurance; "
                 + str(
-                    100.0 * event["clear_count"] / (event["count"]
-                    if event["count"] > 0.0
-                    else 1.0)
+                    100.0
+                    * event["clear_count"]
+                    / (event["count"] if event["count"] > 0.0 else 1.0)
                 )
                 + " %% wave cleared"
             )
