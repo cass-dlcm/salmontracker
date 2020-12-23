@@ -8,7 +8,7 @@ import gzip
 from typing import Dict
 
 if __name__ == "__main__":
-    data = "data/salmonAll.jl.gz"   # core.init("All")
+    data = "data/salmonAll.jl.gz"  # core.init("All")
     tideDict: Dict[str, dict] = {
         "high": {"key": "high", "count": 0.0},
         "normal": {"key": "normal", "count": 0.0},
