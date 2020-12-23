@@ -898,9 +898,20 @@ def hasEvents(data: str, events: List[str], mode: str = None) -> Tuple[str, str]
     for event in events:
         filterFunctions.append(
             lambda var, event=event: (
-                (var["waves"][0]["known_occurrence"] is not None and var["waves"][0]["known_occurrence"]["key"] == event)
-                or (len(var["waves"]) > 1 and var["waves"][1]["known_occurrence"] is not None and var["waves"][1]["known_occurrence"] == event)
-                or (len(var["waves"]) > 2 and var["waves"][2]["known_occurrence"] is not None and var["waves"][2]["known_occurrence"] == event)
+                (
+                    var["waves"][0]["known_occurrence"] is not None
+                    and var["waves"][0]["known_occurrence"]["key"] == event
+                )
+                or (
+                    len(var["waves"]) > 1
+                    and var["waves"][1]["known_occurrence"] is not None
+                    and var["waves"][1]["known_occurrence"] == event
+                )
+                or (
+                    len(var["waves"]) > 2
+                    and var["waves"][2]["known_occurrence"] is not None
+                    and var["waves"][2]["known_occurrence"] == event
+                )
             )
         )
         outPath += event + (mode if mode is not None else "")
