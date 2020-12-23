@@ -5,83 +5,71 @@ import core
 import jsonlines
 import ujson
 import gzip
-from typing import Dict
+from typing import Dict, List, Union, cast
 
 if __name__ == "__main__":
     data = core.init("All")
-    tideDict: Dict[str, dict] = {
-        "high": {
-            "None": {"key": "none", "count": 0.0, "clear_count": 0.0},
-            "mothership": {"key": "mothership", "count": 0.0, "clear_count": 0.0},
-            "fog": {"key": "fog", "count": 0.0, "clear_count": 0.0},
-            "rush": {"key": "rush", "count": 0.0, "clear_count": 0.0},
-            "cohock_charge": {"key": "cohock_charge", "count": 0.0, "clear_count": 0.0},
-            "griller": {"key": "griller", "count": 0.0, "clear_count": 0.0},
-            "goldie_seeking": {
-                "key": "goldie_seeking",
-                "count": 0.0,
-                "clear_count": 0.0,
-            },
-        },
-        "normal": {
-            "None": {"key": "none", "count": 0.0, "clear_count": 0.0},
-            "mothership": {"key": "mothership", "count": 0.0, "clear_count": 0.0},
-            "fog": {"key": "fog", "count": 0.0, "clear_count": 0.0},
-            "rush": {"key": "rush", "count": 0.0, "clear_count": 0.0},
-            "cohock_charge": {"key": "cohock_charge", "count": 0.0, "clear_count": 0.0},
-            "griller": {"key": "griller", "count": 0.0, "clear_count": 0.0},
-            "goldie_seeking": {
-                "key": "goldie_seeking",
-                "count": 0.0,
-                "clear_count": 0.0,
-            },
-        },
-        "low": {
-            "None": {"key": "none", "count": 0.0, "clear_count": 0.0},
-            "mothership": {"key": "mothership", "count": 0.0, "clear_count": 0.0},
-            "fog": {"key": "fog", "count": 0.0, "clear_count": 0.0},
-            "rush": {"key": "rush", "count": 0.0, "clear_count": 0.0},
-            "cohock_charge": {"key": "cohock_charge", "count": 0.0, "clear_count": 0.0},
-            "griller": {"key": "griller", "count": 0.0, "clear_count": 0.0},
-            "goldie_seeking": {
-                "key": "goldie_seeking",
-                "count": 0.0,
-                "clear_count": 0.0,
-            },
-        },
-    }
+    tideList: List[str] = ["high", "normal", "low"]
+    eventList: List[str] = [
+        "None",
+        "mothership",
+        "fog",
+        "rush",
+        "cohock_charge",
+        "griller",
+        "goldie_seeking",
+    ]
+    tideDict: Dict[str, Dict[str, Dict[str, Union[str, float]]]] = {}
+    for tideStr in tideList:
+        eventDict: Dict[str, Dict[str, Union[str, float]]] = {}
+        for eventStr in eventList:
+            eventDict[eventStr] = {"key": eventStr, "count": 0.0, "clear_count": 0.0}
+        tideDict[tideStr] = eventDict
     total = 0.0
     with gzip.open(data) as reader:
         for job in jsonlines.Reader(reader, ujson.loads):
-            waveCount = 0
+            waveCount: int = 0
             for wave in job["waves"]:
                 total += 1.0
                 if wave["known_occurrence"] is not None:
-                    tideDict[wave["water_level"]["key"]][
-                        wave["known_occurrence"]["key"]
-                    ]["count"] += 1.0
-                    if job["clear_waves"] > waveCount:
+                    cast(
+                        Dict[str, float],
                         tideDict[wave["water_level"]["key"]][
                             wave["known_occurrence"]["key"]
-                        ]["clear_count"] += 1.0
-                else:
-                    tideDict[wave["water_level"]["key"]]["None"]["count"] += 1.0
+                        ],
+                    )["count"] += 1.0
                     if job["clear_waves"] > waveCount:
-                        tideDict[wave["water_level"]["key"]]["None"][
-                            "clear_count"
-                        ] += 1.0
+                        cast(
+                            Dict[str, float],
+                            tideDict[wave["water_level"]["key"]][
+                                wave["known_occurrence"]["key"]
+                            ],
+                        )["clear_count"] += 1.0
+                else:
+                    cast(
+                        Dict[str, float], tideDict[wave["water_level"]["key"]]["None"]
+                    )["count"] += 1.0
+                    if job["clear_waves"] > waveCount:
+                        cast(
+                            Dict[str, float],
+                            tideDict[wave["water_level"]["key"]]["None"],
+                        )["clear_count"] += 1.0
                 waveCount += 1
     for tide in tideDict.values():
         for event in tide.values():
             print(
-                event["key"]
+                cast(str, event["key"])
                 + ": "
-                + str(100.0 * event["count"] / total)
-                + "%% occurance; "
+                + str(100.0 * cast(float, event["count"]) / total)
+                + "% occurance; "
                 + str(
-                    100.0 * event["clear_count"] / (event["count"]
-                    if event["count"] > 0.0
-                    else 1.0)
+                    100.0
+                    * cast(float, event["clear_count"])
+                    / (
+                        cast(float, event["count"])
+                        if cast(float, event["count"]) > 0.0
+                        else 1.0
+                    )
                 )
-                + " %% wave cleared"
+                + " % wave cleared"
             )
