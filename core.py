@@ -11,10 +11,10 @@ import shutil
 locale = "en_US"
 
 grizzcoWeapons = (
-    ("Grizzco Charger", "kuma_charger"),
-    ("Grizzco Brella", "kuma_brella"),
-    ("Grizzco Blaster", "kuma_blaster"),
-    ("Grizzco Slosher", "kuma_slosher"),
+    ("Grizzco Charger", "kuma_charger", "charger"),
+    ("Grizzco Brella", "kuma_brella", "brella"),
+    ("Grizzco Blaster", "kuma_blaster", "blaster"),
+    ("Grizzco Slosher", "kuma_slosher", "slosher"),
 )
 
 jobType = Dict[
@@ -1105,7 +1105,7 @@ def getArrayOfStat(data: str, stat: str) -> List[float]:
         return results
 
 
-def init(mode: str, api_key: str = None) -> str:
+def init(mode: str, dataMode: str, api_key: str = None) -> Union[None, str, List[jobType]]:
     """
     Fetch the data sets from stat.ink
 
@@ -1208,4 +1208,12 @@ def init(mode: str, api_key: str = None) -> str:
                 if len(temp) > 0:
                     lastId = cast(List[Dict[str, int]], temp)[-1]["id"]
                 print(lastId)
-    return fileName
+    if dataMode == "mem":
+        data: List[jobType] = []
+        with gzip.open(fileName, "r") as reader:
+            for job in jsonlines.Reader(reader):
+                data.append(job)
+        return data
+    if dataMode == "disk":
+        return fileName
+    return None
