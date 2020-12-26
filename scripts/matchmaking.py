@@ -26,9 +26,7 @@ if __name__ == "__main__":
                     "std": 0.0,
                     "count": 0.0,
                 }
-            playersData[userId]["hazard_level"]["vals"].append(
-                float(job.danger_rate)
-            )
+            playersData[userId]["hazard_level"]["vals"].append(float(job.danger_rate))
             playersData[userId]["count"] += 1
     dangerRateStd: float = np.std(dangerRates)
     playersDataList: List[dict] = list(playersData.values())
