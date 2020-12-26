@@ -1,9 +1,10 @@
-from core import hasJobs, locale
+from core import hasJobs, locale, grizzcoWeapons
 import os.path
-from typing import Tuple, List, Callable
+from typing import Tuple, List, Callable, Dict, Union, cast
 import gzip
 import jsonlines
 import ujson
+import requests
 
 
 def filterJobs(data: str, outpath: str, filterFunction: Callable) -> Tuple[str, str]:
@@ -915,6 +916,146 @@ def hasEvents(data: str, events: List[str], mode: str = None) -> Tuple[str, str]
             )
         )
         outPath += event + (mode if mode is not None else "")
+    if mode == "and":
+        return filterJobsAnd(
+            data,
+            outPath,
+            filterFunctions,
+        )
+    if mode == "or":
+        return filterJobsOr(
+            data,
+            outPath,
+            filterFunctions,
+        )
+    return filterJobs(data, outPath, filterFunctions[0])
+
+
+def hasWeaponTypes(
+    data: str, types: Union[List[str], Tuple[str, ...]], mode: str = None
+) -> Tuple[str, str]:
+    try:
+        os.mkdir(data[0:-6])
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/weaponTypes/")
+    except FileExistsError:
+        pass
+    try:
+        os.mkdir(data[0:-6] + "/notweaponTypes/")
+    except FileExistsError:
+        pass
+    weaponList = requests.get("https://stat.ink/api/v2/weapon").json()
+    for grizzWeapon in grizzcoWeapons:
+        new = {
+            "name": {locale: grizzWeapon[0]},
+            "key": grizzWeapon[1],
+            "main_ref": grizzWeapon[1],
+            "type": {"key": grizzWeapon[2]},
+        }
+        cast(List[Dict[str, Dict[str, str]]], weaponList).append(
+            cast(Dict[str, Dict[str, str]], new)
+        )
+    weaponDict = {}
+    for i in weaponList:
+        weaponDict[i["key"]] = i
+    filterFunctions: List[Callable] = []
+    outPath = "weaponTypes/"
+    for wtype in types:
+        filterFunctions.append(
+            lambda var, wtype=wtype: (
+                weaponDict[var["my_data"]["weapons"][0]["key"]]["type"]["key"] == wtype
+                or (
+                    len(var["my_data"]["weapons"]) > 1
+                    and weaponDict[var["my_data"]["weapons"][1]["key"]]["type"]["key"]
+                    == wtype
+                )
+                or (
+                    len(var["my_data"]["weapons"]) > 2
+                    and weaponDict[var["my_data"]["weapons"][2]["key"]]["type"]["key"]
+                    == wtype
+                )
+                or (
+                    var["teammates"] is not None
+                    and (
+                        (
+                            len(var["teammates"]) > 0
+                            and var["teammates"][0]["weapons"] is not None
+                            and (
+                                weaponDict[var["teammates"][0]["weapons"][0]["key"]][
+                                    "type"
+                                ]["key"]
+                                == wtype
+                                or (
+                                    len(var["teammates"][0]["weapons"]) > 1
+                                    and weaponDict[
+                                        var["teammates"][0]["weapons"][1]["key"]
+                                    ]["type"]["key"]
+                                    == wtype
+                                )
+                                or (
+                                    len(var["teammates"][0]["weapons"]) > 2
+                                    and weaponDict[
+                                        var["teammates"][0]["weapons"][2]["key"]
+                                    ]["type"]["key"]
+                                    == wtype
+                                )
+                            )
+                        )
+                        or (
+                            len(var["teammates"]) > 1
+                            and var["teammates"][1]["weapons"] is not None
+                            and (
+                                weaponDict[var["teammates"][1]["weapons"][0]["key"]][
+                                    "type"
+                                ]["key"]
+                                == wtype
+                                or (
+                                    len(var["teammates"][1]["weapons"]) > 1
+                                    and weaponDict[
+                                        var["teammates"][1]["weapons"][1]["key"]
+                                    ]["type"]["key"]
+                                    == wtype
+                                )
+                                or (
+                                    len(var["teammates"][1]["weapons"]) > 2
+                                    and weaponDict[
+                                        var["teammates"][1]["weapons"][2]["key"]
+                                    ]["type"]["key"]
+                                    == wtype
+                                )
+                            )
+                        )
+                        or (
+                            len(var["teammates"]) > 2
+                            and var["teammates"][2]["weapons"] is not None
+                            and (
+                                weaponDict[var["teammates"][2]["weapons"][0]["key"]][
+                                    "type"
+                                ]["key"]
+                                == wtype
+                                or (
+                                    len(var["teammates"][2]["weapons"]) > 1
+                                    and weaponDict[
+                                        var["teammates"][2]["weapons"][1]["key"]
+                                    ]["type"]["key"]
+                                    == wtype
+                                )
+                                or (
+                                    len(var["teammates"][2]["weapons"]) > 2
+                                    and weaponDict[
+                                        var["teammates"][2]["weapons"][2]["key"]
+                                    ]["type"]["key"]
+                                    == wtype
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+        outPath += wtype + (mode if mode is not None else "")
     if mode == "and":
         return filterJobsAnd(
             data,
