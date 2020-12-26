@@ -7,6 +7,7 @@ import sys
 from typing import Tuple, List, Union, Dict, cast, Optional, Callable, Any
 import gzip
 import shutil
+from objects import Job
 
 locale = "en_US"
 
@@ -16,56 +17,6 @@ grizzcoWeapons = (
     ("Grizzco Blaster", "kuma_blaster", "blaster"),
     ("Grizzco Slosher", "kuma_slosher", "slosher"),
 )
-
-jobType = Dict[
-    str,
-    Union[
-        int,
-        str,
-        bool,
-        Dict[
-            str,
-            Union[
-                int,
-                str,
-                Dict[str, Union[int, str, Dict[str, Union[int, str]]]],
-                List[
-                    Union[
-                        int,
-                        Dict[
-                            str,
-                            Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]],
-                        ],
-                    ]
-                ],
-            ],
-        ],
-        List[
-            Union[
-                int,
-                Dict[
-                    str,
-                    Union[
-                        str,
-                        int,
-                        Dict[str, Union[int, str, Dict[str, str]]],
-                        List[
-                            Union[
-                                int,
-                                Dict[
-                                    str,
-                                    Union[
-                                        int, str, Dict[str, Union[str, Dict[str, str]]]
-                                    ],
-                                ],
-                            ]
-                        ],
-                    ],
-                ],
-            ]
-        ],
-    ],
-]
 
 
 def hasJobs(data: str) -> bool:
@@ -544,11 +495,11 @@ def waveClearPercentageWithWeapon(data: str, weapon: str) -> float:
         return sumVal / count
 
 
-def sumStatWaves(data: jobType, stat: str) -> int:
+def sumStatWaves(data: Job, stat: str) -> int:
     """
 
     :param data:
-    :type data: jobType
+    :type data: Job
     :param stat:
     :type stat: str
     :return:
@@ -561,11 +512,11 @@ def sumStatWaves(data: jobType, stat: str) -> int:
     return sumVal
 
 
-def getPlayersAttribute(data: jobType, attr: str) -> List[str]:
+def getPlayersAttribute(data: Job, attr: str) -> List[str]:
     """
 
     :param data:
-    :type data: jobType
+    :type data: Job
     :param attr:
     :type attr: str
     :return:
@@ -588,11 +539,11 @@ def getPlayersAttribute(data: jobType, attr: str) -> List[str]:
     return attrs
 
 
-def getWavesAttribute(data: jobType, attr: str) -> str:
+def getWavesAttribute(data: Job, attr: str) -> str:
     """
 
     :param data:
-    :type data: jobType
+    :type data: Job
     :param attr:
     :type attr: str
     :return:
@@ -688,11 +639,11 @@ def getOverview(data: str) -> str:
     return result
 
 
-def printGeneral(data: jobType) -> None:
+def printGeneral(data: Job) -> None:
     """
 
     :param data:
-    :type data: jobType
+    :type data: Job
 
     """
     print("Stat.ink Link: {}".format(data["url"]))
@@ -729,11 +680,11 @@ def printGeneral(data: jobType) -> None:
     )
 
 
-def printWaves(data: jobType) -> None:
+def printWaves(data: Job) -> None:
     """
 
     :param data:
-    :type data: jobType
+    :type data: Job
 
     """
     print(
@@ -781,11 +732,11 @@ def printWaves(data: jobType) -> None:
     )
 
 
-def printWeapons(data: jobType) -> None:
+def printWeapons(data: Job) -> None:
     """
 
     :param data:
-    :type data: jobType
+    :type data: Job
 
     """
     for i in range(
@@ -802,11 +753,11 @@ def printWeapons(data: jobType) -> None:
             print("\t{:16}".format(player))
 
 
-def printSpecials(data: jobType) -> None:
+def printSpecials(data: Job) -> None:
     """
 
     :param data:
-    :type data: jobType
+    :type data: Job
 
     """
     for i in range(
@@ -820,11 +771,11 @@ def printSpecials(data: jobType) -> None:
         )
 
 
-def printPlayers(data: jobType) -> None:
+def printPlayers(data: Job) -> None:
     """
 
     :param data:
-    :type data: jobType
+    :type data: Job
 
     """
     print(
@@ -894,11 +845,11 @@ def printPlayers(data: jobType) -> None:
     )
 
 
-def getBosses(data: jobType) -> List[Union[Dict[str, str], Dict[str, int]]]:
+def getBosses(data: Job) -> List[Union[Dict[str, str], Dict[str, int]]]:
     """
 
     :param data:
-    :type data: jobType
+    :type data: Job
     :return:
     :rtype: List[Union[Dict[str, str], Dict[str, int]]]
 
@@ -990,7 +941,7 @@ def getBosses(data: jobType) -> List[Union[Dict[str, str], Dict[str, int]]]:
     return results
 
 
-def getSingleJob(data: str, index: int = 0) -> Optional[jobType]:
+def getSingleJob(data: str, index: int = 0) -> Optional[Job]:
     """
 
     :param data: the full name of the data file
@@ -998,7 +949,7 @@ def getSingleJob(data: str, index: int = 0) -> Optional[jobType]:
     :param index: the index in the list of the job to find
     :type index: int
     :return: either the found job or None if there isn't a job at that index
-    :rtype: Optional[jobType]
+    :rtype: Optional[Job]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
     :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
@@ -1013,11 +964,11 @@ def getSingleJob(data: str, index: int = 0) -> Optional[jobType]:
     return None
 
 
-def printBosses(data: jobType) -> None:
+def printBosses(data: Job) -> None:
     """
 
     :param data: the job to print boss information for
-    :type data: jobType
+    :type data: Job
 
     :Example:
 
@@ -1105,7 +1056,7 @@ def getArrayOfStat(data: str, stat: str) -> List[float]:
         return results
 
 
-def init(mode: str, dataMode: str, api_key: str = None) -> Union[None, str, List[jobType]]:
+def init(mode: str, api_key: str = None) -> str:
     """
     Fetch the data sets from stat.ink
 
@@ -1162,7 +1113,7 @@ def init(mode: str, dataMode: str, api_key: str = None) -> Union[None, str, List
             os.replace(fileName[0:-6] + "Temp.jl.gz", fileName)
         prevLastId: int = 0
         params: Dict[str, str] = {"order": "asc", "newer_than": str(recentId)}
-        temp: List[jobType] = requests.get(url, headers=headers, params=params).json()
+        temp: List[Job] = requests.get(url, headers=headers, params=params).json()
         if len(temp) > 0:
             try:
                 shutil.rmtree(fileName[0:-6])
@@ -1208,12 +1159,12 @@ def init(mode: str, dataMode: str, api_key: str = None) -> Union[None, str, List
                 if len(temp) > 0:
                     lastId = cast(List[Dict[str, int]], temp)[-1]["id"]
                 print(lastId)
-    if dataMode == "mem":
-        data: List[jobType] = []
-        with gzip.open(fileName, "r") as reader:
-            for job in jsonlines.Reader(reader):
-                data.append(job)
-        return data
-    if dataMode == "disk":
-        return fileName
-    return None
+    return fileName
+
+
+def loadJobsFromFile(data: str) -> List[Job]:
+    jobs: List[Job] = []
+    with gzip.open(data, "r") as reader:
+        for line in reader:
+            jobs.append(Job(**ujson.loads(line)))
+    return jobs
