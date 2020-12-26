@@ -4,6 +4,7 @@ from core import (
     locale,
     statSummary,
 )
+from objects import Job
 import filters
 import jsonlines
 import requests
@@ -74,18 +75,19 @@ def sortStages(data: str, stat: str) -> None:
     stageDict: Dict[str, Dict[str, Union[str, float]]] = {}
     stageList: List[Dict[str, Union[str, float]]] = []
     with gzip.open(data) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
-            if job["stage"] is not None:
-                if not (job["stage"]["name"][locale] in stageDict):
-                    stageDict[job["stage"]["name"][locale]] = {
-                        "name": job["stage"]["name"][locale],
+        for line in reader:
+            job = Job(**ujson.loads(line))
+            if job.has_stage():
+                if not (getattr(job.stage.name, locale) in stageDict):
+                    stageDict[getattr(job.stage.name, locale)] = {
+                        "name": getattr(job.stage.name, locale),
                         stat: 0.0,
                         "count": 0.0,
                     }
-                cast(Dict[str, float], stageDict[job["stage"]["name"][locale]])[
+                cast(Dict[str, float], stageDict[getattr(job.stage.name, locale)])[
                     stat
-                ] += cast(float, job[stat])
-                cast(Dict[str, float], stageDict[job["stage"]["name"][locale]])[
+                ] += cast(float, getattr(job, stat))
+                cast(Dict[str, float], stageDict[getattr(job.stage.name, locale)])[
                     "count"
                 ] += 1.0
         for stage in stageDict.values():
@@ -108,22 +110,22 @@ def sortSpecial(data: str, stat: str) -> None:
     specialDict: Dict[str, Dict[str, Union[str, float]]] = {}
     specialList: List[Dict[str, Union[str, float]]] = []
     with gzip.open(data) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
-            if job["stage"] is not None:
-                if not (job["my_data"]["special"]["name"][locale] in specialDict):
-                    specialDict[job["my_data"]["special"]["name"][locale]] = {
-                        "name": job["my_data"]["special"]["name"][locale],
-                        "clear_waves": 0.0,
-                        "count": 0.0,
-                    }
-                cast(
-                    Dict[str, float],
-                    specialDict[job["my_data"]["special"]["name"][locale]],
-                )[stat] += cast(float, job[stat])
-                cast(
-                    Dict[str, float],
-                    specialDict[job["my_data"]["special"]["name"][locale]],
-                )["count"] += 1.0
+        for line in reader:
+            job = Job(**ujson.loads(line))
+            if not (getattr(job.my_data.special.name, locale) in specialDict):
+                specialDict[getattr(job.my_data.special.name, locale)] = {
+                    "name": getattr(job.my_data.special.name, locale),
+                    "clear_waves": 0.0,
+                    "count": 0.0,
+                }
+            cast(
+                Dict[str, float],
+                specialDict[getattr(job.my_data.special.name, locale)],
+            )[stat] += cast(float, getattr(job, stat))
+            cast(
+                Dict[str, float],
+                specialDict[getattr(job.my_data.special.name, locale)],
+            )["count"] += 1.0
         for special in specialDict.values():
             specialList.append(
                 {
@@ -178,8 +180,8 @@ def sortRotation(data: str, stat: str) -> None:
 
 
 if __name__ == "__main__":
-    # fullPath: str = core.initUser(ujson.load(open("keys.json", "r"))["statink_key"])
-    fullPath: str = core.init("All")
+    # fullPath: str = core.init("User", "disk", ujson.load(open("keys.json", "r"))["statink_key"])
+    fullPath: str = cast(str, core.init("All", "disk"))
     # sortStages(fullPath, "clear_waves")
     sortWeapons(fullPath, "clear_waves")
     # sortSpecial(fullPath, "clear_waves")
