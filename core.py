@@ -366,9 +366,7 @@ def findPlayerIdByName(data: str, player: str) -> List[str]:
     return foundIds
 
 
-def getValMultiDimensional(
-    data: Union[list, Dict[str, Any]], statArr: List[Union[str, int]]
-) -> str:
+def getValMultiDimensional(data, statArr: List[Union[str, int]]) -> str:
     """
     Retrieve the chosen stat from the provided data structure, using recursion.
 
@@ -385,16 +383,14 @@ def getValMultiDimensional(
     if len(statArr) > 1:
         if isinstance(statArr[0], int):
             if len(data) > statArr[0]:
-                return getValMultiDimensional(cast(list, data)[statArr[0]], statArr[1:])
+                return getValMultiDimensional(data[statArr[0]], statArr[1:])
             return ""
-        return getValMultiDimensional(
-            cast(Dict[str, Union[list, Dict[str, Any]]], data)[statArr[0]], statArr[1:]
-        )
+        return getValMultiDimensional(getattr(data, statArr[0]), statArr[1:])
     if isinstance(statArr[0], int):
         if len(data) > statArr[0]:
-            return cast(List[str], data)[statArr[0]]
+            return data[statArr[0]]
         return ""
-    return cast(Dict[str, str], data)[statArr[0]]
+    return getattr(data, statArr[0])
 
 
 def statSummary(data: str, stat: str) -> Tuple[float, float, float, float]:
@@ -507,8 +503,8 @@ def sumStatWaves(data: Job, stat: str) -> int:
 
     """
     sumVal: int = 0
-    for w in cast(Dict[str, List[Dict[str, int]]], data)["waves"]:
-        sumVal += w[stat]
+    for w in data.waves:
+        sumVal += w.stat
     return sumVal
 
 
@@ -526,11 +522,11 @@ def getPlayersAttribute(data: Job, attr: str) -> List[str]:
     attrsList: List[str] = attr.split()
     attrs: List[str] = [
         getValMultiDimensional(
-            cast(Dict[str, Union[list, Dict[str, Any]]], data)["my_data"],
+            data.my_data,
             list(map(lambda ele: int(ele) if ele.isdigit() else ele, attrsList)),
         )
     ]
-    for p in cast(Dict[str, List[Dict[str, Any]]], data)["teammates"]:
+    for p in data.teammates:
         attrs.append(
             getValMultiDimensional(
                 p, list(map(lambda ele: int(ele) if ele.isdigit() else ele, attrsList))
@@ -553,10 +549,10 @@ def getWavesAttribute(data: Job, attr: str) -> str:
     attrs: str = ""
     attrsList: List[str] = attr.split()
     for i in range(0, 3):
-        if i < len(cast(Dict[str, List[Dict[str, Any]]], data)["waves"]):
+        if i < len(data.waves):
             attrs += "{:<16}\t".format(
                 getValMultiDimensional(
-                    cast(Dict[str, List[Dict[str, Any]]], data)["waves"][i],
+                    data.waves[i],
                     list(
                         map(lambda ele: int(ele) if ele.isdigit() else ele, attrsList)
                     ),
@@ -602,9 +598,9 @@ def getOverview(data: str) -> str:
         count: int = 0
         for job in jsonlines.Reader(reader, ujson.loads):
             count += 1
-            clearCount += float(job["clear_waves"] == 3)
-            waveTwoCount += float(job["clear_waves"] >= 2)
-            waveOneCount += float(job["clear_waves"] >= 1)
+            clearCount += float(job.clear_waves == 3)
+            waveTwoCount += float(job.clear_waves >= 2)
+            waveOneCount += float(job.clear_waves >= 1)
             for i in range(0, len(stats)):
                 val = float(
                     getValMultiDimensional(
@@ -646,36 +642,18 @@ def printGeneral(data: Job) -> None:
     :type data: Job
 
     """
-    print("Stat.ink Link: {}".format(data["url"]))
-    print("Splatnet #: {}".format(data["splatnet_number"]))
-    print(
-        "Stage: {}".format(
-            cast(Dict[str, Dict[str, Dict[str, str]]], data)["stage"]["name"][locale]
-        )
-    )
-    print(
-        "Rotation Start Date: {}".format(
-            cast(Dict[str, Dict[str, str]], data)["shift_start_at"]["iso8601"]
-        )
-    )
-    print(
-        "Start Date: {}".format(
-            cast(Dict[str, Dict[str, str]], data)["start_at"]["iso8601"]
-        )
-    )
-    print("Result: {}".format("Cleared" if data["clear_waves"] == 3 else "Failed"))
+    print("Stat.ink Link: {}".format(data.url))
+    print("Splatnet #: {}".format(data.splatnet_number))
+    print("Stage: {}".format(getattr(data.stage.name, locale)))
+    print("Rotation Start Date: {}".format(data.shift_start_at.iso8601))
+    print("Start Date: {}".format(data.start_at.iso8601))
+    print("Result: {}".format("Cleared" if data.clear_waves == 3 else "Failed"))
     print(
         "Title: {} {:<3} -> {} {:<3}".format(
-            cast(Dict[str, Dict[str, Dict[str, str]]], data)["title"]["name"][locale]
-            if data["title"]
-            else "",
-            data["title_exp"],
-            cast(Dict[str, Dict[str, Dict[str, str]]], data)["title_after"]["name"][
-                locale
-            ]
-            if data["title_after"]
-            else "",
-            data["title_exp_after"],
+            getattr(data.title.name, locale) if data.title else "",
+            data.title_exp,
+            getattr(data.title_after.name, locale) if data.title_after else "",
+            data.title_exp_after,
         )
     )
 
@@ -741,7 +719,7 @@ def printWeapons(data: Job) -> None:
     """
     for i in range(
         0,
-        len(cast(Dict[str, Dict[str, list]], data)["my_data"]["weapons"]),
+        len(data.my_data.weapons),
     ):
         weapons = getPlayersAttribute(data, "weapons " + str(i) + " name " + locale)
         print(
@@ -760,9 +738,7 @@ def printSpecials(data: Job) -> None:
     :type data: Job
 
     """
-    for i in range(
-        0, len(cast(Dict[str, Dict[str, List[int]]], data)["my_data"]["special_uses"])
-    ):
+    for i in range(0, len(data.my_data.special_uses)):
         print(
             "{:16}\t{:}".format(
                 "Wave {:1} Special Use".format(i + 1),
@@ -857,86 +833,31 @@ def getBosses(data: Job) -> List[Union[Dict[str, str], Dict[str, int]]]:
     results: List[Union[Dict[str, str], Dict[str, int]]] = []
     names: Dict[str, str] = {}
     appearances: Dict[str, int] = {"": 0}
-    if data["boss_appearances"] is None:
+    if data.boss_appearances is None:
         return results
-    for boss in range(0, len(cast(Dict[str, list], data)["boss_appearances"])):
-        names[
-            cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)[
-                "boss_appearances"
-            ][boss]["boss"]["name"][locale]
-        ] = cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)[
-            "boss_appearances"
-        ][
-            boss
-        ][
-            "boss"
-        ][
-            "name"
-        ][
-            locale
-        ]
+    for boss in range(0, len(data.boss_appearances)):
+        names[getattr(data.boss_appearances[boss].boss.name, locale)] = getattr(
+            data.boss_appearances[boss].boss.name, locale
+        )
         appearances[
-            cast(Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]], data)[
-                "boss_appearances"
-            ][boss]["boss"]["name"][locale]
-        ] = cast(Dict[str, List[Dict[str, int]]], data)["boss_appearances"][boss][
-            "count"
-        ]
-    results.append(names)
+            getattr(data.boss_appearances[boss].boss.name, locale)
+        ] = data.boss_appearances[boss].count
+        results.append(names)
     results.append(appearances)
     my_data: Dict[str, int] = {"": 0}
-    if cast(Dict[str, Dict[str, list]], data)["my_data"]["boss_kills"] is not None:
-        for boss in range(
-            0, len(cast(Dict[str, Dict[str, list]], data)["my_data"]["boss_kills"])
-        ):
+    if data.my_data.boss_kills is not None:
+        for boss in range(0, len(data.my_data.boss_kills)):
             my_data[
-                cast(
-                    Dict[str, Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]]],
-                    data,
-                )["my_data"]["boss_kills"][boss]["boss"]["name"][locale]
-            ] = cast(Dict[str, Dict[str, List[Dict[str, int]]]], data)["my_data"][
-                "boss_kills"
-            ][
-                boss
-            ][
-                "count"
-            ]
+                getattr(data.my_data.boss_kills[boss].boss.name, locale)
+            ] = data.my_data.boss_kills[boss].count
     results.append(my_data)
-    for teammate in range(0, len(cast(Dict[str, list], data)["teammates"])):
+    for teammate in range(0, len(data.teammates)):
         teammate_data: Dict[str, int] = {"": 0}
-        if (
-            cast(Dict[str, List[Dict[str, list]]], data)["teammates"][teammate][
-                "boss_kills"
-            ]
-            is not None
-        ):
-            for boss in range(
-                0,
-                len(
-                    cast(Dict[str, List[Dict[str, list]]], data)["teammates"][teammate][
-                        "boss_kills"
-                    ]
-                ),
-            ):
+        if data.teammates[teammate].boss_kills is not None:
+            for boss in range(0, len(data.teammates[teammate].boss_kills)):
                 my_data[
-                    cast(
-                        Dict[
-                            str,
-                            List[Dict[str, List[Dict[str, Dict[str, Dict[str, str]]]]]],
-                        ],
-                        data,
-                    )["teammates"][teammate]["boss_kills"][boss]["boss"]["name"][locale]
-                ] = cast(Dict[str, List[Dict[str, List[Dict[str, int]]]]], data)[
-                    "teammates"
-                ][
-                    teammate
-                ][
-                    "boss_kills"
-                ][
-                    boss
-                ][
-                    "count"
-                ]
+                    getattr(data.teammates[teammate].boss_kills[boss].boss.name, locale)
+                ] = (data.teammates[teammate].boss_kills[boss].count)
         results.append(teammate_data)
     return results
 
@@ -952,14 +873,13 @@ def getSingleJob(data: str, index: int = 0) -> Optional[Job]:
     :rtype: Optional[Job]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     """
     count = 0
     with gzip.open(data) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
+        for line in reader:
             if count == index:
-                return job
+                return Job(**ujson.loads(line))
             count += 1
     return None
 
