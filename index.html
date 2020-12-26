@@ -265,12 +265,12 @@
 
 <dl class="function">
 <dt id="core.getBosses">
-<code class="descclassname">core.</code><code class="descname">getBosses</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]]</em><span class="sig-paren">)</span> &#x2192; List[Union[Dict[str, str], Dict[str, int]]]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getBosses" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">getBosses</code><span class="sig-paren">(</span><em>data: objects.Job</em><span class="sig-paren">)</span> &#x2192; List[Union[Dict[str, str], Dict[str, int]]]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getBosses" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>jobType</em>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>Job</em>) – </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
@@ -295,13 +295,13 @@
 
 <dl class="function">
 <dt id="core.getPlayersAttribute">
-<code class="descclassname">core.</code><code class="descname">getPlayersAttribute</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]], attr: str</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getPlayersAttribute" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">getPlayersAttribute</code><span class="sig-paren">(</span><em>data: objects.Job</em>, <em>attr: str</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getPlayersAttribute" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>jobType</em>) – </li>
+<li><strong>data</strong> (<em>Job</em>) – </li>
 <li><strong>attr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </li>
 </ul>
 </td>
@@ -318,7 +318,7 @@
 
 <dl class="function">
 <dt id="core.getSingleJob">
-<code class="descclassname">core.</code><code class="descname">getSingleJob</code><span class="sig-paren">(</span><em>data: str</em>, <em>index: int = 0</em><span class="sig-paren">)</span> &#x2192; Optional[Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]]]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getSingleJob" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">getSingleJob</code><span class="sig-paren">(</span><em>data: str</em>, <em>index: int = 0</em><span class="sig-paren">)</span> &#x2192; Optional[objects.Job]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getSingleJob" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -332,13 +332,12 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">either the found job or None if there isn’t a job at that index</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Optional[jobType]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Optional[Job]</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
 <li><a class="reference external" href="https://docs.python.org/3/library/gzip.html#gzip.BadGzipFile" title="(in Python v3.9)"><strong>gzip.BadGzipFile</strong></a> – if the file exists but isn’t a gzip file</li>
 <li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.9)"><strong>FileNotFoundError</strong></a> – if the file doesn’t exist</li>
-<li><a class="reference external" href="https://jsonlines.readthedocs.io/en/latest/index.html#jsonlines.InvalidLineError" title="(in jsonlines)"><strong>jsonlines.InvalidLineError</strong></a> – if the file is a gzip file of something else</li>
 </ul>
 </td>
 </tr>
@@ -348,7 +347,7 @@
 
 <dl class="function">
 <dt id="core.getValMultiDimensional">
-<code class="descclassname">core.</code><code class="descname">getValMultiDimensional</code><span class="sig-paren">(</span><em>data: Union[list, Dict[str, Any]], statArr: List[Union[str, int]]</em><span class="sig-paren">)</span> &#x2192; str<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getValMultiDimensional" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">getValMultiDimensional</code><span class="sig-paren">(</span><em>data, statArr: List[Union[str, int]]</em><span class="sig-paren">)</span> &#x2192; str<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getValMultiDimensional" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve the chosen stat from the provided data structure, using recursion.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -372,13 +371,13 @@
 
 <dl class="function">
 <dt id="core.getWavesAttribute">
-<code class="descclassname">core.</code><code class="descname">getWavesAttribute</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]], attr: str</em><span class="sig-paren">)</span> &#x2192; str<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getWavesAttribute" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">getWavesAttribute</code><span class="sig-paren">(</span><em>data: objects.Job</em>, <em>attr: str</em><span class="sig-paren">)</span> &#x2192; str<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getWavesAttribute" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>jobType</em>) – </li>
+<li><strong>data</strong> (<em>Job</em>) – </li>
 <li><strong>attr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </li>
 </ul>
 </td>
@@ -478,12 +477,12 @@
 
 <dl class="function">
 <dt id="core.printBosses">
-<code class="descclassname">core.</code><code class="descname">printBosses</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printBosses" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">printBosses</code><span class="sig-paren">(</span><em>data: objects.Job</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printBosses" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>jobType</em>) – the job to print boss information for</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>Job</em>) – the job to print boss information for</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"></td>
 </tr>
@@ -506,12 +505,12 @@
 
 <dl class="function">
 <dt id="core.printGeneral">
-<code class="descclassname">core.</code><code class="descname">printGeneral</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printGeneral" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">printGeneral</code><span class="sig-paren">(</span><em>data: objects.Job</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printGeneral" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>jobType</em>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>Job</em>) – </td>
 </tr>
 </tbody>
 </table>
@@ -519,12 +518,12 @@
 
 <dl class="function">
 <dt id="core.printPlayers">
-<code class="descclassname">core.</code><code class="descname">printPlayers</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printPlayers" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">printPlayers</code><span class="sig-paren">(</span><em>data: objects.Job</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printPlayers" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>jobType</em>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>Job</em>) – </td>
 </tr>
 </tbody>
 </table>
@@ -532,12 +531,12 @@
 
 <dl class="function">
 <dt id="core.printSpecials">
-<code class="descclassname">core.</code><code class="descname">printSpecials</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printSpecials" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">printSpecials</code><span class="sig-paren">(</span><em>data: objects.Job</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printSpecials" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>jobType</em>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>Job</em>) – </td>
 </tr>
 </tbody>
 </table>
@@ -545,12 +544,12 @@
 
 <dl class="function">
 <dt id="core.printWaves">
-<code class="descclassname">core.</code><code class="descname">printWaves</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printWaves" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">printWaves</code><span class="sig-paren">(</span><em>data: objects.Job</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printWaves" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>jobType</em>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>Job</em>) – </td>
 </tr>
 </tbody>
 </table>
@@ -558,12 +557,12 @@
 
 <dl class="function">
 <dt id="core.printWeapons">
-<code class="descclassname">core.</code><code class="descname">printWeapons</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printWeapons" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">printWeapons</code><span class="sig-paren">(</span><em>data: objects.Job</em><span class="sig-paren">)</span> &#x2192; None<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.printWeapons" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>jobType</em>) – </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>Job</em>) – </td>
 </tr>
 </tbody>
 </table>
@@ -595,13 +594,13 @@
 
 <dl class="function">
 <dt id="core.sumStatWaves">
-<code class="descclassname">core.</code><code class="descname">sumStatWaves</code><span class="sig-paren">(</span><em>data: Dict[str, Union[int, str, bool, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, Union[int, str]]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[int, str, Dict[str, str]]]]]]]]], List[Union[int, Dict[str, Union[str, int, Dict[str, Union[int, str, Dict[str, str]]], List[Union[int, Dict[str, Union[int, str, Dict[str, Union[str, Dict[str, str]]]]]]]]]]]]], stat: str</em><span class="sig-paren">)</span> &#x2192; int<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.sumStatWaves" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">sumStatWaves</code><span class="sig-paren">(</span><em>data: objects.Job</em>, <em>stat: str</em><span class="sig-paren">)</span> &#x2192; int<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.sumStatWaves" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>jobType</em>) – </li>
+<li><strong>data</strong> (<em>Job</em>) – </li>
 <li><strong>stat</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </li>
 </ul>
 </td>
