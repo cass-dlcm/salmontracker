@@ -374,6 +374,8 @@ class Job(object):
         self.quota = quota
         if title is not None:
             self.title = Title(**title)
+        else:
+            self.title = None
         self.title_exp = title_exp
         self.title_after = Title(**title_after)
         self.title_exp_after = title_exp_after
