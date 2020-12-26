@@ -29,7 +29,8 @@ class Name(object):
         "zh_TW",
     ]
 
-    def __init__(self,
+    def __init__(
+        self,
         de_DE,
         en_GB,
         en_US,
@@ -106,7 +107,8 @@ class Wave(object):
         "power_egg_collected",
     ]
 
-    def __init__(self,
+    def __init__(
+        self,
         known_occurrence,
         water_level,
         golden_egg_quota,
@@ -115,8 +117,14 @@ class Wave(object):
         power_egg_collected,
     ):
         if known_occurrence is not None:
-            self.known_occurrence = Stage__Water_Level__Special__Known_Occurrence__Weapon(**known_occurrence)
-        self.water_level = Stage__Water_Level__Special__Known_Occurrence__Weapon(**water_level)
+            self.known_occurrence = (
+                Stage__Water_Level__Special__Known_Occurrence__Weapon(
+                    **known_occurrence
+                )
+            )
+        self.water_level = Stage__Water_Level__Special__Known_Occurrence__Weapon(
+            **water_level
+        )
         self.golden_egg_quota = golden_egg_quota
         self.golden_egg_appearances = golden_egg_appearances
         self.golden_egg_delivered = golden_egg_delivered
@@ -164,7 +172,8 @@ class My_Data_Teammate(object):
         "boss_kills",
     ]
 
-    def __init__(self,
+    def __init__(
+        self,
         splatnet_id,
         name,
         special,
@@ -193,7 +202,9 @@ class My_Data_Teammate(object):
         self.weapons = []
         if weapons is not None:
             for weapon in weapons:
-                self.weapons.append(Stage__Water_Level__Special__Known_Occurrence__Weapon(**weapon))
+                self.weapons.append(
+                    Stage__Water_Level__Special__Known_Occurrence__Weapon(**weapon)
+                )
         self.boss_kills = []
         if boss_kills is not None:
             for boss in boss_kills:
@@ -211,7 +222,8 @@ class Stats(object):
         "registered_at",
     ]
 
-    def __init__(self,
+    def __init__(
+        self,
         work_count,
         total_golden_eggs,
         total_eggs,
@@ -261,8 +273,17 @@ class User(object):
         "stats",
     ]
 
-    def __init__(self,
-        id, name, screen_name, url, salmon_url, battle_url, join_at, profile, stats
+    def __init__(
+        self,
+        id,
+        name,
+        screen_name,
+        url,
+        salmon_url,
+        battle_url,
+        join_at,
+        profile,
+        stats,
     ):
         self.id = id
         self.name = name
@@ -307,7 +328,8 @@ class Job(object):
         "register_at",
     ]
 
-    def __init__(self,
+    def __init__(
+        self,
         id,
         uuid,
         splatnet_number,
@@ -363,7 +385,7 @@ class Job(object):
         for wave in waves:
             self.waves.append(Wave(**wave))
         self.my_data = My_Data_Teammate(**my_data)
-        self.teammates  = []
+        self.teammates = []
         if teammates is not None:
             for teammate in teammates:
                 self.teammates.append(My_Data_Teammate(**teammate))
@@ -378,6 +400,9 @@ class Job(object):
         else:
             self.end_at = end_at
         self.register_at = Time(**register_at)
+
+    def has_stage(self) -> bool:
+        return self.stage is not None
 
 
 if __name__ == "__main__":
