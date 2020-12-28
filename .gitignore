@@ -7,3 +7,4 @@ python-probe.log
 build/
 _build/
 reports/
+*.c
