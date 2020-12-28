@@ -1,3 +1,6 @@
 {
-    "restructuredtext.confPath": "${workspaceFolder}\\source"
+    "restructuredtext.confPath": "${workspaceFolder}\\source",
+    "files.associations": {
+        "type_traits": "c"
+    }
 }
