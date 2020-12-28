@@ -1,10 +1,7 @@
-import time
-import ujson
 from typing import List, Dict, Union, Optional
-import gzip
 
 
-class Time(object):
+class Time:
     __slots__ = ["time", "iso8601"]
 
     def __init__(self, time: int, iso8601: str):
@@ -12,7 +9,7 @@ class Time(object):
         self.iso8601: str = iso8601
 
 
-class Name(object):
+class Name:
     __slots__ = [
         "de_DE",
         "en_GB",
@@ -60,7 +57,7 @@ class Name(object):
         self.zh_TW: str = zh_TW
 
 
-class Boss(object):
+class Boss:
     __slots__ = ["key", "splatnet", "splatnet_str", "name"]
 
     def __init__(
@@ -72,7 +69,7 @@ class Boss(object):
         self.name: Name = Name(**name)
 
 
-class Boss_Appearance(object):
+class Boss_Appearance:
     __slots__ = ["boss", "count"]
 
     def __init__(self, boss: dict, count: int):
@@ -80,7 +77,7 @@ class Boss_Appearance(object):
         self.count: int = count
 
 
-class Title(object):
+class Title:
     __slots__ = ["key", "splatnet", "name", "generic_name"]
 
     def __init__(
@@ -96,7 +93,7 @@ class Title(object):
         self.generic_name: Name = Name(**generic_name)
 
 
-class Special_Weapon(object):
+class Special_Weapon:
     __slots__ = ["key", "splatnet", "name"]
 
     def __init__(self, key: str, splatnet, name: Dict[str, str]):
@@ -105,7 +102,7 @@ class Special_Weapon(object):
         self.name: Name = Name(**name)
 
 
-class Stage_WaterLevel_KnownOccurrence(object):
+class Stage_WaterLevel_KnownOccurrence:
     __slots__ = ["key", "splatnet", "name"]
 
     def __init__(self, key: str, splatnet, name: Dict[str, str]):
@@ -114,7 +111,7 @@ class Stage_WaterLevel_KnownOccurrence(object):
         self.name: Name = Name(**name)
 
 
-class Wave(object):
+class Wave:
     __slots__ = [
         "known_occurrence",
         "water_level",
@@ -146,7 +143,7 @@ class Wave(object):
         self.power_egg_collected: int = power_egg_collected
 
 
-class Gender(object):
+class Gender:
     __slots__ = ["key", "iso5218", "name"]
 
     def __init__(self, key: str, iso5218: int, name: Dict[str, str]):
@@ -155,7 +152,7 @@ class Gender(object):
         self.name: Name = Name(**name)
 
 
-class Species_FailReason(object):
+class Species_FailReason:
     __slots__ = ["key", "name"]
 
     def __init__(self, key, name):
@@ -163,7 +160,7 @@ class Species_FailReason(object):
         self.name: Name = Name(**name)
 
 
-class Agent(object):
+class Agent:
     __slots__ = ["name", "version"]
 
     def __init__(self, name: str, version: str):
@@ -171,7 +168,7 @@ class Agent(object):
         self.version: str = version
 
 
-class My_Data_Teammate(object):
+class My_Data_Teammate:
     __slots__ = [
         "splatnet_id",
         "name",
@@ -224,7 +221,7 @@ class My_Data_Teammate(object):
                 self.boss_kills.append(Boss_Appearance(**boss))
 
 
-class Stats(object):
+class Stats:
     __slots__ = [
         "work_count",
         "total_golden_eggs",
@@ -254,7 +251,7 @@ class Stats(object):
         self.registered_at: Time = Time(**registered_at)
 
 
-class Profile(object):
+class Profile:
     __slots__ = [
         "nnid",
         "friend_code",
@@ -281,7 +278,7 @@ class Profile(object):
         self.environment: str = environment
 
 
-class User(object):
+class User:
     __slots__ = [
         "id",
         "name",
@@ -317,7 +314,7 @@ class User(object):
         self.stats: Stats = Stats(**stats)
 
 
-class Job(object):
+class Job:
     __slots__ = [
         "id",
         "uuid",
@@ -436,12 +433,3 @@ class Job(object):
 
     def has_stage(self) -> bool:
         return self.stage is not None
-
-
-if __name__ == "__main__":
-    tic = time.perf_counter()
-    jobs: List[Job] = []
-    with gzip.open("data/salmon.jl.gz", "r") as reader:
-        for line in reader:
-            jobs.append(Job(**ujson.loads(line)))
-    print("Time taken: {}".format(time.perf_counter() - tic))
