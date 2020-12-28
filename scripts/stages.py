@@ -48,12 +48,8 @@ if __name__ == "__main__":
                     job = Job(**ujson.loads(line))
                     withValClearWaves.append(float(job.clear_waves))
                     withValDangerRate.append(float(job.danger_rate))
-                    withValGoldenTotal.append(
-                        float(job.my_data.golden_egg_delivered)
-                    )
-                    withValPowerTotal.append(
-                        float(job.my_data.power_egg_collected)
-                    )
+                    withValGoldenTotal.append(float(job.my_data.golden_egg_delivered))
+                    withValPowerTotal.append(float(job.my_data.power_egg_collected))
             with gzip.open(withoutVal) as reader:
                 for line in reader:
                     job = Job(**ujson.loads(line))
@@ -62,9 +58,7 @@ if __name__ == "__main__":
                     withoutValGoldenTotal.append(
                         float(job.my_data.golden_egg_delivered)
                     )
-                    withoutValPowerTotal.append(
-                        float(job.my_data.power_egg_collected)
-                    )
+                    withoutValPowerTotal.append(float(job.my_data.power_egg_collected))
             with gzip.open(data) as reader:
                 for line in reader:
                     job = Job(**ujson.loads(line))

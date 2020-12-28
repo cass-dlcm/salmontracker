@@ -35,21 +35,17 @@ if __name__ == "__main__":
                 if wave.known_occurrence is not None:
                     cast(
                         Dict[str, float],
-                        tideDict[wave.water_level.key][
-                            wave.known_occurrence.key
-                        ],
+                        tideDict[wave.water_level.key][wave.known_occurrence.key],
                     )["count"] += 1.0
                     if job.clear_waves > waveCount:
                         cast(
                             Dict[str, float],
-                            tideDict[wave.water_level.key][
-                                wave.known_occurrence.key
-                            ],
+                            tideDict[wave.water_level.key][wave.known_occurrence.key],
                         )["clear_count"] += 1.0
                 else:
-                    cast(
-                        Dict[str, float], tideDict[wave.water_level.key]["None"]
-                    )["count"] += 1.0
+                    cast(Dict[str, float], tideDict[wave.water_level.key]["None"])[
+                        "count"
+                    ] += 1.0
                     if job.clear_waves > waveCount:
                         cast(
                             Dict[str, float],
