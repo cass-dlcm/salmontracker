@@ -7,7 +7,7 @@ import sys
 from typing import Tuple, List, Union, Dict, cast, Optional, Callable, Any
 import gzip
 import shutil
-from objects import Job
+from objects import Job, Stage_WaterLevel_KnownOccurrence
 
 locale = "en_US"
 
@@ -19,7 +19,7 @@ grizzcoWeapons = (
 )
 
 
-def hasJobs(data: str) -> bool:
+def hasJobs(data) -> bool:
     """
     Check if a given data file has data.
 
@@ -52,12 +52,19 @@ def hasJobs(data: str) -> bool:
         return False
 
 
-def listAllUsers(data: str) -> List[str]:
+def listAllUsers(data) -> List[str]:
+    """
+
+    :param data:
+    :type data: str
+
+    """
     result: List[str] = []
     with gzip.open(data) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
-            if job["my_data"]["splatnet_id"] not in result:
-                result.append(job["my_data"]["splatnet_id"])
+        for line in reader:
+            job = Job(**ujson.loads(line))
+            if job.my_data.splatnet_id not in result:
+                result.append(job.my_data.splatnet_id)
     return result
 
 
@@ -95,166 +102,164 @@ def findRotationByWeaponsAndStage(data: str, **kargs) -> List[int]:
     """
     foundRotations: List[int] = []
     with gzip.open(data) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
+        for line in reader:
+            job = Job(**ujson.loads(line))
             found = kargs.get("stage") is None or (
-                job["stage"] is not None
+                job.stage is not None
                 and kargs.get("stage")
                 in (
-                    job["stage"]["key"],
-                    job["stage"]["name"][locale],
+                    job.stage.key,
+                    getattr(job.stage.name, locale),
                 )
             )
             if kargs.get("weapons") is not None:
                 for weapon in cast(List[str], kargs.get("weapons")):
                     found = found and (
-                        job["my_data"]["weapons"][0]["key"] == weapon
+                        job.my_data.weapons[0].key == weapon
                         or (
-                            len(job["my_data"]["weapons"]) > 1
-                            and job["my_data"]["weapons"][1]["key"] == weapon
+                            len(job.my_data.weapons) > 1
+                            and job.my_data.weapons[1].key == weapon
                         )
                         or (
-                            len(job["my_data"]["weapons"]) > 2
-                            and job["my_data"]["weapons"][2]["key"] == weapon
+                            len(job.my_data.weapons) > 2
+                            and job.my_data.weapons[2].key == weapon
                         )
                         or (
-                            job["teammates"] is not None
+                            job.teammates is not None
                             and (
                                 (
-                                    len(job["teammates"]) > 0
-                                    and job["teammates"][0]["weapons"] is not None
+                                    len(job.teammates) > 0
+                                    and job.teammates[0].weapons is not None
                                     and (
-                                        job["teammates"][0]["weapons"][0]["key"]
-                                        == weapon
+                                        job.teammates[0].weapons[0].key == weapon
                                         or (
-                                            len(job["teammates"][0]["weapons"]) > 1
-                                            and job["teammates"][0]["weapons"][1]["key"]
+                                            len(job.teammates[0].weapons) > 1
+                                            and job.teammates[0].weapons[1].key
                                             == weapon
                                         )
                                         or (
-                                            len(job["teammates"][0]["weapons"]) > 2
-                                            and job["teammates"][0]["weapons"][2]["key"]
+                                            len(job.teammates[0].weapons) > 2
+                                            and job.teammates[0].weapons[2].key
                                             == weapon
                                         )
                                     )
                                 )
                                 or (
-                                    len(job["teammates"]) > 1
-                                    and job["teammates"][1]["weapons"] is not None
+                                    len(job.teammates) > 1
+                                    and job.teammates[1].weapons is not None
                                     and (
-                                        job["teammates"][1]["weapons"][0]["key"]
-                                        == weapon
+                                        job.teammates[1].weapons[0].key == weapon
                                         or (
-                                            len(job["teammates"][1]["weapons"]) > 1
-                                            and job["teammates"][1]["weapons"][1]["key"]
+                                            len(job.teammates[1].weapons) > 1
+                                            and job.teammates[1].weapons[1].key
                                             == weapon
                                         )
                                         or (
-                                            len(job["teammates"][1]["weapons"]) > 2
-                                            and job["teammates"][1]["weapons"][2]["key"]
+                                            len(job.teammates[1].weapons) > 2
+                                            and job.teammates[1].weapons[2].key
                                             == weapon
                                         )
                                     )
                                 )
                                 or (
-                                    len(job["teammates"]) > 2
-                                    and job["teammates"][2]["weapons"] is not None
+                                    len(job.teammates) > 2
+                                    and job.teammates[2].weapons is not None
                                     and (
-                                        job["teammates"][2]["weapons"][0]["key"]
-                                        == weapon
+                                        job.teammates[2].weapons[0].key == weapon
                                         or (
-                                            len(job["teammates"][2]["weapons"]) > 1
-                                            and job["teammates"][2]["weapons"][1]["key"]
+                                            len(job.teammates[2].weapons) > 1
+                                            and job.teammates[2].weapons[1].key
                                             == weapon
                                         )
                                         or (
-                                            len(job["teammates"][2]["weapons"]) > 2
-                                            and job["teammates"][2]["weapons"][2]["key"]
+                                            len(job.teammates[2].weapons) > 2
+                                            and job.teammates[2].weapons[2].key
                                             == weapon
                                         )
                                     )
                                 )
                             )
                         )
-                        or job["my_data"]["weapons"][0]["name"][locale] == weapon
+                        or getattr(job.my_data.weapons[0].name, locale) == weapon
                         or (
-                            len(job["my_data"]["weapons"]) > 1
-                            and job["my_data"]["weapons"][1]["name"][locale] == weapon
+                            len(job.my_data.weapons) > 1
+                            and getattr(job.my_data.weapons[1].name, locale) == weapon
                         )
                         or (
-                            len(job["my_data"]["weapons"]) > 2
-                            and job["my_data"]["weapons"][2]["name"][locale] == weapon
+                            len(job.my_data.weapons) > 2
+                            and getattr(job.my_data.weapons[2].name, locale) == weapon
                         )
                         or (
-                            job["teammates"] is not None
+                            job.teammates is not None
                             and (
                                 (
-                                    len(job["teammates"]) > 0
-                                    and job["teammates"][0]["weapons"] is not None
+                                    len(job.teammates) > 0
+                                    and job.teammates[0].weapons is not None
                                     and (
-                                        job["teammates"][0]["weapons"][0]["name"][
-                                            locale
-                                        ]
+                                        getattr(
+                                            job.teammates[0].weapons[0].name, locale
+                                        )
                                         == weapon
                                         or (
-                                            len(job["teammates"][0]["weapons"]) > 1
-                                            and job["teammates"][0]["weapons"][1][
-                                                "name"
-                                            ][locale]
+                                            len(job.teammates[0].weapons) > 1
+                                            and getattr(
+                                                job.teammates[0].weapons[1].name, locale
+                                            )
                                             == weapon
                                         )
                                         or (
-                                            len(job["teammates"][0]["weapons"]) > 2
-                                            and job["teammates"][0]["weapons"][2][
-                                                "name"
-                                            ][locale]
+                                            len(job.teammates[0].weapons) > 2
+                                            and getattr(
+                                                job.teammates[0].weapons[2].name, locale
+                                            )
                                             == weapon
                                         )
                                     )
                                 )
                                 or (
-                                    len(job["teammates"]) > 1
-                                    and job["teammates"][1]["weapons"] is not None
+                                    len(job.teammates) > 1
+                                    and job.teammates[1].weapons is not None
                                     and (
-                                        job["teammates"][1]["weapons"][0]["name"][
-                                            locale
-                                        ]
+                                        getattr(
+                                            job.teammates[1].weapons[0].name, locale
+                                        )
                                         == weapon
                                         or (
-                                            len(job["teammates"][1]["weapons"]) > 1
-                                            and job["teammates"][1]["weapons"][1][
-                                                "name"
-                                            ][locale]
+                                            len(job.teammates[1].weapons) > 1
+                                            and getattr(
+                                                job.teammates[1].weapons[1].name, locale
+                                            )
                                             == weapon
                                         )
                                         or (
-                                            len(job["teammates"][1]["weapons"]) > 2
-                                            and job["teammates"][1]["weapons"][2][
-                                                "name"
-                                            ][locale]
+                                            len(job.teammates[1].weapons) > 2
+                                            and getattr(
+                                                job.teammates[1].weapons[2].name, locale
+                                            )
                                             == weapon
                                         )
                                     )
                                 )
                                 or (
-                                    len(job["teammates"]) > 2
-                                    and job["teammates"][2]["weapons"] is not None
+                                    len(job.teammates) > 0
+                                    and job.teammates[2].weapons is not None
                                     and (
-                                        job["teammates"][2]["weapons"][0]["name"][
-                                            locale
-                                        ]
+                                        getattr(
+                                            job.teammates[2].weapons[0].name, locale
+                                        )
                                         == weapon
                                         or (
-                                            len(job["teammates"][2]["weapons"]) > 1
-                                            and job["teammates"][2]["weapons"][1][
-                                                "name"
-                                            ][locale]
+                                            len(job.teammates[2].weapons) > 1
+                                            and getattr(
+                                                job.teammates[2].weapons[1].name, locale
+                                            )
                                             == weapon
                                         )
                                         or (
-                                            len(job["teammates"][2]["weapons"]) > 2
-                                            and job["teammates"][2]["weapons"][2][
-                                                "name"
-                                            ][locale]
+                                            len(job.teammates[2].weapons) > 2
+                                            and getattr(
+                                                job.teammates[2].weapons[2].name, locale
+                                            )
                                             == weapon
                                         )
                                     )
@@ -262,14 +267,12 @@ def findRotationByWeaponsAndStage(data: str, **kargs) -> List[int]:
                             )
                         )
                     )
-            if found and job["shift_start_at"]["time"] not in foundRotations:
-                foundRotations.append(job["shift_start_at"]["time"])
+            if found and job.shift_start_at.time not in foundRotations:
+                foundRotations.append(job.shift_start_at.time)
     return foundRotations
 
 
-def findWeaponsAndStageByRotation(
-    data: str, rotation: int
-) -> Dict[str, Union[str, List[str]]]:
+def findWeaponsAndStageByRotation(data, rotation) -> Dict[str, Union[str, List[str]]]:
     """
     Find the weapons and stage for a given rotation.
 
@@ -303,33 +306,29 @@ def findWeaponsAndStageByRotation(
     """
     result: Dict[str, Union[str, List[str]]] = {}
     with gzip.open(data) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
-            if job["shift_start_at"]["time"] == rotation:
-                result["stage"] = job["stage"]["name"][locale]
+        for line in reader:
+            job = Job(**ujson.loads(line))
+            if job.shift_start_at.time == rotation:
+                if isinstance(job.stage, Stage_WaterLevel_KnownOccurrence):
+                    result["stage"] = getattr(job.stage.name, locale)
                 result["weapons"] = []
-                if job["my_data"]["weapons"] is not None:
-                    for i in range(0, len(job["my_data"]["weapons"])):
-                        if (
-                            job["my_data"]["weapons"][i]["name"][locale]
-                            not in result["weapons"]
-                        ):
+                if job.my_data.weapons is not None:
+                    for weapon in job.my_data.weapons:
+                        if getattr(weapon.name, locale) not in result["weapons"]:
                             cast(Dict[str, List[str]], result)["weapons"].append(
-                                job["my_data"]["weapons"][i]["name"][locale]
+                                getattr(weapon.name, locale)
                             )
-                for i in range(0, len(job["teammates"])):
-                    if job["teammates"][i]["weapons"] is not None:
-                        for j in range(0, len(job["teammates"][i]["weapons"])):
-                            if (
-                                job["teammates"][i]["weapons"][j]["name"][locale]
-                                not in result["weapons"]
-                            ):
+                for teammate in job.teammates:
+                    if teammate.weapons is not None:
+                        for weapon in teammate.weapons:
+                            if getattr(weapon.name, locale) not in result["weapons"]:
                                 cast(Dict[str, List[str]], result)["weapons"].append(
-                                    job["teammates"][i]["weapons"][j]["name"][locale]
+                                    getattr(weapon.name, locale)
                                 )
     return result
 
 
-def findPlayerIdByName(data: str, player: str) -> List[str]:
+def findPlayerIdByName(data, player) -> List[str]:
     """
     Find all the recorded player IDs for a given player name.
 
@@ -350,19 +349,14 @@ def findPlayerIdByName(data: str, player: str) -> List[str]:
     """
     foundIds: List[str] = []
     with gzip.open(data) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
-            if (
-                job["my_data"]["name"] == player
-                and job["my_data"]["splatnet_id"] not in foundIds
-            ):
-                foundIds.append(job["my_data"]["splatnet_id"])
-            if job["teammates"] is not None:
-                for teammate in job["teammates"]:
-                    if (
-                        teammate["name"] == player
-                        and teammate["splatnet_id"] not in foundIds
-                    ):
-                        foundIds.append(teammate["splatnet_id"])
+        for line in reader:
+            job = Job(**ujson.loads(line))
+            if job.my_data.name == player and job.my_data.splatnet_id not in foundIds:
+                foundIds.append(job.my_data.splatnet_id)
+            if job.teammates is not None:
+                for teammate in job.teammates:
+                    if teammate.name == player and teammate.splatnet_id not in foundIds:
+                        foundIds.append(teammate.splatnet_id)
     return foundIds
 
 
@@ -393,7 +387,7 @@ def getValMultiDimensional(data, statArr: List[Union[str, int]]) -> str:
     return getattr(data, statArr[0])
 
 
-def statSummary(data: str, stat: str) -> Tuple[float, float, float, float]:
+def statSummary(data, stat) -> Tuple[float, float, float, float]:
     """
     Find the average, min, median, and max of a stat given a data file
 
@@ -425,73 +419,77 @@ def statSummary(data: str, stat: str) -> Tuple[float, float, float, float]:
         return (sumVal / count, minVal, np.median(vals), maxVal)
 
 
-def waveClearPercentageWithWeapon(data: str, weapon: str) -> float:
+def waveClearPercentageWithWeapon(data, weapon):
     """
 
-    :param data: str:
-    :param weapon: str:
-    :returns float:
+    :param data:
+    :type data: str
+    :param weapon:
+    :type weapon: str
+    :return:
+    :rtype: float
 
     """
     with gzip.open(data) as reader:
         sumVal: float = 0.0
         count: float = 0.0
-        for job in jsonlines.Reader(reader, ujson.loads):
+        for line in reader:
+            job = Job(**ujson.loads(line))
             sumVal += int(
                 (
                     weapon
                     in (
-                        job["my_data"]["weapons"][0]["key"],
-                        job["my_data"]["weapons"][0]["name"][locale],
+                        job.my_data.weapons[0].key,
+                        getattr(job.my_data.weapons[0].name, locale),
                     )
                     and job["clear_waves"] > 0
                 )
                 or (
-                    len(job["my_data"]["weapons"]) > 1
+                    len(job.my_data.weapons) > 1
                     and weapon
                     in (
-                        job["my_data"]["weapons"][1]["key"],
-                        job["my_data"]["weapons"][1]["name"][locale],
+                        job.my_data.weapons[1].key,
+                        getattr(job.my_data.weapons[1].name, locale),
                     )
-                    and job["clear_waves"] > 1
+                    and job.clear_waves > 1
                 )
                 or (
-                    len(job["my_data"]["weapons"]) > 2
+                    len(job.my_data.weapons) > 2
                     and weapon
                     in (
-                        job["my_data"]["weapons"][2]["key"],
-                        job["my_data"]["weapons"][2]["name"][locale],
+                        job.my_data.weapons[2].key,
+                        getattr(job.my_data.weapons[2].name, locale),
                     )
-                    and job["clear_waves"] > 2
+                    and job.clear_waves > 2
                 )
             )
             count += int(
                 weapon
                 in (
-                    job["my_data"]["weapons"][0]["key"],
-                    job["my_data"]["weapons"][0]["name"][locale],
+                    job.my_data.weapons[0].key,
+                    getattr(job.my_data.weapons[0].name, locale),
                 )
                 or (
-                    len(job["my_data"]["weapons"]) > 1
+                    len(job.my_data.weapons) > 1
                     and weapon
                     in (
-                        job["my_data"]["weapons"][1]["key"],
-                        job["my_data"]["weapons"][1]["name"][locale],
+                        job.my_data.weapons[1].key,
+                        getattr(job.my_data.weapons[1].name, locale),
                     )
                 )
                 or (
-                    len(job["my_data"]["weapons"]) > 2
+                    len(job.my_data.weapons) > 2
                     and weapon
                     in (
-                        job["my_data"]["weapons"][2]["key"],
-                        job["my_data"]["weapons"][2]["name"][locale],
+                        job.my_data.weapons[2].key,
+                        getattr(job.my_data.weapons[2].name, locale),
                     )
                 )
             )
         return sumVal / count
 
 
-def sumStatWaves(data: Job, stat: str) -> int:
+def sumStatWaves(data: Job, stat) -> int:
     """
 
     :param data:
@@ -504,11 +502,11 @@ def sumStatWaves(data: Job, stat: str) -> int:
     """
     sumVal: int = 0
     for w in data.waves:
-        sumVal += w.stat
+        sumVal += getattr(w, stat)
     return sumVal
 
 
-def getPlayersAttribute(data: Job, attr: str) -> List[str]:
+def getPlayersAttribute(data: Job, attr) -> List[str]:
     """
 
     :param data:
@@ -535,7 +533,7 @@ def getPlayersAttribute(data: Job, attr: str) -> List[str]:
     return attrs
 
 
-def getWavesAttribute(data: Job, attr: str) -> str:
+def getWavesAttribute(data: Job, attr) -> str:
     """
 
     :param data:
@@ -564,7 +562,7 @@ def getWavesAttribute(data: Job, attr: str) -> str:
     return attrs
 
 
-def getOverview(data: str) -> str:
+def getOverview(data) -> str:
     """
 
     :param data:
@@ -596,7 +594,8 @@ def getOverview(data: str) -> str:
         ]
         vals: List[List[float]] = [[], [], [], [], [], []]
         count: int = 0
-        for job in jsonlines.Reader(reader, ujson.loads):
+        for line in reader:
+            job = Job(**ujson.loads(line))
             count += 1
             clearCount += float(job.clear_waves == 3)
             waveTwoCount += float(job.clear_waves >= 2)
@@ -644,7 +643,8 @@ def printGeneral(data: Job) -> None:
     """
     print("Stat.ink Link: {}".format(data.url))
     print("Splatnet #: {}".format(data.splatnet_number))
-    print("Stage: {}".format(getattr(data.stage.name, locale)))
+    if data.stage is not None:
+        print("Stage: {}".format(getattr(data.stage.name, locale)))
     print("Rotation Start Date: {}".format(data.shift_start_at.iso8601))
     print("Start Date: {}".format(data.start_at.iso8601))
     print("Result: {}".format("Cleared" if data.clear_waves == 3 else "Failed"))
@@ -862,7 +862,7 @@ def getBosses(data: Job) -> List[Union[Dict[str, str], Dict[str, int]]]:
     return results
 
 
-def getSingleJob(data: str, index: int = 0) -> Optional[Job]:
+def getSingleJob(data, index=0) -> Optional[Job]:
     """
 
     :param data: the full name of the data file
@@ -936,7 +936,7 @@ def printBosses(data: Job) -> None:
             )
 
 
-def getArrayOfStat(data: str, stat: str) -> List[float]:
+def getArrayOfStat(data, stat) -> List[float]:
     """
     Collect all the values of a single stat for a given list of jobs.
 
@@ -956,7 +956,8 @@ def getArrayOfStat(data: str, stat: str) -> List[float]:
     """
     with gzip.open(data) as reader:
         results = []
-        for job in jsonlines.Reader(reader, ujson.loads):
+        for line in reader:
+            job = Job(**ujson.loads(line))
             results.append(
                 float(
                     getValMultiDimensional(
@@ -976,7 +977,7 @@ def getArrayOfStat(data: str, stat: str) -> List[float]:
         return results
 
 
-def init(mode: str, api_key: str = None) -> str:
+def init(mode, api_key="") -> str:
     """
     Fetch the data sets from stat.ink
 
@@ -1082,7 +1083,7 @@ def init(mode: str, api_key: str = None) -> str:
     return fileName
 
 
-def loadJobsFromFile(data: str) -> List[Job]:
+def loadJobsFromFile(data) -> List[Job]:
     jobs: List[Job] = []
     with gzip.open(data, "r") as reader:
         for line in reader:

@@ -288,7 +288,11 @@ def printOverview(dataFile: List[str]):
         sys.exit()
 
 
-def printAllJobs(dataFile: str):
+def printAllJobs(dataFile):
+    """
+    :parem dataFile:
+    :type dataFile: str
+    """
     with gzip.open(dataFile) as reader:
         for job in jsonlines.Reader(reader, loads=ujson.loads):
             core.printGeneral(job)

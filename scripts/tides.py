@@ -16,9 +16,10 @@ if __name__ == "__main__":
     }
     total = 0.0
     with gzip.open(data) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
-            for wave in job["waves"]:
+        for line in reader:
+            job = Job(**ujson.loads(line))
+            for wave in job.waves:
                 total += 1.0
-                tideDict[wave["water_level"]["key"]]["count"] += 1.0
+                tideDict[wave.water_level.key]["count"] += 1.0
     for tide in tideDict.values():
         print(tide["key"] + ": " + str(tide["count"] / total))

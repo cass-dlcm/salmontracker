@@ -27,32 +27,33 @@ if __name__ == "__main__":
         tideDict[tideStr] = eventDict
     total = 0.0
     with gzip.open(data) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
+        for line in reader:
+            job = Job(**ujson.loads(line))
             waveCount: int = 0
-            for wave in job["waves"]:
+            for wave in job.waves:
                 total += 1.0
-                if wave["known_occurrence"] is not None:
+                if wave.known_occurrence is not None:
                     cast(
                         Dict[str, float],
-                        tideDict[wave["water_level"]["key"]][
-                            wave["known_occurrence"]["key"]
+                        tideDict[wave.water_level.key][
+                            wave.known_occurrence.key
                         ],
                     )["count"] += 1.0
-                    if job["clear_waves"] > waveCount:
+                    if job.clear_waves > waveCount:
                         cast(
                             Dict[str, float],
-                            tideDict[wave["water_level"]["key"]][
-                                wave["known_occurrence"]["key"]
+                            tideDict[wave.water_level.key][
+                                wave.known_occurrence.key
                             ],
                         )["clear_count"] += 1.0
                 else:
                     cast(
-                        Dict[str, float], tideDict[wave["water_level"]["key"]]["None"]
+                        Dict[str, float], tideDict[wave.water_level.key]["None"]
                     )["count"] += 1.0
-                    if job["clear_waves"] > waveCount:
+                    if job.clear_waves > waveCount:
                         cast(
                             Dict[str, float],
-                            tideDict[wave["water_level"]["key"]]["None"],
+                            tideDict[wave.water_level.key]["None"],
                         )["clear_count"] += 1.0
                 waveCount += 1
     for tide in tideDict.values():

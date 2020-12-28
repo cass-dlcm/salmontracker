@@ -7,7 +7,7 @@ import ujson
 import requests
 
 
-def filterJobs(data: str, outpath: str, filterFunction: Callable) -> Tuple[str, str]:
+def filterJobs(data, outpath, filterFunction: Callable) -> Tuple[str, str]:
     if not (
         os.path.exists(data[0:-6] + "/" + outpath + ".jl.gz")
         and os.path.exists(data[0:-6] + "/not" + outpath + ".jl.gz")
@@ -37,9 +37,7 @@ def filterJobs(data: str, outpath: str, filterFunction: Callable) -> Tuple[str, 
     )
 
 
-def filterJobsOr(
-    data: str, outpath: str, filterFunctions: List[Callable]
-) -> Tuple[str, str]:
+def filterJobsOr(data, outpath, filterFunctions: List[Callable]) -> Tuple[str, str]:
     if not (
         os.path.exists(data[0:-6] + "/" + outpath + ".jl.gz")
         and os.path.exists(data[0:-6] + "/not" + outpath + ".jl.gz")
@@ -72,9 +70,7 @@ def filterJobsOr(
     )
 
 
-def filterJobsAnd(
-    data: str, outpath: str, filterFunctions: List[Callable]
-) -> Tuple[str, str]:
+def filterJobsAnd(data, outpath, filterFunctions: List[Callable]) -> Tuple[str, str]:
     if not (
         os.path.exists(data[0:-6] + "/" + outpath + ".jl.gz")
         and os.path.exists(data[0:-6] + "/not" + outpath + ".jl.gz")
@@ -107,14 +103,14 @@ def filterJobsAnd(
     )
 
 
-def hasPlayers(data: str, players: List[str], mode: str = None) -> Tuple[str, str]:
+def hasPlayers(data, players: List[str], mode="") -> Tuple[str, str]:
     """
     Filter the jobs in the given data file to jobs that contain the chosen player.
 
     :param data: the full name of the data file
     :type data: str
     :param player: the Splatnet ID of the chosen player
-    :type player: str
+    :type player: List[str]
     :return: the full names of the paired filtered files
     :rtype: Tuple[str, str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
@@ -163,7 +159,7 @@ def hasPlayers(data: str, players: List[str], mode: str = None) -> Tuple[str, st
                 )
             ),
         )
-        outPath += player + (mode if mode is not None else "")
+        outPath += player + mode
     if mode == "and":
         return filterJobsAnd(
             data,
@@ -179,7 +175,7 @@ def hasPlayers(data: str, players: List[str], mode: str = None) -> Tuple[str, st
     return filterJobs(data, outPath, filterFunctions[0])
 
 
-def hasWeapons(data: str, weapons: List[str], mode: str = None) -> Tuple[str, str]:
+def hasWeapons(data, weapons: List[str], mode="") -> Tuple[str, str]:
     """
     Filter the data file to only jobs that contain the chosen weapon(s).
 
@@ -367,7 +363,7 @@ def hasWeapons(data: str, weapons: List[str], mode: str = None) -> Tuple[str, st
                 )
             )
         )
-        outPath += weapon + (mode if mode is not None else "")
+        outPath += weapon + mode
     if mode == "and":
         return filterJobsAnd(
             data,
@@ -383,7 +379,7 @@ def hasWeapons(data: str, weapons: List[str], mode: str = None) -> Tuple[str, st
     return filterJobs(data, outPath, filterFunctions[0])
 
 
-def usesWeapons(data: str, weapons: List[str], mode: str = None) -> Tuple[str, str]:
+def usesWeapons(data, weapons: List[str], mode="") -> Tuple[str, str]:
     """
     Filter the data file to only jobs where the player uses the chosen weapon(s).
 
@@ -444,7 +440,7 @@ def usesWeapons(data: str, weapons: List[str], mode: str = None) -> Tuple[str, s
                 )
             )
         )
-        outPath += weapon + (mode if mode is not None else "")
+        outPath += weapon + mode
     if mode == "and":
         return filterJobsAnd(
             data,
@@ -460,14 +456,14 @@ def usesWeapons(data: str, weapons: List[str], mode: str = None) -> Tuple[str, s
     return filterJobs(data, outPath, filterFunctions[0])
 
 
-def onStages(data: str, stages: List[str], mode: str = None) -> Tuple[str, str]:
+def onStages(data, stages: List[str], mode=None) -> Tuple[str, str]:
     """
     Filter the data file to only jobs on the chosen stage(s).
 
     :param data: the file name of the data file
     :type data: str
     :param stage: the name(s) or ID(s) of the chosen stage(s)
-    :type stage: str
+    :type stage: List[str]
     :return: the full names of the paired filtered files
     :rtype: Tuple[str, str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
@@ -517,7 +513,7 @@ def onStages(data: str, stages: List[str], mode: str = None) -> Tuple[str, str]:
     return filterJobs(data, outPath, filterFunctions[0])
 
 
-def withSpecial(data: str, special: str) -> Tuple[str, str]:
+def withSpecial(data, special) -> Tuple[str, str]:
     """
     Filter the data file to only jobs where the player had the chosen special.
 
@@ -556,7 +552,7 @@ def withSpecial(data: str, special: str) -> Tuple[str, str]:
     return filterJobs(
         data,
         "special/" + special,
-        lambda var: special
+        lambda var, special=special: special
         in (
             var["my_data"]["special"]["key"],
             var["my_data"]["special"]["name"][locale],
@@ -564,14 +560,14 @@ def withSpecial(data: str, special: str) -> Tuple[str, str]:
     )
 
 
-def failReasons(data: str, reasons: List[str], mode: str = None) -> Tuple[str, str]:
+def failReasons(data, reasons: List[str], mode="") -> Tuple[str, str]:
     """
     Filter the data file to only jobs where the fail reason was the chosen reason.
 
     :param data: the file name of the data file
     :type data: str
-    :param reason: the chosen reason
-    :type reason: str
+    :param reasons: the chosen reasons
+    :type reasons: List[str]
     :return: the path and filename of the output data file
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
@@ -614,9 +610,7 @@ def failReasons(data: str, reasons: List[str], mode: str = None) -> Tuple[str, s
     return filterJobs(data, outPath, filterFunctions[0])
 
 
-def duringRotationInts(
-    data: str, rotations: List[int], mode: str = None
-) -> Tuple[str, str]:
+def duringRotationInts(data, rotations: List[int], mode="") -> Tuple[str, str]:
     """
     Filter the data file to only jobs where the rotation was the chosen rotation.
 
@@ -666,7 +660,7 @@ def duringRotationInts(
     return filterJobs(data, outPath, filterFunctions[0])
 
 
-def clearWave(data: str, wave: int, comparison: str = "=") -> Tuple[str, str]:
+def clearWave(data, wave, comparison="=") -> Tuple[str, str]:
     """
     Filter the data file to only jobs where the clear wave was the chosen clear wave.
 
@@ -709,7 +703,9 @@ def clearWave(data: str, wave: int, comparison: str = "=") -> Tuple[str, str]:
             os.mkdir(data[0:-6] + "/clearWaves/notgreaterThan/")
         except FileExistsError:
             pass
-        return filterJobs(data, outPath, lambda job: job["clear_waves"] > wave)
+        return filterJobs(
+            data, outPath, lambda job, wave=wave: job["clear_waves"] > wave
+        )
     if comparison == "<":
         outPath += "lessThan" + str(wave)
         try:
@@ -720,7 +716,9 @@ def clearWave(data: str, wave: int, comparison: str = "=") -> Tuple[str, str]:
             os.mkdir(data[0:-6] + "/clearWaves/notlessThan/")
         except FileExistsError:
             pass
-        return filterJobs(data, outPath, lambda job: job["clear_waves"] < wave)
+        return filterJobs(
+            data, outPath, lambda job, wave=wave: job["clear_waves"] < wave
+        )
     outPath += "equal" + str(wave)
     try:
         os.mkdir(data[0:-6] + "/clearWaves/equal/")
@@ -730,17 +728,17 @@ def clearWave(data: str, wave: int, comparison: str = "=") -> Tuple[str, str]:
         os.mkdir(data[0:-6] + "/clearWaves/notequal/")
     except FileExistsError:
         pass
-    return filterJobs(data, outPath, lambda job: job["clear_waves"] == wave)
+    return filterJobs(data, outPath, lambda job, wave=wave: job["clear_waves"] == wave)
 
 
-def dangerRate(data: str, rate: str, comparison: str = "=") -> Tuple[str, str]:
+def dangerRate(data, rate, comparison="=") -> Tuple[str, str]:
     """
     Filter the data file to only jobs where the danger rate was the chosen danger rate.
 
     :param data: the full name of the data file
     :type data: str
     :param rate: the chosen danger rate
-    :type rate: int
+    :type rate: float
     :return: the full names of the paired filtered files
     :rtype: Tuple[str, str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
@@ -767,7 +765,7 @@ def dangerRate(data: str, rate: str, comparison: str = "=") -> Tuple[str, str]:
         pass
     outPath = "dangerRate/"
     if comparison == ">":
-        outPath += "greaterThan" + rate
+        outPath += "greaterThan" + str(rate)
         try:
             os.mkdir(data[0:-6] + "/dangerRate/greaterThan/")
         except FileExistsError:
@@ -776,9 +774,11 @@ def dangerRate(data: str, rate: str, comparison: str = "=") -> Tuple[str, str]:
             os.mkdir(data[0:-6] + "/dangerRate/notgreaterThan/")
         except FileExistsError:
             pass
-        return filterJobs(data, outPath, lambda job: job["danger_rate"] > rate)
+        return filterJobs(
+            data, outPath, lambda job, rate=rate: float(job["danger_rate"]) > rate
+        )
     if comparison == "<":
-        outPath += "lessThan" + rate
+        outPath += "lessThan" + str(rate)
         try:
             os.mkdir(data[0:-6] + "/dangerRate/lessThan/")
         except FileExistsError:
@@ -787,8 +787,10 @@ def dangerRate(data: str, rate: str, comparison: str = "=") -> Tuple[str, str]:
             os.mkdir(data[0:-6] + "/dangerRate/notlessThan/")
         except FileExistsError:
             pass
-        return filterJobs(data, outPath, lambda job: job["danger_rate"] < rate)
-    outPath += "equal" + rate
+        return filterJobs(
+            data, outPath, lambda job, rate=rate: float(job["danger_rate"]) < rate
+        )
+    outPath += "equal" + str(rate)
     try:
         os.mkdir(data[0:-6] + "/dangerRate/equal/")
     except FileExistsError:
@@ -797,17 +799,19 @@ def dangerRate(data: str, rate: str, comparison: str = "=") -> Tuple[str, str]:
         os.mkdir(data[0:-6] + "/dangerRate/notequal/")
     except FileExistsError:
         pass
-    return filterJobs(data, outPath, lambda job: job["danger_rate"] == rate)
+    return filterJobs(
+        data, outPath, lambda job, rate=rate: float(job["danger_rate"]) == rate
+    )
 
 
-def hasTides(data: str, tides: List[str], mode: str = None) -> Tuple[str, str]:
+def hasTides(data, tides: List[str], mode="") -> Tuple[str, str]:
     """
     Filter the data file to only jobs where the tide of at least one wave is the chosen tide.
 
     :param data: the full name of the data file
     :type data: str
-    :param rotation: the chosen tide (as either "normal", "low", or "high")
-    :type rotation: int
+    :param tides: the chosen tides (as either "normal", "low", or "high")
+    :type tides: List[str]
     :return: the full name of the output data files
     :rtype: Tuple[str, str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
@@ -860,14 +864,14 @@ def hasTides(data: str, tides: List[str], mode: str = None) -> Tuple[str, str]:
     return filterJobs(data, outPath, filterFunctions[0])
 
 
-def hasEvents(data: str, events: List[str], mode: str = None) -> Tuple[str, str]:
+def hasEvents(data, events: List[str], mode="") -> Tuple[str, str]:
     """
     Filter the data file to only jobs where the event of at least one wave is the chosen event.
 
     :param data: the full name of the data file
     :type data: str
-    :param rotation: the chosen event ("mothership", "fog", "rush", "cohock_charge", "griller", "goldie_seeking")
-    :type rotation: int
+    :param events: the chosen event ("mothership", "fog", "rush", "cohock_charge", "griller", "goldie_seeking")
+    :type events: List[str]
     :return: the full name of the output data files
     :rtype: Tuple[str, str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
@@ -931,9 +935,7 @@ def hasEvents(data: str, events: List[str], mode: str = None) -> Tuple[str, str]
     return filterJobs(data, outPath, filterFunctions[0])
 
 
-def hasWeaponTypes(
-    data: str, types: Union[List[str], Tuple[str, ...]], mode: str = None
-) -> Tuple[str, str]:
+def hasWeaponTypes(data, types: List[str], mode="") -> Tuple[str, str]:
     try:
         os.mkdir(data[0:-6])
     except FileExistsError:
@@ -964,7 +966,7 @@ def hasWeaponTypes(
     outPath = "weaponTypes/"
     for wtype in types:
         filterFunctions.append(
-            lambda var, wtype=wtype: (
+            lambda var, wtype=wtype, weaponDict=weaponDict: (
                 weaponDict[var["my_data"]["weapons"][0]["key"]]["type"]["key"] == wtype
                 or (
                     len(var["my_data"]["weapons"]) > 1

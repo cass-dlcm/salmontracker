@@ -3,6 +3,7 @@ import sys
 sys.path.insert(0, ".")
 import core
 from core import getValMultiDimensional
+from objects import Job
 import gzip
 import jsonlines
 import os
@@ -27,8 +28,9 @@ if __name__ == "__main__":
         ["danger_rate"],
     ]
     with gzip.open(startFile) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
-            userId = job["my_data"]["splatnet_id"]
+        for line in reader:
+            job = Job(**ujson.loads(line))
+            userId = job.my_data.splatnet_id
             if userId not in usersDetails:
                 usersDetails[userId] = {
                     "id": userId,
@@ -74,9 +76,9 @@ if __name__ == "__main__":
                     },
                 }
             usersDetails[userId]["count"] += 1
-            usersDetails[userId]["clear_count"] += float(job["clear_waves"] == 3)
-            usersDetails[userId]["w2_count"] += float(job["clear_waves"] >= 2)
-            usersDetails[userId]["w1_count"] += float(job["clear_waves"] >= 1)
+            usersDetails[userId]["clear_count"] += float(job.clear_waves == 3)
+            usersDetails[userId]["w2_count"] += float(job.clear_waves >= 2)
+            usersDetails[userId]["w1_count"] += float(job.clear_waves >= 1)
             for i in range(0, len(stats)):
                 usersDetails[userId][stats[i][-1]]["sum"] += float(
                     getValMultiDimensional(job, stats[i])

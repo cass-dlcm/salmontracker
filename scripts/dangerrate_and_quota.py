@@ -2,6 +2,7 @@ import sys
 
 sys.path.insert(0, ".")
 import core
+from objects import Job
 import matplotlib.pyplot as plt
 import numpy
 from typing import List, cast, Union, Tuple
@@ -16,11 +17,12 @@ if __name__ == "__main__":
         dangerRates: List[float] = []
         quotas: Tuple[List[float], List[float], List[float]] = ([], [], [])
         count = 0
-        for job in jsonlines.Reader(reader, ujson.loads):
-            dangerRates.append(float(job["danger_rate"]))
-            quotas[0].append(float(job["quota"][0]))
-            quotas[1].append(float(job["quota"][1]))
-            quotas[2].append(float(job["quota"][2]))
+        for line in reader:
+            job = Job(**ujson.loads(line))
+            dangerRates.append(float(job.danger_rate))
+            quotas[0].append(float(job.quota[0]))
+            quotas[1].append(float(job.quota[1]))
+            quotas[2].append(float(job.quota[2]))
             count += 1
     plt.figure(1)
     plt.subplot(131)

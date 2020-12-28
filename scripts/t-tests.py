@@ -2,6 +2,7 @@ import sys
 
 sys.path.insert(0, ".")
 import core
+from objects import Job
 import filters
 from scipy.stats import ttest_ind
 import numpy as np
@@ -55,17 +56,19 @@ if __name__ == "__main__":
     withoutValGoldenTotal: List[float] = []
     withoutValPowerTotal: List[float] = []
     with gzip.open(withVal) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
-            withValClearWaves.append(float(job["clear_waves"]))
-            withValDangerRate.append(float(job["danger_rate"]))
-            withValGoldenTotal.append(float(job["my_data"]["golden_egg_delivered"]))
-            withValPowerTotal.append(float(job["my_data"]["power_egg_collected"]))
+        for line in reader:
+            job = Job(**ujson.loads(line))
+            withValClearWaves.append(float(job.clear_waves))
+            withValDangerRate.append(float(job.danger_rate))
+            withValGoldenTotal.append(float(job.my_data.golden_egg_delivered))
+            withValPowerTotal.append(float(job.my_data.power_egg_collected))
     with gzip.open(withoutVal) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
-            withoutValClearWaves.append(float(job["clear_waves"]))
-            withoutValDangerRate.append(float(job["danger_rate"]))
-            withoutValGoldenTotal.append(float(job["my_data"]["golden_egg_delivered"]))
-            withoutValPowerTotal.append(float(job["my_data"]["power_egg_collected"]))
+        for line in reader:
+            job = Job(**ujson.loads(line))
+            withoutValClearWaves.append(float(job.clear_waves))
+            withoutValDangerRate.append(float(job.danger_rate))
+            withoutValGoldenTotal.append(float(job.my_data.golden_egg_delivered))
+            withoutValPowerTotal.append(float(job.my_data.power_egg_collected))
     t, p = ttest_ind(withValClearWaves, withoutValClearWaves, equal_var=False)
     print("a - b = " + str(np.mean(withValClearWaves) - np.mean(withoutValClearWaves)))
     print("t = " + str(t))

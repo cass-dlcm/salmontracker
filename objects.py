@@ -1,15 +1,15 @@
 import time
 import ujson
-from typing import List
+from typing import List, Dict, Union, Optional
 import gzip
 
 
 class Time(object):
     __slots__ = ["time", "iso8601"]
 
-    def __init__(self, time, iso8601):
-        self.time = time
-        self.iso8601 = iso8601
+    def __init__(self, time: int, iso8601: str):
+        self.time: int = time
+        self.iso8601: str = iso8601
 
 
 class Name(object):
@@ -31,70 +31,87 @@ class Name(object):
 
     def __init__(
         self,
-        de_DE,
-        en_GB,
-        en_US,
-        es_ES,
-        es_MX,
-        fr_CA,
-        fr_FR,
-        it_IT,
-        ja_JP,
-        nl_NL,
-        ru_RU,
-        zh_CN,
-        zh_TW,
+        de_DE: str,
+        en_GB: str,
+        en_US: str,
+        es_ES: str,
+        es_MX: str,
+        fr_CA: str,
+        fr_FR: str,
+        it_IT: str,
+        ja_JP: str,
+        nl_NL: str,
+        ru_RU: str,
+        zh_CN: str,
+        zh_TW: str,
     ):
-        self.de_DE = de_DE
-        self.en_GB = en_GB
-        self.en_US = en_US
-        self.es_ES = es_ES
-        self.es_MX = es_MX
-        self.fr_CA = fr_CA
-        self.fr_FR = fr_FR
-        self.it_IT = it_IT
-        self.ja_JP = ja_JP
-        self.nl_NL = nl_NL
-        self.ru_RU = ru_RU
-        self.zh_CN = zh_CN
-        self.zh_TW = zh_TW
+        self.de_DE: str = de_DE
+        self.en_GB: str = en_GB
+        self.en_US: str = en_US
+        self.es_ES: str = es_ES
+        self.es_MX: str = es_MX
+        self.fr_CA: str = fr_CA
+        self.fr_FR: str = fr_FR
+        self.it_IT: str = it_IT
+        self.ja_JP: str = ja_JP
+        self.nl_NL: str = nl_NL
+        self.ru_RU: str = ru_RU
+        self.zh_CN: str = zh_CN
+        self.zh_TW: str = zh_TW
 
 
 class Boss(object):
     __slots__ = ["key", "splatnet", "splatnet_str", "name"]
 
-    def __init__(self, key, splatnet, splatnet_str, name):
-        self.key = key
-        self.splatnet = splatnet
-        self.splatnet_str = splatnet_str
-        self.name = Name(**name)
+    def __init__(
+        self, key: str, splatnet: int, splatnet_str: str, name: Dict[str, str]
+    ):
+        self.key: str = key
+        self.splatnet: int = splatnet
+        self.splatnet_str: str = splatnet_str
+        self.name: Name = Name(**name)
 
 
 class Boss_Appearance(object):
     __slots__ = ["boss", "count"]
 
-    def __init__(self, boss, count):
-        self.boss = Boss(**boss)
-        self.count = count
+    def __init__(self, boss: dict, count: int):
+        self.boss: Boss = Boss(**boss)
+        self.count: int = count
 
 
 class Title(object):
     __slots__ = ["key", "splatnet", "name", "generic_name"]
 
-    def __init__(self, key, splatnet, name, generic_name):
-        self.key = key
-        self.splatnet = splatnet
-        self.name = Name(**name)
-        self.generic_name = Name(**generic_name)
+    def __init__(
+        self,
+        key: str,
+        splatnet: int,
+        name: Dict[str, str],
+        generic_name: Dict[str, str],
+    ):
+        self.key: str = key
+        self.splatnet: int = splatnet
+        self.name: Name = Name(**name)
+        self.generic_name: Name = Name(**generic_name)
 
 
-class Stage__Water_Level__Special__Known_Occurrence__Weapon(object):
+class Special_Weapon(object):
     __slots__ = ["key", "splatnet", "name"]
 
-    def __init__(self, key, splatnet, name):
-        self.key = key
-        self.splatnet = splatnet
-        self.name = Name(**name)
+    def __init__(self, key: str, splatnet, name: Dict[str, str]):
+        self.key: str = key
+        self.splatnet: int = splatnet
+        self.name: Name = Name(**name)
+
+
+class Stage_WaterLevel_KnownOccurrence(object):
+    __slots__ = ["key", "splatnet", "name"]
+
+    def __init__(self, key: str, splatnet, name: Dict[str, str]):
+        self.key: str = key
+        self.splatnet: str = splatnet
+        self.name: Name = Name(**name)
 
 
 class Wave(object):
@@ -109,51 +126,49 @@ class Wave(object):
 
     def __init__(
         self,
-        known_occurrence,
-        water_level,
-        golden_egg_quota,
-        golden_egg_appearances,
-        golden_egg_delivered,
-        power_egg_collected,
+        known_occurrence: dict,
+        water_level: dict,
+        golden_egg_quota: int,
+        golden_egg_appearances: int,
+        golden_egg_delivered: int,
+        power_egg_collected: int,
     ):
         if known_occurrence is not None:
-            self.known_occurrence = (
-                Stage__Water_Level__Special__Known_Occurrence__Weapon(
-                    **known_occurrence
-                )
+            self.known_occurrence: Stage_WaterLevel_KnownOccurrence = (
+                Stage_WaterLevel_KnownOccurrence(**known_occurrence)
             )
-        self.water_level = Stage__Water_Level__Special__Known_Occurrence__Weapon(
-            **water_level
+        self.water_level: Stage_WaterLevel_KnownOccurrence = (
+            Stage_WaterLevel_KnownOccurrence(**water_level)
         )
-        self.golden_egg_quota = golden_egg_quota
-        self.golden_egg_appearances = golden_egg_appearances
-        self.golden_egg_delivered = golden_egg_delivered
-        self.power_egg_collected = power_egg_collected
+        self.golden_egg_quota: int = golden_egg_quota
+        self.golden_egg_appearances: int = golden_egg_appearances
+        self.golden_egg_delivered: int = golden_egg_delivered
+        self.power_egg_collected: int = power_egg_collected
 
 
 class Gender(object):
     __slots__ = ["key", "iso5218", "name"]
 
-    def __init__(self, key, iso5218, name):
-        self.key = key
-        self.iso5218 = iso5218
-        self.name = Name(**name)
+    def __init__(self, key: str, iso5218: int, name: Dict[str, str]):
+        self.key: str = key
+        self.iso5218: int = iso5218
+        self.name: Name = Name(**name)
 
 
-class Species(object):
+class Species_FailReason(object):
     __slots__ = ["key", "name"]
 
     def __init__(self, key, name):
-        self.key = key
-        self.name = Name(**name)
+        self.key: str = key
+        self.name: Name = Name(**name)
 
 
 class Agent(object):
     __slots__ = ["name", "version"]
 
-    def __init__(self, name, version):
-        self.name = name
-        self.version = version
+    def __init__(self, name: str, version: str):
+        self.name: str = name
+        self.version: str = version
 
 
 class My_Data_Teammate(object):
@@ -174,38 +189,36 @@ class My_Data_Teammate(object):
 
     def __init__(
         self,
-        splatnet_id,
-        name,
-        special,
-        rescue,
-        death,
-        golden_egg_delivered,
-        power_egg_collected,
-        species,
-        gender,
-        special_uses,
-        weapons,
-        boss_kills,
+        splatnet_id: str,
+        name: str,
+        special: dict,
+        rescue: int,
+        death: int,
+        golden_egg_delivered: int,
+        power_egg_collected: int,
+        species: Dict[str, Union[str, Dict[str, str]]],
+        gender: dict,
+        special_uses: List[int],
+        weapons: List[dict],
+        boss_kills: List[dict],
     ):
-        self.splatnet_id = splatnet_id
-        self.name = name
-        self.special = Stage__Water_Level__Special__Known_Occurrence__Weapon(**special)
-        self.rescue = rescue
-        self.death = death
-        self.golden_egg_delivered = golden_egg_delivered
-        self.power_egg_collected = power_egg_collected
+        self.splatnet_id: str = splatnet_id
+        self.name: str = name
+        self.special: Special_Weapon = Special_Weapon(**special)
+        self.rescue: int = rescue
+        self.death: int = death
+        self.golden_egg_delivered: int = golden_egg_delivered
+        self.power_egg_collected: int = power_egg_collected
         if species is not None:
-            self.species = Species(**species)
+            self.species: Species_FailReason = Species_FailReason(**species)
         if gender is not None:
             self.gender = Gender(**gender)
-        self.special_uses = special_uses
-        self.weapons = []
+        self.special_uses: List[int] = special_uses
+        self.weapons: List[Special_Weapon] = []
         if weapons is not None:
             for weapon in weapons:
-                self.weapons.append(
-                    Stage__Water_Level__Special__Known_Occurrence__Weapon(**weapon)
-                )
-        self.boss_kills = []
+                self.weapons.append(Special_Weapon(**weapon))
+        self.boss_kills: List[Boss_Appearance] = []
         if boss_kills is not None:
             for boss in boss_kills:
                 self.boss_kills.append(Boss_Appearance(**boss))
@@ -224,21 +237,21 @@ class Stats(object):
 
     def __init__(
         self,
-        work_count,
-        total_golden_eggs,
-        total_eggs,
-        total_rescued,
-        total_point,
-        as_of,
-        registered_at,
+        work_count: int,
+        total_golden_eggs: int,
+        total_eggs: int,
+        total_rescued: int,
+        total_point: int,
+        as_of: dict,
+        registered_at: dict,
     ):
-        self.work_count = work_count
-        self.total_golden_eggs = total_golden_eggs
-        self.total_eggs = total_eggs
-        self.total_rescued = total_rescued
-        self.total_point = total_point
-        self.as_of = Time(**as_of)
-        self.registered_at = Time(**registered_at)
+        self.work_count: int = work_count
+        self.total_golden_eggs: int = total_golden_eggs
+        self.total_eggs: int = total_eggs
+        self.total_rescued: int = total_rescued
+        self.total_point: int = total_point
+        self.as_of: Time = Time(**as_of)
+        self.registered_at: Time = Time(**registered_at)
 
 
 class Profile(object):
@@ -251,13 +264,21 @@ class Profile(object):
         "environment",
     ]
 
-    def __init__(self, nnid, friend_code, twitter, ikanakama, ikanakama2, environment):
-        self.nnid = nnid
-        self.friend_code = friend_code
-        self.twitter = twitter
-        self.ikanakama = ikanakama
-        self.ikanakama2 = ikanakama2
-        self.environment = environment
+    def __init__(
+        self,
+        nnid: str,
+        friend_code: str,
+        twitter: str,
+        ikanakama: str,
+        ikanakama2: str,
+        environment: str,
+    ):
+        self.nnid: str = nnid
+        self.friend_code: str = friend_code
+        self.twitter: str = twitter
+        self.ikanakama: str = ikanakama
+        self.ikanakama2: str = ikanakama2
+        self.environment: str = environment
 
 
 class User(object):
@@ -275,25 +296,25 @@ class User(object):
 
     def __init__(
         self,
-        id,
-        name,
-        screen_name,
-        url,
-        salmon_url,
-        battle_url,
-        join_at,
-        profile,
-        stats,
+        id: int,
+        name: str,
+        screen_name: str,
+        url: str,
+        salmon_url: str,
+        battle_url: str,
+        join_at: dict,
+        profile: Dict[str, str],
+        stats: dict,
     ):
-        self.id = id
-        self.name = name
-        self.screen_name = screen_name
-        self.url = url
-        self.salmon_url = salmon_url
-        self.battle_url = battle_url
-        self.join_at = Time(**join_at)
-        self.profile = Profile(**profile)
-        self.stats = Stats(**stats)
+        self.id: int = id
+        self.name: str = name
+        self.screen_name: str = screen_name
+        self.url: str = url
+        self.salmon_url: str = salmon_url
+        self.battle_url: str = battle_url
+        self.join_at: Time = Time(**join_at)
+        self.profile: Profile = Profile(**profile)
+        self.stats: Stats = Stats(**stats)
 
 
 class Job(object):
@@ -330,78 +351,88 @@ class Job(object):
 
     def __init__(
         self,
-        id,
-        uuid,
-        splatnet_number,
-        url,
-        api_endpoint,
-        user,
-        stage,
-        is_cleared,
-        fail_reason,
-        clear_waves,
-        danger_rate,
-        quota,
-        title,
-        title_exp,
-        title_after,
-        title_exp_after,
-        boss_appearances,
-        waves,
-        my_data,
-        teammates,
-        agent,
-        automated,
-        note,
-        link_url,
-        shift_start_at,
-        start_at,
-        end_at,
-        register_at,
+        id: int,
+        uuid: str,
+        splatnet_number: int,
+        url: str,
+        api_endpoint: str,
+        user: dict,
+        stage: dict,
+        is_cleared: bool,
+        fail_reason: dict,
+        clear_waves: int,
+        danger_rate: str,
+        quota: List[int],
+        title: dict,
+        title_exp: int,
+        title_after: dict,
+        title_exp_after: int,
+        boss_appearances: List[dict],
+        waves: List[dict],
+        my_data: dict,
+        teammates: List[dict],
+        agent: Dict[str, str],
+        automated: bool,
+        note: str,
+        link_url: str,
+        shift_start_at: dict,
+        start_at: dict,
+        end_at: Optional[dict],
+        register_at: dict,
     ):
-        self.id = id
-        self.uuid = uuid
-        self.splatnet_number = splatnet_number
-        self.url = url
-        self.api_endpoint = api_endpoint
-        self.user = User(**user)
+        self.id: int = id
+        self.uuid: str = uuid
+        self.splatnet_number: int = splatnet_number
+        self.url: str = url
+        self.api_endpoint: str = api_endpoint
+        self.user: User = User(**user)
         if stage is not None:
-            self.stage = Stage__Water_Level__Special__Known_Occurrence__Weapon(**stage)
-        self.is_cleared = is_cleared
-        self.fail_reason = fail_reason
-        self.clear_waves = clear_waves
-        self.danger_rate = danger_rate
-        self.quota = quota
+            self.stage: Optional[
+                Stage_WaterLevel_KnownOccurrence
+            ] = Stage_WaterLevel_KnownOccurrence(**stage)
+        else:
+            self.stage = None
+        self.is_cleared: bool = is_cleared
+        if fail_reason is not None and fail_reason != "None":
+            self.fail_reason: Optional[Species_FailReason] = Species_FailReason(
+                **fail_reason
+            )
+        else:
+            self.fail_reason = None
+        self.clear_waves: int = clear_waves
+        self.danger_rate: str = danger_rate
+        self.quota: List[int] = quota
         if title is not None:
-            self.title = Title(**title)
+            self.title: Optional[Title] = Title(**title)
         else:
             self.title = None
-        self.title_exp = title_exp
-        self.title_after = Title(**title_after)
-        self.title_exp_after = title_exp_after
-        self.boss_appearances = []
+        if title_exp is not None:
+            self.title_exp: int = title_exp
+        self.title_after: Title = Title(**title_after)
+        self.title_exp_after: int = title_exp_after
+        self.boss_appearances: List[Boss_Appearance] = []
         if boss_appearances is not None:
             for boss in boss_appearances:
                 self.boss_appearances.append(Boss_Appearance(**boss))
-        self.waves = []
+        self.waves: List[Wave] = []
         for wave in waves:
             self.waves.append(Wave(**wave))
-        self.my_data = My_Data_Teammate(**my_data)
-        self.teammates = []
+        self.my_data: My_Data_Teammate = My_Data_Teammate(**my_data)
+        self.teammates: List[My_Data_Teammate] = []
         if teammates is not None:
             for teammate in teammates:
                 self.teammates.append(My_Data_Teammate(**teammate))
-        self.agent = Agent(**agent)
-        self.automated = automated
-        self.note = note
-        self.link_url = link_url
-        self.shift_start_at = Time(**shift_start_at)
-        self.start_at = Time(**start_at)
+        self.agent: Agent = Agent(**agent)
+        self.automated: bool = automated
+        self.note: str = note
+        self.link_url: str = link_url
+        self.shift_start_at: Time = Time(**shift_start_at)
+        self.start_at: Time = Time(**start_at)
         if end_at is not None:
-            self.end_at = Time(**end_at)
+            self.end_at: Optional[Time] = Time(**end_at)
         else:
-            self.end_at = end_at
-        self.register_at = Time(**register_at)
+            self.end_at = None
+        self.register_at: Time = Time(**register_at)
 
     def has_stage(self) -> bool:
         return self.stage is not None
@@ -410,7 +441,7 @@ class Job(object):
 if __name__ == "__main__":
     tic = time.perf_counter()
     jobs: List[Job] = []
-    with gzip.open("data/salmonAll.jl.gz", "r") as reader:
+    with gzip.open("data/salmon.jl.gz", "r") as reader:
         for line in reader:
             jobs.append(Job(**ujson.loads(line)))
     print("Time taken: {}".format(time.perf_counter() - tic))

@@ -2,6 +2,7 @@ import sys
 
 sys.path.insert(0, ".")
 import core
+from objects import Job
 import jsonlines
 import ujson
 import gzip
@@ -20,11 +21,12 @@ if __name__ == "__main__":
     }
     total = 0.0
     with gzip.open(data) as reader:
-        for job in jsonlines.Reader(reader, ujson.loads):
-            for wave in job["waves"]:
+        for line in reader:
+            job = Job(**ujson.loads(line))
+            for wave in job.waves:
                 total += 1.0
-                if wave["known_occurrence"] is not None:
-                    eventDict[wave["known_occurrence"]["key"]]["count"] += 1.0
+                if wave.known_occurrence is not None:
+                    eventDict[wave.known_occurrence.key]["count"] += 1.0
                 else:
                     eventDict["None"]["count"] += 1.0
     for event in eventDict.values():

@@ -15,17 +15,27 @@ import gzip
 import os
 
 
-def hasVal(var: List[Dict[str, str]], val: str):
+def hasVal(var: List[Dict[str, str]], val) -> bool:
+    """
+
+    :param var:
+    :type var: List[Dict[str, str]]
+    :param val:
+
+    """
     for item in var:
         if val == item["key"]:
             return True
+    return False
 
 
-def sortWeapons(data: str, stat: str) -> None:
+def sortWeapons(data, stat) -> None:
     """
 
-    :param data: str:
-    :param stat: str:
+    :param data:
+    :type data: str
+    :param stat:
+    :type stat: str
 
     """
     weaponsList: List[Dict[str, Union[str, Dict[str, str]]]] = requests.get(
@@ -65,11 +75,13 @@ def sortWeapons(data: str, stat: str) -> None:
     pprint.pprint(sorted(results, key=lambda val: val["value"]))
 
 
-def sortStages(data: str, stat: str) -> None:
+def sortStages(data, stat) -> None:
     """
 
-    :param data: str:
-    :param stat: str:
+    ::param data:
+    :type data: str
+    :param stat:
+    :type stat: str
 
     """
     stageDict: Dict[str, Dict[str, Union[str, float]]] = {}
@@ -100,11 +112,13 @@ def sortStages(data: str, stat: str) -> None:
         pprint.pprint(sorted(stageList, key=lambda val: val["value"]))
 
 
-def sortSpecial(data: str, stat: str) -> None:
+def sortSpecial(data, stat) -> None:
     """
 
-    :param data: str:
-    :param stat: str:
+    :param data:
+    :type data: str
+    :param stat:
+    :type stat: str
 
     """
     specialDict: Dict[str, Dict[str, Union[str, float]]] = {}
@@ -115,7 +129,7 @@ def sortSpecial(data: str, stat: str) -> None:
             if not (getattr(job.my_data.special.name, locale) in specialDict):
                 specialDict[getattr(job.my_data.special.name, locale)] = {
                     "name": getattr(job.my_data.special.name, locale),
-                    "clear_waves": 0.0,
+                    stat: 0.0,
                     "count": 0.0,
                 }
             cast(
@@ -136,16 +150,15 @@ def sortSpecial(data: str, stat: str) -> None:
         pprint.pprint(sorted(specialList, key=lambda val: val["value"]))
 
 
-def sortRotation(data: str, stat: str) -> None:
+def sortRotation(data, stat) -> None:
     """
     Print the sorted rotations by the average of the given stat.
 
-    :param path: the directory of the data file
-    :type path: str
     :param data: the data file name
     :type data: str
     :param stat: the statistic to sort by
     :type stat: str
+
     """
     rotationList: List[int] = []
     rotationResultsList: List[
