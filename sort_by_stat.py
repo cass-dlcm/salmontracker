@@ -4,7 +4,7 @@ from core import (
     locale,
     statSummary,
 )
-from objects import Job
+from objects import Job, Stage_WaterLevel_KnownOccurrence
 import filters
 import jsonlines
 import requests
@@ -90,18 +90,43 @@ def sortStages(data, stat) -> None:
         for line in reader:
             job = Job(**ujson.loads(line))
             if job.has_stage():
-                if not (getattr(job.stage.name, locale) in stageDict):
-                    stageDict[getattr(job.stage.name, locale)] = {
-                        "name": getattr(job.stage.name, locale),
+                if not (
+                    getattr(
+                        cast(Stage_WaterLevel_KnownOccurrence, job.stage).name, locale
+                    )
+                    in stageDict
+                ):
+                    stageDict[
+                        getattr(
+                            cast(Stage_WaterLevel_KnownOccurrence, job.stage).name,
+                            locale,
+                        )
+                    ] = {
+                        "name": getattr(
+                            cast(Stage_WaterLevel_KnownOccurrence, job.stage).name,
+                            locale,
+                        ),
                         stat: 0.0,
                         "count": 0.0,
                     }
-                cast(Dict[str, float], stageDict[getattr(job.stage.name, locale)])[
-                    stat
-                ] += cast(float, getattr(job, stat))
-                cast(Dict[str, float], stageDict[getattr(job.stage.name, locale)])[
-                    "count"
-                ] += 1.0
+                cast(
+                    Dict[str, float],
+                    stageDict[
+                        getattr(
+                            cast(Stage_WaterLevel_KnownOccurrence, job.stage).name,
+                            locale,
+                        )
+                    ],
+                )[stat] += cast(float, getattr(job, stat))
+                cast(
+                    Dict[str, float],
+                    stageDict[
+                        getattr(
+                            cast(Stage_WaterLevel_KnownOccurrence, job.stage).name,
+                            locale,
+                        )
+                    ],
+                )["count"] += 1.0
         for stage in stageDict.values():
             stageList.append(
                 {
