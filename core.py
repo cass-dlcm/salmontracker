@@ -404,7 +404,8 @@ def statSummary(data, stat) -> Tuple[float, float, float, float]:
         minVal: float = sys.float_info.max
         vals: List[float] = []
         count: float = 0.0
-        for job in jsonlines.Reader(reader, ujson.loads):
+        for line in reader:
+            job = Job(**ujson.loads(line))
             val = float(
                 getValMultiDimensional(
                     job,
@@ -514,7 +515,7 @@ def getPlayersAttribute(data: Job, attr) -> List[str]:
     :param attr:
     :type attr: str
     :return:
-    :rtype: List[float]
+    :rtype: List[str]
 
     """
     attrsList: List[str] = attr.split()
@@ -977,12 +978,14 @@ def getArrayOfStat(data, stat) -> List[float]:
         return results
 
 
-def init(mode, api_key="") -> str:
+def init(mode, data_path, api_key="") -> str:
     """
     Fetch the data sets from stat.ink
 
     :param mode: whether to fetch data for all users or a single user
     :type mode: str
+    :param data_path: the path to the data folder
+    :type data_path: str
     :param api_key: the stat.ink API key for the user to fetch
     :type api_key: str
     :return: the resulting data file path
@@ -991,7 +994,7 @@ def init(mode, api_key="") -> str:
     :Example:
 
     >>> import core
-    >>> core.init("All")
+    >>> core.init("All", "data/)
     'data/salmonAll.jl.gz'
     >>> import ujson
     >>> core.init(
@@ -1008,10 +1011,10 @@ def init(mode, api_key="") -> str:
     """
     headers: Dict[str, str] = {}
     if mode == "All":
-        fileName: str = "data/salmonAll.jl.gz"
+        fileName: str = data_path + "salmonAll.jl.gz"
         url: str = "http://stat.ink/api/v2/salmon"
     elif mode == "User":
-        fileName = "data/salmon.jl.gz"
+        fileName = data_path + "salmon.jl.gz"
         url = "http://stat.ink/api/v2/user-salmon"
         headers = {"Authorization": "Bearer {}".format(api_key)}
     if os.path.exists(fileName):
