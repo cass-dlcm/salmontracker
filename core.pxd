@@ -1,21 +1,21 @@
 import cython
 
 @cython.locals(reader=object)
-cpdef bint hasJobs(str data)
+cpdef bint hasJobs(str location, object data)
 
 @cython.locals(result=list, reader=object, job=object)
-cpdef list listAllUsers(str data)
+cpdef list listAllUsers(str location, object data)
 
 @cython.locals(result=dict, reader=object, line=bytes, job=object, i=cython.int)
-cpdef dict findWeaponsAndStageByRotation(str data, int rotation)
+cpdef dict findWeaponsAndStageByRotation(str location, object data, int rotation)
 
 @cython.locals(foundIds=list, reader=object, line=bytes, job=object, teammate=object)
-cpdef list findPlayerIdByName(str data, str player)
+cpdef list findPlayerIdByName(str location, object data, str player)
 
 cpdef str getValMultiDimensional(object data, list statArr)
 
-@cython.locals(statArr=list, sumVal=cython.double, maxVal=cython.double, minVal=cython.double, vals=list, count=cython.double, line=bytes, job=object, val=cython.double)
-cpdef tuple statSummary(str data, str stat)
+@cython.locals(reader=object, statArr=list, sumVal=cython.double, maxVal=cython.double, minVal=cython.double, vals=list, count=cython.double, line=bytes, job=object, val=cython.double)
+cpdef tuple statSummary(str location, object data, str stat)
 
 @cython.locals(sumVal=cython.double, count=cython.double, line=bytes, job=object)
 cpdef double waveClearPercentageWithWeapon(str data, str weapon)
@@ -30,7 +30,7 @@ cpdef list getPlayersAttribute(object data, str attr)
 cpdef str getWavesAttribute(object data, str attr)
 
 @cython.locals(result=str, stats=list, reader=object, clearCount=cython.double, waveTwoCount=cython.double, waveOneCount=cython.double, sumVal=cython.double[6], maxVal=cython.double[6], minVal=cython.double[6], vals=list, count=cython.int, line=bytes, job=object, i=cython.int, val=cython.double)
-cpdef str getOverview(str data)
+cpdef str getOverview(str location, object data)
 
 cpdef void printGeneral(object data)
 cpdef void printWaves(object data)
@@ -53,7 +53,7 @@ cpdef object getSingleJob(str data, int index=*)
 cpdef void printBosses(object data)
 
 @cython.locals(reader=object, results=list, line=bytes, job=object)
-cpdef list getArrayOfStat(str data, str stat)
+cpdef list getArrayOfStat(str location, object data, str stat)
 
 @cython.locals(headers=dict, fileName=str, url=str, recentId=cython.int, reader=object, writer=object, line=object, prevLastId=cython.int, params=dict, temp=list, lastId=cython.int, job=dict, result=object)
 cpdef str init(str mode, str data_path, str api_key=*)
