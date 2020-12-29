@@ -134,6 +134,8 @@ class Wave:
             self.known_occurrence: Stage_WaterLevel_KnownOccurrence = (
                 Stage_WaterLevel_KnownOccurrence(**known_occurrence)
             )
+        else:
+            known_occurrence = None
         self.water_level: Stage_WaterLevel_KnownOccurrence = (
             Stage_WaterLevel_KnownOccurrence(**water_level)
         )
@@ -208,17 +210,25 @@ class My_Data_Teammate:
         self.power_egg_collected: int = power_egg_collected
         if species is not None:
             self.species: Species_FailReason = Species_FailReason(**species)
+        else:
+            self.species = None
         if gender is not None:
             self.gender = Gender(**gender)
+        else:
+            self.gender = None
         self.special_uses: List[int] = special_uses
         self.weapons: List[Special_Weapon] = []
         if weapons is not None:
             for weapon in weapons:
                 self.weapons.append(Special_Weapon(**weapon))
+        else:
+            self.weapons = None
         self.boss_kills: List[Boss_Appearance] = []
         if boss_kills is not None:
             for boss in boss_kills:
                 self.boss_kills.append(Boss_Appearance(**boss))
+        else:
+            self.boss_kills = None
 
 
 class Stats:
@@ -405,6 +415,8 @@ class Job:
             self.title = None
         if title_exp is not None:
             self.title_exp: int = title_exp
+        else:
+            self.title_exp = None
         self.title_after: Title = Title(**title_after)
         self.title_exp_after: int = title_exp_after
         self.boss_appearances: List[Boss_Appearance] = []
@@ -419,6 +431,8 @@ class Job:
         if teammates is not None:
             for teammate in teammates:
                 self.teammates.append(My_Data_Teammate(**teammate))
+        else:
+            self.teammates = None
         self.agent: Agent = Agent(**agent)
         self.automated: bool = automated
         self.note: str = note
