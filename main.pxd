@@ -1,6 +1,6 @@
 import cython
 
-@cython.locals(filters=list, stat=str, playerName=str, playerId=list, val=str, mode=str, clearAfter=str, i=cython.int, weapons=list, stageChoice=str, rotations=list, rot=int, comparison=str, wave=int)
+@cython.locals(filters=list, stat=str, playerName=str, playerId=list, val=str, mode=str, clearAfter=str, i=cython.int, result=tuple, weapons=list, stageChoice=str, rotations=list, rot=int, comparison=str, wave=int)
 cpdef list filterBy(list dataFile)
 
 @cython.locals(which=str, i=cython.int, chosenList=cython.int)
