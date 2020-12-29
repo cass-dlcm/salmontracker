@@ -1,8 +1,10 @@
 from core import hasJobs, locale, grizzcoWeapons
+from objects import Job
 import os.path
 from typing import Tuple, List, Callable, Dict, Union, cast
 import gzip
 import jsonlines
+import json
 import ujson
 import requests
 
@@ -24,12 +26,13 @@ def filterJobs(data, outpath, filterFunction: Callable) -> Tuple[str, str]:
                         "at",
                         encoding="utf8",
                     ) as writerB:
-                        for job in jsonlines.Reader(reader, ujson.loads):
+                        for line in reader:
+                            job = Job(**ujson.loads(line))
                             if filterFunction(job):
-                                ujson.dump(job, writerA)
+                                json.dump(job, writerA, default=lambda x: x.__dict__)
                                 writerA.write("\n")
                             else:
-                                ujson.dump(job, writerB)
+                                json.dump(job, writerB, default=lambda x: x.__dict__)
                                 writerB.write("\n")
     return (
         data[0:-6] + "/" + outpath + ".jl.gz",
@@ -54,15 +57,16 @@ def filterJobsOr(data, outpath, filterFunctions: List[Callable]) -> Tuple[str, s
                         "at",
                         encoding="utf8",
                     ) as writerB:
-                        for job in jsonlines.Reader(reader, ujson.loads):
+                        for line in reader:
+                            job = Job(**ujson.loads(line))
                             found = False
                             for funct in filterFunctions:
                                 found = found or funct(job)
                             if found:
-                                ujson.dump(job, writerA)
+                                json.dump(job, writerA, default=lambda x: x.__dict__)
                                 writerA.write("\n")
                             else:
-                                ujson.dump(job, writerB)
+                                json.dump(job, writerB, default=lambda x: x.__dict__)
                                 writerB.write("\n")
     return (
         data[0:-6] + "/" + outpath + ".jl.gz",
@@ -87,15 +91,16 @@ def filterJobsAnd(data, outpath, filterFunctions: List[Callable]) -> Tuple[str, 
                         "at",
                         encoding="utf8",
                     ) as writerB:
-                        for job in jsonlines.Reader(reader, ujson.loads):
+                        for line in reader:
+                            job = Job(**ujson.loads(line))
                             found = True
                             for funct in filterFunctions:
                                 found = found and funct(job)
                             if found:
-                                ujson.dump(job, writerA)
+                                json.dump(job, writerA, default=lambda x: x.__dict__)
                                 writerA.write("\n")
                             else:
-                                ujson.dump(job, writerB)
+                                json.dump(job, writerB, default=lambda x: x.__dict__)
                                 writerB.write("\n")
     return (
         data[0:-6] + "/" + outpath + ".jl.gz",
@@ -143,18 +148,18 @@ def hasPlayers(data, players: List[str], mode="") -> Tuple[str, str]:
     filterFunctions: List[Callable] = []
     for player in players:
         filterFunctions.append(
-            lambda var, player=player: var["my_data"]["splatnet_id"] == player
+            lambda var, player=player: var.my_data.splatnet_id == player
             or (
-                var["teammates"] is not None
+                var.teammates is not None
                 and (
-                    (var["teammates"][0]["splatnet_id"] == player)
+                    (var.teammates[0].splatnet_id == player)
                     or (
-                        len(var["teammates"]) > 1
-                        and var["teammates"][1]["splatnet_id"] == player
+                        len(var.teammates) > 1
+                        and var.teammates[1].splatnet_id == player
                     )
                     or (
-                        len(var["teammates"]) > 2
-                        and var["teammates"][2]["splatnet_id"] == player
+                        len(var.teammates) > 2
+                        and var.teammates[2].splatnet_id == player
                     )
                 )
             ),
@@ -192,10 +197,10 @@ def hasWeapons(data, weapons: List[str], mode="") -> Tuple[str, str]:
     :Example:
 
     >>> import core
-    >>> core.hasWeapon("data/salmonAll.jl.gz", ["Grizzco Charger"])
+    >>> core.hasWeapon("data/salmonAll.jl.gz", ["kuma_charger"])
     (
-        'data/salmonAll/weapons/Grizzco Charger.jl.gz',
-        'data/salmonAll/notweapons/Grizzco Charger.jl.gz'
+        'data/salmonAll/weapons/kuma_charger.jl.gz',
+        'data/salmonAll/notweapons/kuma_charger.jl.gz'
     )
 
     """
@@ -216,146 +221,60 @@ def hasWeapons(data, weapons: List[str], mode="") -> Tuple[str, str]:
     for weapon in weapons:
         filterFunctions.append(
             lambda var, weapon=weapon: (
-                var["my_data"]["weapons"][0]["key"] == weapon
+                var.my_data.weapons[0].key == weapon
                 or (
-                    len(var["my_data"]["weapons"]) > 1
-                    and var["my_data"]["weapons"][1]["key"] == weapon
+                    len(var.my_data.weapons) > 1
+                    and var.my_data.weapons[1].key == weapon
                 )
                 or (
-                    len(var["my_data"]["weapons"]) > 2
-                    and var["my_data"]["weapons"][2]["key"] == weapon
+                    len(var.my_data.weapons) > 2
+                    and var.my_data.weapons[2].key == weapon
                 )
                 or (
-                    var["teammates"] is not None
+                    var.teammates is not None
                     and (
                         (
-                            len(var["teammates"]) > 0
-                            and var["teammates"][0]["weapons"] is not None
+                            len(var.teammates) > 0
+                            and var.teammates[0].weapons is not None
                             and (
-                                var["teammates"][0]["weapons"][0]["key"] == weapon
+                                var.teammates[0].weapons[0].key == weapon
                                 or (
-                                    len(var["teammates"][0]["weapons"]) > 1
-                                    and var["teammates"][0]["weapons"][1]["key"]
-                                    == weapon
+                                    len(var.teammates[0].weapons) > 1
+                                    and var.teammates[0].weapons[1].key == weapon
                                 )
                                 or (
-                                    len(var["teammates"][0]["weapons"]) > 2
-                                    and var["teammates"][0]["weapons"][2]["key"]
-                                    == weapon
+                                    len(var.teammates[0].weapons) > 2
+                                    and var.teammates[0].weapons[2].key == weapon
                                 )
                             )
                         )
                         or (
-                            len(var["teammates"]) > 1
-                            and var["teammates"][1]["weapons"] is not None
+                            len(var.teammates) > 1
+                            and var.teammates[1].weapons is not None
                             and (
-                                var["teammates"][1]["weapons"][0]["key"] == weapon
+                                var.teammates[1].weapons[0].key == weapon
                                 or (
-                                    len(var["teammates"][1]["weapons"]) > 1
-                                    and var["teammates"][1]["weapons"][1]["key"]
-                                    == weapon
+                                    len(var.teammates[1].weapons) > 1
+                                    and var.teammates[1].weapons[1].key == weapon
                                 )
                                 or (
-                                    len(var["teammates"][1]["weapons"]) > 2
-                                    and var["teammates"][1]["weapons"][2]["key"]
-                                    == weapon
+                                    len(var.teammates[1].weapons) > 2
+                                    and var.teammates[1].weapons[2].key == weapon
                                 )
                             )
                         )
                         or (
-                            len(var["teammates"]) > 2
-                            and var["teammates"][2]["weapons"] is not None
+                            len(var.teammates) > 2
+                            and var.teammates[2].weapons is not None
                             and (
-                                var["teammates"][2]["weapons"][0]["key"] == weapon
+                                var.teammates[2].weapons[0].key == weapon
                                 or (
-                                    len(var["teammates"][2]["weapons"]) > 1
-                                    and var["teammates"][2]["weapons"][1]["key"]
-                                    == weapon
+                                    len(var.teammates[2].weapons) > 1
+                                    and var.teammates[2].weapons[1].key == weapon
                                 )
                                 or (
-                                    len(var["teammates"][2]["weapons"]) > 2
-                                    and var["teammates"][2]["weapons"][2]["key"]
-                                    == weapon
-                                )
-                            )
-                        )
-                    )
-                )
-                or (var["my_data"]["weapons"][0]["name"][locale] == weapon)
-                or (
-                    len(var["my_data"]["weapons"]) > 1
-                    and var["my_data"]["weapons"][1]["name"][locale] == weapon
-                )
-                or (
-                    len(var["my_data"]["weapons"]) > 2
-                    and var["my_data"]["weapons"][2]["name"][locale] == weapon
-                )
-                or (
-                    var["teammates"] is not None
-                    and (
-                        (
-                            len(var["teammates"]) > 0
-                            and var["teammates"][0]["weapons"] is not None
-                            and (
-                                var["teammates"][0]["weapons"][0]["name"][locale]
-                                == weapon
-                                or (
-                                    len(var["teammates"][0]["weapons"]) > 1
-                                    and var["teammates"][0]["weapons"][1]["name"][
-                                        locale
-                                    ]
-                                    == weapon
-                                )
-                                or (
-                                    len(var["teammates"][0]["weapons"]) > 2
-                                    and var["teammates"][0]["weapons"][2]["name"][
-                                        locale
-                                    ]
-                                    == weapon
-                                )
-                            )
-                        )
-                        or (
-                            len(var["teammates"]) > 1
-                            and var["teammates"][1]["weapons"] is not None
-                            and (
-                                var["teammates"][1]["weapons"][0]["name"][locale]
-                                == weapon
-                                or (
-                                    len(var["teammates"][1]["weapons"]) > 1
-                                    and var["teammates"][1]["weapons"][1]["name"][
-                                        locale
-                                    ]
-                                    == weapon
-                                )
-                                or (
-                                    len(var["teammates"][1]["weapons"]) > 2
-                                    and var["teammates"][1]["weapons"][2]["name"][
-                                        locale
-                                    ]
-                                    == weapon
-                                )
-                            )
-                        )
-                        or (
-                            len(var["teammates"]) > 2
-                            and var["teammates"][2]["weapons"] is not None
-                            and (
-                                var["teammates"][2]["weapons"][0]["name"][locale]
-                                == weapon
-                                or (
-                                    len(var["teammates"][2]["weapons"]) > 1
-                                    and var["teammates"][2]["weapons"][1]["name"][
-                                        locale
-                                    ]
-                                    == weapon
-                                )
-                                or (
-                                    len(var["teammates"][2]["weapons"]) > 2
-                                    and var["teammates"][2]["weapons"][2]["name"][
-                                        locale
-                                    ]
-                                    == weapon
+                                    len(var.teammates[2].weapons) > 2
+                                    and var.teammates[2].weapons[2].key == weapon
                                 )
                             )
                         )
@@ -420,23 +339,14 @@ def usesWeapons(data, weapons: List[str], mode="") -> Tuple[str, str]:
     for weapon in weapons:
         filterFunctions.append(
             lambda var, weapon=weapon: (
-                var["my_data"]["weapons"][0]["key"] == weapon
+                var.my_data.weapons[0].key == weapon
                 or (
-                    len(var["my_data"]["weapons"]) > 1
-                    and var["my_data"]["weapons"][1]["key"] == weapon
+                    len(var.my_data.weapons) > 1
+                    and var.my_data.weapons[1].key == weapon
                 )
                 or (
-                    len(var["my_data"]["weapons"]) > 2
-                    and var["my_data"]["weapons"][2]["key"] == weapon
-                )
-                or var["my_data"]["weapons"][0]["name"][locale] == weapon
-                or (
-                    len(var["my_data"]["weapons"]) > 1
-                    and var["my_data"]["weapons"][1]["name"][locale] == weapon
-                )
-                or (
-                    len(var["my_data"]["weapons"]) > 2
-                    and var["my_data"]["weapons"][2]["name"][locale] == weapon
+                    len(var.my_data.weapons) > 2
+                    and var.my_data.weapons[2].key == weapon
                 )
             )
         )
@@ -496,12 +406,7 @@ def onStages(data, stages: List[str], mode=None) -> Tuple[str, str]:
     filterFunctions = []
     for stage in stages:
         filterFunctions.append(
-            lambda var, stage=stage: var["stage"] is not None
-            and stage
-            in (
-                var["stage"]["key"],
-                var["stage"]["name"][locale],
-            )
+            lambda var, stage=stage: var.stage is not None and stage in (var.stage.key,)
         )
         outPath += stage + (mode if mode is not None else "")
     if mode == "or":
@@ -552,11 +457,7 @@ def withSpecial(data, special) -> Tuple[str, str]:
     return filterJobs(
         data,
         "special/" + special,
-        lambda var, special=special: special
-        in (
-            var["my_data"]["special"]["key"],
-            var["my_data"]["special"]["name"][locale],
-        ),
+        lambda var, special=special: special in (var.my_data.special.key,),
     )
 
 
@@ -599,7 +500,7 @@ def failReasons(data, reasons: List[str], mode="") -> Tuple[str, str]:
     filterFunctions: List[Callable] = []
     outPath = "failReasons/"
     for reason in reasons:
-        filterFunctions.append(lambda var, reason=reason: var["fail_reason"] == reason)
+        filterFunctions.append(lambda var, reason=reason: var.fail_reason == reason)
         outPath += reason + (mode if mode is not None else "")
     if mode == "or":
         return filterJobsOr(
@@ -648,7 +549,7 @@ def duringRotationInts(data, rotations: List[int], mode="") -> Tuple[str, str]:
     outPath = "rotations/"
     for rotation in rotations:
         filterFunctions.append(
-            lambda var, rotation=rotation: var["shift_start_at"]["time"] == rotation
+            lambda var, rotation=rotation: var.shift_start_at.time == rotation
         )
         outPath += str(rotation) + (mode if mode is not None else "")
     if mode == "or":
@@ -703,9 +604,7 @@ def clearWave(data, wave, comparison="=") -> Tuple[str, str]:
             os.mkdir(data[0:-6] + "/clearWaves/notgreaterThan/")
         except FileExistsError:
             pass
-        return filterJobs(
-            data, outPath, lambda job, wave=wave: job["clear_waves"] > wave
-        )
+        return filterJobs(data, outPath, lambda job, wave=wave: job.clear_waves > wave)
     if comparison == "<":
         outPath += "lessThan" + str(wave)
         try:
@@ -716,9 +615,7 @@ def clearWave(data, wave, comparison="=") -> Tuple[str, str]:
             os.mkdir(data[0:-6] + "/clearWaves/notlessThan/")
         except FileExistsError:
             pass
-        return filterJobs(
-            data, outPath, lambda job, wave=wave: job["clear_waves"] < wave
-        )
+        return filterJobs(data, outPath, lambda job, wave=wave: job.clear_waves < wave)
     outPath += "equal" + str(wave)
     try:
         os.mkdir(data[0:-6] + "/clearWaves/equal/")
@@ -728,7 +625,7 @@ def clearWave(data, wave, comparison="=") -> Tuple[str, str]:
         os.mkdir(data[0:-6] + "/clearWaves/notequal/")
     except FileExistsError:
         pass
-    return filterJobs(data, outPath, lambda job, wave=wave: job["clear_waves"] == wave)
+    return filterJobs(data, outPath, lambda job, wave=wave: job.clear_waves == wave)
 
 
 def dangerRate(data, rate, comparison="=") -> Tuple[str, str]:
@@ -775,7 +672,7 @@ def dangerRate(data, rate, comparison="=") -> Tuple[str, str]:
         except FileExistsError:
             pass
         return filterJobs(
-            data, outPath, lambda job, rate=rate: float(job["danger_rate"]) > rate
+            data, outPath, lambda job, rate=rate: float(job.danger_rate) > rate
         )
     if comparison == "<":
         outPath += "lessThan" + str(rate)
@@ -788,7 +685,7 @@ def dangerRate(data, rate, comparison="=") -> Tuple[str, str]:
         except FileExistsError:
             pass
         return filterJobs(
-            data, outPath, lambda job, rate=rate: float(job["danger_rate"]) < rate
+            data, outPath, lambda job, rate=rate: float(job.danger_rate) < rate
         )
     outPath += "equal" + str(rate)
     try:
@@ -800,7 +697,7 @@ def dangerRate(data, rate, comparison="=") -> Tuple[str, str]:
     except FileExistsError:
         pass
     return filterJobs(
-        data, outPath, lambda job, rate=rate: float(job["danger_rate"]) == rate
+        data, outPath, lambda job, rate=rate: float(job.danger_rate) == rate
     )
 
 
@@ -843,9 +740,9 @@ def hasTides(data, tides: List[str], mode="") -> Tuple[str, str]:
     for tide in tides:
         filterFunctions.append(
             lambda var, tide=tide: (
-                var["waves"][0]["water_level"] == tide
-                or (len(var["waves"]) > 1 and var["waves"][1]["water_level"] == tide)
-                or (len(var["waves"]) > 2 and var["waves"][2]["water_level"] == tide)
+                var.waves[0].water_level == tide
+                or (len(var.waves) > 1 and var.waves[1].water_level == tide)
+                or (len(var.waves) > 2 and var.waves[2].water_level == tide)
             )
         )
         outPath += tide + (mode if mode is not None else "")
@@ -904,18 +801,18 @@ def hasEvents(data, events: List[str], mode="") -> Tuple[str, str]:
         filterFunctions.append(
             lambda var, event=event: (
                 (
-                    var["waves"][0]["known_occurrence"] is not None
-                    and var["waves"][0]["known_occurrence"]["key"] == event
+                    var.waves[0].known_occurrence is not None
+                    and var.waves[0].known_occurrence.key == event
                 )
                 or (
-                    len(var["waves"]) > 1
-                    and var["waves"][1]["known_occurrence"] is not None
-                    and var["waves"][1]["known_occurrence"] == event
+                    len(var.waves) > 1
+                    and var.waves[1].known_occurrence is not None
+                    and var.waves[1].known_occurrence.key == event
                 )
                 or (
-                    len(var["waves"]) > 2
-                    and var["waves"][2]["known_occurrence"] is not None
-                    and var["waves"][2]["known_occurrence"] == event
+                    len(var.waves) > 2
+                    and var.waves[2].known_occurrence is not None
+                    and var.waves[2].known_occurrence.key == event
                 )
             )
         )
@@ -967,88 +864,86 @@ def hasWeaponTypes(data, types: List[str], mode="") -> Tuple[str, str]:
     for wtype in types:
         filterFunctions.append(
             lambda var, wtype=wtype, weaponDict=weaponDict: (
-                weaponDict[var["my_data"]["weapons"][0]["key"]]["type"]["key"] == wtype
+                weaponDict[var.my_data.weapons[0].key]["type"]["key"] == wtype
                 or (
-                    len(var["my_data"]["weapons"]) > 1
-                    and weaponDict[var["my_data"]["weapons"][1]["key"]]["type"]["key"]
-                    == wtype
+                    len(var.my_data.weapons) > 1
+                    and weaponDict[var.my_data.weapons[1].key]["type"]["key"] == wtype
                 )
                 or (
-                    len(var["my_data"]["weapons"]) > 2
-                    and weaponDict[var["my_data"]["weapons"][2]["key"]]["type"]["key"]
-                    == wtype
+                    len(var.my_data.weapons) > 2
+                    and weaponDict[var.my_data.weapons[2].key]["type"]["key"] == wtype
                 )
                 or (
-                    var["teammates"] is not None
+                    var.teammates is not None
                     and (
                         (
-                            len(var["teammates"]) > 0
-                            and var["teammates"][0]["weapons"] is not None
+                            len(var.teammates) > 0
+                            and var.teammates[0].weapons is not None
                             and (
-                                weaponDict[var["teammates"][0]["weapons"][0]["key"]][
-                                    "type"
-                                ]["key"]
+                                weaponDict[var.teammates[0].weapons[0].key]["type"][
+                                    "key"
+                                ]
                                 == wtype
                                 or (
-                                    len(var["teammates"][0]["weapons"]) > 1
-                                    and weaponDict[
-                                        var["teammates"][0]["weapons"][1]["key"]
-                                    ]["type"]["key"]
+                                    len(var.teammates[0].weapons) > 1
+                                    and weaponDict[var.teammates[0].weapons[1].key][
+                                        "type"
+                                    ]["key"]
                                     == wtype
                                 )
                                 or (
-                                    len(var["teammates"][0]["weapons"]) > 2
-                                    and weaponDict[
-                                        var["teammates"][0]["weapons"][2]["key"]
-                                    ]["type"]["key"]
+                                    len(var.teammates[0].weapons) > 2
+                                    and weaponDict[var.teammates[0].weapons[2].key][
+                                        "type"
+                                    ]["key"]
                                     == wtype
                                 )
                             )
                         )
                         or (
-                            len(var["teammates"]) > 1
-                            and var["teammates"][1]["weapons"] is not None
+                            len(var.teammates) > 1
+                            and var.teammates[1].weapons is not None
                             and (
-                                weaponDict[var["teammates"][1]["weapons"][0]["key"]][
-                                    "type"
-                                ]["key"]
+                                weaponDict[var.teammates[1].weapons[0].key]["type"][
+                                    "key"
+                                ]
                                 == wtype
                                 or (
-                                    len(var["teammates"][1]["weapons"]) > 1
-                                    and weaponDict[
-                                        var["teammates"][1]["weapons"][1]["key"]
-                                    ]["type"]["key"]
+                                    len(var.teammates[1].weapons) > 1
+                                    and weaponDict[var.teammates[1].weapons[1].key][
+                                        "type"
+                                    ]["key"]
                                     == wtype
                                 )
                                 or (
-                                    len(var["teammates"][1]["weapons"]) > 2
-                                    and weaponDict[
-                                        var["teammates"][1]["weapons"][2]["key"]
-                                    ]["type"]["key"]
+                                    len(var.teammates[1].weapons) > 2
+                                    and weaponDict[var.teammates[1].weapons[2].key][
+                                        "type"
+                                    ]["key"]
                                     == wtype
                                 )
                             )
                         )
                         or (
-                            len(var["teammates"]) > 2
-                            and var["teammates"][2]["weapons"] is not None
+                            len(var.teammates) > 2
+                            and var.teammates[2].weapons is not None
                             and (
-                                weaponDict[var["teammates"][2]["weapons"][0]["key"]][
-                                    "type"
-                                ]["key"]
+                                weaponDict[var.teammates[2].weapons[0].key]["type"][
+                                    "key"
+                                ]
                                 == wtype
                                 or (
-                                    len(var["teammates"][2]["weapons"]) > 1
-                                    and weaponDict[
-                                        var["teammates"][2]["weapons"][1]["key"]
-                                    ]["type"]["key"]
+                                    len(var.teammates[2].weapons) > 1
+                                    and weaponDict[var.teammates[2].weapons[1].key][
+                                        "type"
+                                    ]["key"]
                                     == wtype
                                 )
                                 or (
-                                    len(var["teammates"][2]["weapons"]) > 2
-                                    and weaponDict[
-                                        var["teammates"][2]["weapons"][2]["key"]
-                                    ]["type"]["key"]
+                                    len(var.teammates[2].weapons) > 2
+                                    and weaponDict[var.teammates[2].weapons[2].key][
+                                        "type"
+                                    ]["key"]
                                     == wtype
                                 )
                             )
