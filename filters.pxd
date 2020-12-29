@@ -1,45 +1,45 @@
 import cython
 
-@cython.locals(reader=object, writerA=object, writerB=object, line=str, job=object)
-cpdef tuple filterJobs(str data, str outpath, object filterFunction)
+@cython.locals(reader=object, writerA=object, writerB=object, line=bytes, job=object, jobsWith=list, jobsWithout=list)
+cpdef object filterJobs(str location, str data, object filterFunction, str outpath)
 
-@cython.locals(reader=object, writerA=object, writerB=object, line=str, job=object, found=cython.bint, funct=object)
-cpdef tuple filterJobsOr(str data, str outpath, list filterFunctions)
+@cython.locals(reader=object, writerA=object, writerB=object, line=bytes, job=object, found=cython.bint, funct=object, jobsWith=list, jobsWithout=list)
+cpdef object filterJobsOr(str location, str data, list filterFunctions, str outpath)
 
-@cython.locals(reader=object, writerA=object, writerB=object, line=str, job=object, found=cython.bint, funct=object)
-cpdef tuple filterJobsAnd(str data, str outpath, list filterFunctions)
+@cython.locals(reader=object, writerA=object, writerB=object, line=bytes, job=object, found=cython.bint, funct=object, jobsWith=list, jobsWithout=list)
+cpdef object filterJobsAnd(str location, str data, list filterFunctions, str outpath)
 
 @cython.locals(outPath=str, filterFunctions=list, player=str)
-cpdef tuple hasPlayers(str data, list players, str mode=*)
+cpdef object hasPlayers(str location, str data, list players, str mode=*)
 
 @cython.locals(outPath=str, filterFunctions=list, weapon=str)
-cpdef tuple hasWeapons(str data, list weapons, str mode=*)
+cpdef object hasWeapons(str location, str data, list weapons, str mode=*)
 
 @cython.locals(outPath=str, filterFunctions=list, weapon=str)
-cpdef tuple usesWeapons(str data, list weapons, str mode=*)
+cpdef object usesWeapons(str location, str data, list weapons, str mode=*)
 
 @cython.locals(outPath=str, filterFunctions=list, stage=str)
-cpdef tuple onStages(str data, list stages, str mode=*)
+cpdef object onStages(str location, str data, list stages, str mode=*)
 
-cpdef tuple withSpecial(str data, str special)
+cpdef object withSpecial(str location, str data, str special)
 
 @cython.locals(filterFunctions=list, outPath=str, reason=str)
-cpdef tuple failReasons(str data, list reasons, str mode=*)
+cpdef object failReasons(str location, str data, list reasons, str mode=*)
 
 @cython.locals(filterFunctions=list, outPath=str, rotation=cython.int)
-cpdef tuple duringRotationInts(str data, list rotations, str mode=*)
+cpdef object duringRotationInts(str location, str data, list rotations, str mode=*)
 
 @cython.locals(outPath=str)
-cpdef tuple clearWave(str data, int wave, str comparison=*)
+cpdef object clearWave(str location, str data, int wave, str comparison=*)
 
 @cython.locals(outPath=str)
-cpdef tuple dangerRate(str data, double rate, str comparison=*)
+cpdef object dangerRate(str location, str data, double rate, str comparison=*)
 
 @cython.locals(filterFunctions=list, outPath=str, tide=str)
-cpdef tuple hasTides(str data, list tides, str mode=*)
+cpdef object hasTides(str location, str data, list tides, str mode=*)
 
 @cython.locals(filterFunctions=list, outPath=str, event=str)
-cpdef tuple hasEvents(str data, list events, str mode=*)
+cpdef object hasEvents(str location, str data, list events, str mode=*)
 
 @cython.locals(weaponList=list, grizzWeapon=tuple, new=dict, weaponDict=dict, i=dict, filterFunctions=list, outPath=str, wtype=str)
-cpdef tuple hasWeaponTypes(str data, list types, str mode=*)
+cpdef object hasWeaponTypes(str location, str data, list types, str mode=*)

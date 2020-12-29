@@ -3,112 +3,168 @@ from objects import Job
 import os.path
 from typing import Tuple, List, Callable, Dict, Union, cast
 import gzip
-import jsonlines
 import json
 import ujson
+import zlib
 import requests
 
 
-def filterJobs(data, outpath, filterFunction: Callable) -> Tuple[str, str]:
-    if not (
-        os.path.exists(data[0:-6] + "/" + outpath + ".jl.gz")
-        and os.path.exists(data[0:-6] + "/not" + outpath + ".jl.gz")
-    ):
-        with gzip.open(data) as reader:
-            if hasJobs(data):
-                with gzip.open(
-                    data[0:-6] + "/" + outpath + ".jl.gz",
-                    "at",
-                    encoding="utf8",
-                ) as writerA:
+def filterJobs(
+    location, data, filterFunction: Callable, outpath
+) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
+    if location == "disk":
+        if not (
+            os.path.exists(data[0:-6] + "/" + outpath + ".jl.gz")
+            and os.path.exists(data[0:-6] + "/not" + outpath + ".jl.gz")
+        ):
+            with gzip.open(data) as reader:
+                if hasJobs(data):
                     with gzip.open(
-                        data[0:-6] + "/not" + outpath + ".jl.gz",
+                        data[0:-6] + "/" + outpath + ".jl.gz",
                         "at",
                         encoding="utf8",
-                    ) as writerB:
-                        for line in reader:
-                            job = Job(**ujson.loads(line))
-                            if filterFunction(job):
-                                json.dump(job, writerA, default=lambda x: x.__dict__)
-                                writerA.write("\n")
-                            else:
-                                json.dump(job, writerB, default=lambda x: x.__dict__)
-                                writerB.write("\n")
-    return (
-        data[0:-6] + "/" + outpath + ".jl.gz",
-        data[0:-6] + "/not" + outpath + ".jl.gz",
-    )
+                    ) as writerA:
+                        with gzip.open(
+                            data[0:-6] + "/not" + outpath + ".jl.gz",
+                            "at",
+                            encoding="utf8",
+                        ) as writerB:
+                            for line in reader:
+                                job = Job(**ujson.loads(line))
+                                if filterFunction(job):
+                                    json.dump(
+                                        job, writerA, default=lambda x: x.__dict__
+                                    )
+                                    writerA.write("\n")
+                                else:
+                                    json.dump(
+                                        job, writerB, default=lambda x: x.__dict__
+                                    )
+                                    writerB.write("\n")
+        return (
+            data[0:-6] + "/" + outpath + ".jl.gz",
+            data[0:-6] + "/not" + outpath + ".jl.gz",
+        )
+    jobsWith: List[bytes] = []
+    jobsWithout: List[bytes] = []
+    for line in data:
+        job = Job(**ujson.loads(zlib.decompress(line)))
+        if filterFunction(job):
+            jobsWith.append(line)
+        else:
+            jobsWithout.append(line)
+    return (jobsWith, jobsWithout)
 
 
-def filterJobsOr(data, outpath, filterFunctions: List[Callable]) -> Tuple[str, str]:
-    if not (
-        os.path.exists(data[0:-6] + "/" + outpath + ".jl.gz")
-        and os.path.exists(data[0:-6] + "/not" + outpath + ".jl.gz")
-    ):
-        with gzip.open(data) as reader:
-            if hasJobs(data):
-                with gzip.open(
-                    data[0:-6] + "/" + outpath + ".jl.gz",
-                    "at",
-                    encoding="utf8",
-                ) as writerA:
+def filterJobsOr(
+    location, data, filterFunctions: List[Callable], outpath
+) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
+    if location == "disk":
+        if not (
+            os.path.exists(data[0:-6] + "/" + outpath + ".jl.gz")
+            and os.path.exists(data[0:-6] + "/not" + outpath + ".jl.gz")
+        ):
+            with gzip.open(data) as reader:
+                if hasJobs(data):
                     with gzip.open(
-                        data[0:-6] + "/not" + outpath + ".jl.gz",
+                        data[0:-6] + "/" + outpath + ".jl.gz",
                         "at",
                         encoding="utf8",
-                    ) as writerB:
-                        for line in reader:
-                            job = Job(**ujson.loads(line))
-                            found = False
-                            for funct in filterFunctions:
-                                found = found or funct(job)
-                            if found:
-                                json.dump(job, writerA, default=lambda x: x.__dict__)
-                                writerA.write("\n")
-                            else:
-                                json.dump(job, writerB, default=lambda x: x.__dict__)
-                                writerB.write("\n")
-    return (
-        data[0:-6] + "/" + outpath + ".jl.gz",
-        data[0:-6] + "/not" + outpath + ".jl.gz",
-    )
+                    ) as writerA:
+                        with gzip.open(
+                            data[0:-6] + "/not" + outpath + ".jl.gz",
+                            "at",
+                            encoding="utf8",
+                        ) as writerB:
+                            for line in reader:
+                                job = Job(**ujson.loads(line))
+                                found = False
+                                for funct in filterFunctions:
+                                    found = found or funct(job)
+                                if found:
+                                    json.dump(
+                                        job, writerA, default=lambda x: x.__dict__
+                                    )
+                                    writerA.write("\n")
+                                else:
+                                    json.dump(
+                                        job, writerB, default=lambda x: x.__dict__
+                                    )
+                                    writerB.write("\n")
+        return (
+            data[0:-6] + "/" + outpath + ".jl.gz",
+            data[0:-6] + "/not" + outpath + ".jl.gz",
+        )
+    jobsWith: List[bytes] = []
+    jobsWithout: List[bytes] = []
+    for line in data:
+        job = Job(**ujson.loads(zlib.decompress(line)))
+        found = False
+        for funct in filterFunctions:
+            found = found or funct(job)
+        if found:
+            jobsWith.append(line)
+        else:
+            jobsWithout.append(line)
+    return (jobsWith, jobsWithout)
 
 
-def filterJobsAnd(data, outpath, filterFunctions: List[Callable]) -> Tuple[str, str]:
-    if not (
-        os.path.exists(data[0:-6] + "/" + outpath + ".jl.gz")
-        and os.path.exists(data[0:-6] + "/not" + outpath + ".jl.gz")
-    ):
-        with gzip.open(data) as reader:
-            if hasJobs(data):
-                with gzip.open(
-                    data[0:-6] + "/" + outpath + ".jl.gz",
-                    "at",
-                    encoding="utf8",
-                ) as writerA:
+def filterJobsAnd(
+    location, data, filterFunctions: List[Callable], outpath
+) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
+    if location == "disk":
+        if not (
+            os.path.exists(data[0:-6] + "/" + outpath + ".jl.gz")
+            and os.path.exists(data[0:-6] + "/not" + outpath + ".jl.gz")
+        ):
+            with gzip.open(data) as reader:
+                if hasJobs(data):
                     with gzip.open(
-                        data[0:-6] + "/not" + outpath + ".jl.gz",
+                        data[0:-6] + "/" + outpath + ".jl.gz",
                         "at",
                         encoding="utf8",
-                    ) as writerB:
-                        for line in reader:
-                            job = Job(**ujson.loads(line))
-                            found = True
-                            for funct in filterFunctions:
-                                found = found and funct(job)
-                            if found:
-                                json.dump(job, writerA, default=lambda x: x.__dict__)
-                                writerA.write("\n")
-                            else:
-                                json.dump(job, writerB, default=lambda x: x.__dict__)
-                                writerB.write("\n")
-    return (
-        data[0:-6] + "/" + outpath + ".jl.gz",
-        data[0:-6] + "/not" + outpath + ".jl.gz",
-    )
+                    ) as writerA:
+                        with gzip.open(
+                            data[0:-6] + "/not" + outpath + ".jl.gz",
+                            "at",
+                            encoding="utf8",
+                        ) as writerB:
+                            for line in reader:
+                                job = Job(**ujson.loads(line))
+                                found = True
+                                for funct in filterFunctions:
+                                    found = found and funct(job)
+                                if found:
+                                    json.dump(
+                                        job, writerA, default=lambda x: x.__dict__
+                                    )
+                                    writerA.write("\n")
+                                else:
+                                    json.dump(
+                                        job, writerB, default=lambda x: x.__dict__
+                                    )
+                                    writerB.write("\n")
+        return (
+            data[0:-6] + "/" + outpath + ".jl.gz",
+            data[0:-6] + "/not" + outpath + ".jl.gz",
+        )
+    jobsWith: List[bytes] = []
+    jobsWithout: List[bytes] = []
+    for line in data:
+        job = Job(**ujson.loads(zlib.decompress(line)))
+        found = True
+        for funct in filterFunctions:
+            found = found and funct(job)
+        if found:
+            jobsWith.append(line)
+        else:
+            jobsWithout.append(line)
+    return (jobsWith, jobsWithout)
 
 
-def hasPlayers(data, players: List[str], mode="") -> Tuple[str, str]:
+def hasPlayers(
+    location, data, players: List[str], mode=""
+) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the jobs in the given data file to jobs that contain the chosen player.
 
@@ -120,7 +176,6 @@ def hasPlayers(data, players: List[str], mode="") -> Tuple[str, str]:
     :rtype: Tuple[str, str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     :Example:
 
@@ -132,18 +187,19 @@ def hasPlayers(data, players: List[str], mode="") -> Tuple[str, str]:
     )
 
     """
-    try:
-        os.mkdir(data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/playerIds/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/notplayerIds/")
-    except FileExistsError:
-        pass
+    if location == "disk":
+        try:
+            os.mkdir(data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/playerIds/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/notplayerIds/")
+        except FileExistsError:
+            pass
     outPath = "playerIds/"
     filterFunctions: List[Callable] = []
     for player in players:
@@ -166,21 +222,15 @@ def hasPlayers(data, players: List[str], mode="") -> Tuple[str, str]:
         )
         outPath += player + mode
     if mode == "and":
-        return filterJobsAnd(
-            data,
-            outPath,
-            filterFunctions,
-        )
+        return filterJobsAnd(location, data, filterFunctions, outPath)
     if mode == "or":
-        return filterJobsOr(
-            data,
-            outPath,
-            filterFunctions,
-        )
-    return filterJobs(data, outPath, filterFunctions[0])
+        return filterJobsOr(location, data, filterFunctions, outPath)
+    return filterJobs(location, data, filterFunctions[0], outPath)
 
 
-def hasWeapons(data, weapons: List[str], mode="") -> Tuple[str, str]:
+def hasWeapons(
+    location, data, weapons: List[str], mode=""
+) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs that contain the chosen weapon(s).
 
@@ -192,7 +242,6 @@ def hasWeapons(data, weapons: List[str], mode="") -> Tuple[str, str]:
     :rtype: Tuple[str, str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     :Example:
 
@@ -204,18 +253,19 @@ def hasWeapons(data, weapons: List[str], mode="") -> Tuple[str, str]:
     )
 
     """
-    try:
-        os.mkdir(data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/weapons/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/notweapons/")
-    except FileExistsError:
-        pass
+    if location == "disk":
+        try:
+            os.mkdir(data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/weapons/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/notweapons/")
+        except FileExistsError:
+            pass
     outPath = "weapons/"
     filterFunctions = []
     for weapon in weapons:
@@ -284,21 +334,15 @@ def hasWeapons(data, weapons: List[str], mode="") -> Tuple[str, str]:
         )
         outPath += weapon + mode
     if mode == "and":
-        return filterJobsAnd(
-            data,
-            outPath,
-            filterFunctions,
-        )
+        return filterJobsAnd(location, data, filterFunctions, outPath)
     if mode == "or":
-        return filterJobsOr(
-            data,
-            outPath,
-            filterFunctions,
-        )
-    return filterJobs(data, outPath, filterFunctions[0])
+        return filterJobsOr(location, data, filterFunctions, outPath)
+    return filterJobs(location, data, filterFunctions[0], outPath)
 
 
-def usesWeapons(data, weapons: List[str], mode="") -> Tuple[str, str]:
+def usesWeapons(
+    location, data, weapons: List[str], mode=""
+) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the player uses the chosen weapon(s).
 
@@ -310,7 +354,6 @@ def usesWeapons(data, weapons: List[str], mode="") -> Tuple[str, str]:
     :rtype: Tuple[str, str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     :Example:
 
@@ -322,18 +365,19 @@ def usesWeapons(data, weapons: List[str], mode="") -> Tuple[str, str]:
     )
 
     """
-    try:
-        os.mkdir(data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/usesWeapons/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/notusesWeapons/")
-    except FileExistsError:
-        pass
+    if location == "disk":
+        try:
+            os.mkdir(data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/usesWeapons/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/notusesWeapons/")
+        except FileExistsError:
+            pass
     outPath = "usesWeapons/"
     filterFunctions = []
     for weapon in weapons:
@@ -352,21 +396,15 @@ def usesWeapons(data, weapons: List[str], mode="") -> Tuple[str, str]:
         )
         outPath += weapon + mode
     if mode == "and":
-        return filterJobsAnd(
-            data,
-            outPath,
-            filterFunctions,
-        )
+        return filterJobsAnd(location, data, filterFunctions, outPath)
     if mode == "or":
-        return filterJobsOr(
-            data,
-            outPath,
-            filterFunctions,
-        )
-    return filterJobs(data, outPath, filterFunctions[0])
+        return filterJobsOr(location, data, filterFunctions, outPath)
+    return filterJobs(location, data, filterFunctions[0], outPath)
 
 
-def onStages(data, stages: List[str], mode=None) -> Tuple[str, str]:
+def onStages(
+    location, data, stages: List[str], mode=None
+) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs on the chosen stage(s).
 
@@ -378,7 +416,6 @@ def onStages(data, stages: List[str], mode=None) -> Tuple[str, str]:
     :rtype: Tuple[str, str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     :Example:
 
@@ -390,18 +427,19 @@ def onStages(data, stages: List[str], mode=None) -> Tuple[str, str]:
     )
 
     """
-    try:
-        os.mkdir(data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/stages/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/notstages/")
-    except FileExistsError:
-        pass
+    if location == "disk":
+        try:
+            os.mkdir(data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/stages/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/notstages/")
+        except FileExistsError:
+            pass
     outPath = "stages/"
     filterFunctions = []
     for stage in stages:
@@ -410,15 +448,13 @@ def onStages(data, stages: List[str], mode=None) -> Tuple[str, str]:
         )
         outPath += stage + (mode if mode is not None else "")
     if mode == "or":
-        return filterJobsOr(
-            data,
-            outPath,
-            filterFunctions,
-        )
-    return filterJobs(data, outPath, filterFunctions[0])
+        return filterJobsOr(location, data, filterFunctions, outPath)
+    return filterJobs(location, data, filterFunctions[0], outPath)
 
 
-def withSpecial(data, special) -> Tuple[str, str]:
+def withSpecial(
+    location, data, special
+) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the player had the chosen special.
 
@@ -430,7 +466,6 @@ def withSpecial(data, special) -> Tuple[str, str]:
     :rtype: Tuple[str, str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     :Example:
 
@@ -442,26 +477,30 @@ def withSpecial(data, special) -> Tuple[str, str]:
     )
 
     """
-    try:
-        os.mkdir(data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/special/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/notspecial/")
-    except FileExistsError:
-        pass
+    if location == "disk":
+        try:
+            os.mkdir(data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/special/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/notspecial/")
+        except FileExistsError:
+            pass
     return filterJobs(
+        location,
         data,
-        "special/" + special,
         lambda var, special=special: special in (var.my_data.special.key,),
+        "special/" + special,
     )
 
 
-def failReasons(data, reasons: List[str], mode="") -> Tuple[str, str]:
+def failReasons(
+    location, data, reasons: List[str], mode=""
+) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the fail reason was the chosen reason.
 
@@ -473,7 +512,6 @@ def failReasons(data, reasons: List[str], mode="") -> Tuple[str, str]:
     :rtype: Tuple[Tuple[str, str], Tuple[str, str]]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     :Example:
 
@@ -485,33 +523,32 @@ def failReasons(data, reasons: List[str], mode="") -> Tuple[str, str]:
     )
 
     """
-    try:
-        os.mkdir(data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/failReasons/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/notfailReasons/")
-    except FileExistsError:
-        pass
+    if location == "disk":
+        try:
+            os.mkdir(data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/failReasons/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/notfailReasons/")
+        except FileExistsError:
+            pass
     filterFunctions: List[Callable] = []
     outPath = "failReasons/"
     for reason in reasons:
         filterFunctions.append(lambda var, reason=reason: var.fail_reason == reason)
         outPath += reason + (mode if mode is not None else "")
     if mode == "or":
-        return filterJobsOr(
-            data,
-            outPath,
-            filterFunctions,
-        )
-    return filterJobs(data, outPath, filterFunctions[0])
+        return filterJobsOr(location, data, filterFunctions, outPath)
+    return filterJobs(location, data, filterFunctions[0], outPath)
 
 
-def duringRotationInts(data, rotations: List[int], mode="") -> Tuple[str, str]:
+def duringRotationInts(
+    location, data, rotations: List[int], mode=""
+) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the rotation was the chosen rotation.
 
@@ -523,7 +560,6 @@ def duringRotationInts(data, rotations: List[int], mode="") -> Tuple[str, str]:
     :rtype: Tuple[str, str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     >>> import core
     >>> core.duringRotationInt("data/salmonAll.jl.gz", [1607752800])
@@ -533,18 +569,19 @@ def duringRotationInts(data, rotations: List[int], mode="") -> Tuple[str, str]:
     )
 
     """
-    try:
-        os.mkdir(data[0:-6])
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/rotations/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/notrotations/")
-    except FileExistsError:
-        pass
+    if location == "disk":
+        try:
+            os.mkdir(data[0:-6])
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/rotations/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/notrotations/")
+        except FileExistsError:
+            pass
     filterFunctions: List[Callable] = []
     outPath = "rotations/"
     for rotation in rotations:
@@ -553,15 +590,13 @@ def duringRotationInts(data, rotations: List[int], mode="") -> Tuple[str, str]:
         )
         outPath += str(rotation) + (mode if mode is not None else "")
     if mode == "or":
-        return filterJobsOr(
-            data,
-            outPath,
-            filterFunctions,
-        )
-    return filterJobs(data, outPath, filterFunctions[0])
+        return filterJobsOr(location, data, filterFunctions, outPath)
+    return filterJobs(location, data, filterFunctions[0], outPath)
 
 
-def clearWave(data, wave, comparison="=") -> Tuple[str, str]:
+def clearWave(
+    location, data, wave, comparison="="
+) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the clear wave was the chosen clear wave.
 
@@ -573,7 +608,6 @@ def clearWave(data, wave, comparison="=") -> Tuple[str, str]:
     :rtype: Tuple[str, str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     :Example:
 
@@ -585,14 +619,15 @@ def clearWave(data, wave, comparison="=") -> Tuple[str, str]:
     )
 
     """
-    try:
-        os.mkdir(data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/clearWaves/")
-    except FileExistsError:
-        pass
+    if location == "disk":
+        try:
+            os.mkdir(data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/clearWaves/")
+        except FileExistsError:
+            pass
     outPath = "clearWaves/"
     if comparison == ">":
         outPath += "greaterThan" + str(wave)
@@ -604,7 +639,9 @@ def clearWave(data, wave, comparison="=") -> Tuple[str, str]:
             os.mkdir(data[0:-6] + "/clearWaves/notgreaterThan/")
         except FileExistsError:
             pass
-        return filterJobs(data, outPath, lambda job, wave=wave: job.clear_waves > wave)
+        return filterJobs(
+            location, data, lambda job, wave=wave: job.clear_waves > wave, outPath
+        )
     if comparison == "<":
         outPath += "lessThan" + str(wave)
         try:
@@ -615,7 +652,9 @@ def clearWave(data, wave, comparison="=") -> Tuple[str, str]:
             os.mkdir(data[0:-6] + "/clearWaves/notlessThan/")
         except FileExistsError:
             pass
-        return filterJobs(data, outPath, lambda job, wave=wave: job.clear_waves < wave)
+        return filterJobs(
+            location, data, lambda job, wave=wave: job.clear_waves < wave, outPath
+        )
     outPath += "equal" + str(wave)
     try:
         os.mkdir(data[0:-6] + "/clearWaves/equal/")
@@ -625,10 +664,14 @@ def clearWave(data, wave, comparison="=") -> Tuple[str, str]:
         os.mkdir(data[0:-6] + "/clearWaves/notequal/")
     except FileExistsError:
         pass
-    return filterJobs(data, outPath, lambda job, wave=wave: job.clear_waves == wave)
+    return filterJobs(
+        location, data, lambda job, wave=wave: job.clear_waves == wave, outPath
+    )
 
 
-def dangerRate(data, rate, comparison="=") -> Tuple[str, str]:
+def dangerRate(
+    location, data, rate, comparison="="
+) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the danger rate was the chosen danger rate.
 
@@ -640,7 +683,6 @@ def dangerRate(data, rate, comparison="=") -> Tuple[str, str]:
     :rtype: Tuple[str, str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     :Example:
 
@@ -652,56 +694,68 @@ def dangerRate(data, rate, comparison="=") -> Tuple[str, str]:
     )
 
     """
-    try:
-        os.mkdir(data[0:-6] + "/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/dangerRate/")
-    except FileExistsError:
-        pass
+    if location == "disk":
+        try:
+            os.mkdir(data[0:-6] + "/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/dangerRate/")
+        except FileExistsError:
+            pass
     outPath = "dangerRate/"
     if comparison == ">":
-        outPath += "greaterThan" + str(rate)
-        try:
-            os.mkdir(data[0:-6] + "/dangerRate/greaterThan/")
-        except FileExistsError:
-            pass
-        try:
-            os.mkdir(data[0:-6] + "/dangerRate/notgreaterThan/")
-        except FileExistsError:
-            pass
+        if location == "disk":
+            outPath += "greaterThan" + str(rate)
+            try:
+                os.mkdir(data[0:-6] + "/dangerRate/greaterThan/")
+            except FileExistsError:
+                pass
+            try:
+                os.mkdir(data[0:-6] + "/dangerRate/notgreaterThan/")
+            except FileExistsError:
+                pass
         return filterJobs(
-            data, outPath, lambda job, rate=rate: float(job.danger_rate) > rate
+            location,
+            data,
+            lambda job, rate=rate: float(job.danger_rate) > rate,
+            outPath,
         )
     if comparison == "<":
-        outPath += "lessThan" + str(rate)
-        try:
-            os.mkdir(data[0:-6] + "/dangerRate/lessThan/")
-        except FileExistsError:
-            pass
-        try:
-            os.mkdir(data[0:-6] + "/dangerRate/notlessThan/")
-        except FileExistsError:
-            pass
+        if location == "disk":
+            outPath += "lessThan" + str(rate)
+            try:
+                os.mkdir(data[0:-6] + "/dangerRate/lessThan/")
+            except FileExistsError:
+                pass
+            try:
+                os.mkdir(data[0:-6] + "/dangerRate/notlessThan/")
+            except FileExistsError:
+                pass
         return filterJobs(
-            data, outPath, lambda job, rate=rate: float(job.danger_rate) < rate
+            location,
+            data,
+            lambda job, rate=rate: float(job.danger_rate) < rate,
+            outPath,
         )
-    outPath += "equal" + str(rate)
-    try:
-        os.mkdir(data[0:-6] + "/dangerRate/equal/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/dangerRate/notequal/")
-    except FileExistsError:
-        pass
+    if location == "disk":
+        outPath += "equal" + str(rate)
+        try:
+            os.mkdir(data[0:-6] + "/dangerRate/equal/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/dangerRate/notequal/")
+        except FileExistsError:
+            pass
     return filterJobs(
-        data, outPath, lambda job, rate=rate: float(job.danger_rate) == rate
+        location, data, lambda job, rate=rate: float(job.danger_rate) == rate, outPath
     )
 
 
-def hasTides(data, tides: List[str], mode="") -> Tuple[str, str]:
+def hasTides(
+    location, data, tides: List[str], mode=""
+) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the tide of at least one wave is the chosen tide.
 
@@ -713,7 +767,6 @@ def hasTides(data, tides: List[str], mode="") -> Tuple[str, str]:
     :rtype: Tuple[str, str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     >>> import core
     >>> core.hasTides("data/salmonAll.jl.gz", ["high"])
@@ -723,18 +776,19 @@ def hasTides(data, tides: List[str], mode="") -> Tuple[str, str]:
     )
 
     """
-    try:
-        os.mkdir(data[0:-6])
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/tides/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/nottides/")
-    except FileExistsError:
-        pass
+    if location == "disk":
+        try:
+            os.mkdir(data[0:-6])
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/tides/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/nottides/")
+        except FileExistsError:
+            pass
     filterFunctions: List[Callable] = []
     outPath = "tides/"
     for tide in tides:
@@ -747,21 +801,15 @@ def hasTides(data, tides: List[str], mode="") -> Tuple[str, str]:
         )
         outPath += tide + (mode if mode is not None else "")
     if mode == "and":
-        return filterJobsAnd(
-            data,
-            outPath,
-            filterFunctions,
-        )
+        return filterJobsAnd(location, data, filterFunctions, outPath)
     if mode == "or":
-        return filterJobsOr(
-            data,
-            outPath,
-            filterFunctions,
-        )
-    return filterJobs(data, outPath, filterFunctions[0])
+        return filterJobsOr(location, data, filterFunctions, outPath)
+    return filterJobs(location, data, filterFunctions[0], outPath)
 
 
-def hasEvents(data, events: List[str], mode="") -> Tuple[str, str]:
+def hasEvents(
+    location, data, events: List[str], mode=""
+) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the event of at least one wave is the chosen event.
 
@@ -773,7 +821,6 @@ def hasEvents(data, events: List[str], mode="") -> Tuple[str, str]:
     :rtype: Tuple[str, str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     >>> import core
     >>> core.hasEvents("data/salmonAll.jl.gz", ["fog"])
@@ -783,18 +830,19 @@ def hasEvents(data, events: List[str], mode="") -> Tuple[str, str]:
     )
 
     """
-    try:
-        os.mkdir(data[0:-6])
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/events/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/notevents/")
-    except FileExistsError:
-        pass
+    if location == "disk":
+        try:
+            os.mkdir(data[0:-6])
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/events/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/notevents/")
+        except FileExistsError:
+            pass
     filterFunctions: List[Callable] = []
     outPath = "events/"
     for event in events:
@@ -818,33 +866,28 @@ def hasEvents(data, events: List[str], mode="") -> Tuple[str, str]:
         )
         outPath += event + (mode if mode is not None else "")
     if mode == "and":
-        return filterJobsAnd(
-            data,
-            outPath,
-            filterFunctions,
-        )
+        return filterJobsAnd(location, data, filterFunctions, outPath)
     if mode == "or":
-        return filterJobsOr(
-            data,
-            outPath,
-            filterFunctions,
-        )
-    return filterJobs(data, outPath, filterFunctions[0])
+        return filterJobsOr(location, data, filterFunctions, outPath)
+    return filterJobs(location, data, filterFunctions[0], outPath)
 
 
-def hasWeaponTypes(data, types: List[str], mode="") -> Tuple[str, str]:
-    try:
-        os.mkdir(data[0:-6])
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/weaponTypes/")
-    except FileExistsError:
-        pass
-    try:
-        os.mkdir(data[0:-6] + "/notweaponTypes/")
-    except FileExistsError:
-        pass
+def hasWeaponTypes(
+    location, data, types: List[str], mode=""
+) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
+    if location == "disk":
+        try:
+            os.mkdir(data[0:-6])
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/weaponTypes/")
+        except FileExistsError:
+            pass
+        try:
+            os.mkdir(data[0:-6] + "/notweaponTypes/")
+        except FileExistsError:
+            pass
     weaponList = requests.get("https://stat.ink/api/v2/weapon").json()
     for grizzWeapon in grizzcoWeapons:
         new = {
@@ -954,15 +997,7 @@ def hasWeaponTypes(data, types: List[str], mode="") -> Tuple[str, str]:
         )
         outPath += wtype + (mode if mode is not None else "")
     if mode == "and":
-        return filterJobsAnd(
-            data,
-            outPath,
-            filterFunctions,
-        )
+        return filterJobsAnd(location, data, filterFunctions, outPath)
     if mode == "or":
-        return filterJobsOr(
-            data,
-            outPath,
-            filterFunctions,
-        )
-    return filterJobs(data, outPath, filterFunctions[0])
+        return filterJobsOr(location, data, filterFunctions, outPath)
+    return filterJobs(location, data, filterFunctions[0], outPath)
