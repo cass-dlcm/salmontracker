@@ -873,7 +873,7 @@ def hasEvents(
 
 
 def hasWeaponTypes(
-    location, data, types: List[str], mode=""
+    location, data, types: Union[List[str], Tuple[str, str, str, str]], mode=""
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     if location == "disk":
         try:
