@@ -79,4 +79,4 @@ cdef class Job:
     cdef public Time shift_start_at, start_at, end_at, register_at
     cdef public User user
     cdef public Title title, title_after
-    cdef public object boss_appearances, waves, teammates, quota
+    cdef public list boss_appearances, waves, teammates, quota
