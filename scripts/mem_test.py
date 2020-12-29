@@ -1,19 +1,17 @@
-import sys
-
-sys.path.insert(0, ".")
-import core
-from objects import Job
-import ujson
 import gzip
-from typing import List
-import psutil
+import zlib
+import ujson
 import time
+import psutil
+from typing import List
+from objects import Job
+import core
 
-if __name__ == "__main__":
+
+with gzip.open(core.init("All", "data/"), "r") as reader:
     tic = time.perf_counter()
-    jobs: List[Job] = []
-    with gzip.open("data/salmonAll.jl.gz", "r") as reader:
-        for line in reader:
-            jobs.append(Job(**ujson.loads(line)))
+    jobs: List[bytes] = []
+    for line in reader:
+        jobs.append(zlib.compress(line))
     print("Time taken: {}".format(time.perf_counter() - tic))
     print(psutil.virtual_memory().percent)
