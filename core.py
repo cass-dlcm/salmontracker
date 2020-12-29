@@ -8,6 +8,7 @@ from typing import Tuple, List, Union, Dict, cast, Optional, Callable, Any
 import gzip
 import shutil
 from objects import Job, Stage_WaterLevel_KnownOccurrence
+import zlib
 
 locale = "en_US"
 
@@ -1086,9 +1087,9 @@ def init(mode, data_path, api_key="") -> str:
     return fileName
 
 
-def loadJobsFromFile(data) -> List[Job]:
-    jobs: List[Job] = []
+def loadJobsFromFile(data) -> List[bytes]:
+    jobs: List[bytes] = []
     with gzip.open(data, "r") as reader:
         for line in reader:
-            jobs.append(Job(**ujson.loads(line)))
+            jobs.append(zlib.compress(line))
     return jobs
