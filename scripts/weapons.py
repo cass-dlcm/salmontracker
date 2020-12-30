@@ -43,21 +43,14 @@ clear_waves_std = np.std(clear_waves)
 for combo in typeCombinations:
     result = filters.hasWeaponTypes("mem", data, combo, "and")
     typeComboDict[combo] = {
-        "key": "",
-        "clear_waves": [],
-        "not_clear_waves": [],
+        "key": combo,
+        "clear_waves": core.getArrayOfStat("mem", result[0], "clear_waves"),
+        "not_clear_waves": core.getArrayOfStat("mem", result[1], "clear_waves"),
         "t": 0.0,
         "p": 0.0,
         "x\u0304_1 - x\u0304_2": 0.0,
         "d": 0.0,
     }
-    typeComboDict[combo]["key"] = combo
-    typeComboDict[combo]["clear_waves"] = core.getArrayOfStat(
-        "mem", result[0], "clear_waves"
-    )
-    typeComboDict[combo]["not_clear_waves"] = core.getArrayOfStat(
-        "mem", result[1], "clear_waves"
-    )
     typeComboDict[combo]["t"], typeComboDict[combo]["p"] = ttest_ind(
         typeComboDict[combo]["clear_waves"],
         typeComboDict[combo]["not_clear_waves"],

@@ -71,7 +71,6 @@ def filterBy(dataList: List[List[bytes]]) -> List[List[bytes]]:
         print(rotations)
         rot: int = rotations[int(input("Pick the rotation id by index: "))]
         mode = input("Choose whether you want [With/Without/Both]: ")
-        clearAfter = input("Choose whether you would like to clear after [Y/N]: ")
         for i in range(0, len(dataList)):
             if mode == "With":
                 filters.append(
@@ -93,7 +92,6 @@ def filterBy(dataList: List[List[bytes]]) -> List[List[bytes]]:
     elif stat == "Has Weapon":
         val = input("Enter a weapon: ")
         mode = input("Choose whether you want [With/Without/Both]: ")
-        clearAfter = input("Choose whether you would like to clear after [Y/N]: ")
         for i in range(0, len(dataList)):
             if mode == "With":
                 filters.append(
@@ -115,7 +113,6 @@ def filterBy(dataList: List[List[bytes]]) -> List[List[bytes]]:
     elif stat == "Uses Weapon":
         val = input("Enter a weapon: ")
         mode = input("Choose whether you want [With/Without/Both]: ")
-        clearAfter = input("Choose whether you would like to clear after [Y/N]: ")
         for i in range(0, len(dataList)):
             if mode == "With":
                 filters.append(
@@ -137,7 +134,6 @@ def filterBy(dataList: List[List[bytes]]) -> List[List[bytes]]:
     elif stat == "Stage":
         val = input("Enter a stage: ")
         mode = input("Choose whether you want [With/Without/Both]: ")
-        clearAfter = input("Choose whether you would like to clear after [Y/N]: ")
         for i in range(0, len(dataList)):
             if mode == "With":
                 filters.append(
@@ -159,7 +155,6 @@ def filterBy(dataList: List[List[bytes]]) -> List[List[bytes]]:
         comparison: str = input("Choose whether you want [=/>/<]: ")
         val = input("Enter the danger rate: ")
         mode = input("Choose whether you want [With/Without/Both]: ")
-        clearAfter = input("Choose whether you would like to clear after [Y/N]: ")
         for i in range(0, len(dataList)):
             if mode == "With":
                 filters.append(
@@ -186,7 +181,6 @@ def filterBy(dataList: List[List[bytes]]) -> List[List[bytes]]:
         comparison = input("Choose whether you want [=/>/<]: ")
         wave: int = int(input("Enter the clear wave: "))
         mode = input("Choose whether you want [With/Without/Both]: ")
-        clearAfter = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(dataList)):
             if mode == "With":
                 filters.append(
@@ -212,7 +206,6 @@ def filterBy(dataList: List[List[bytes]]) -> List[List[bytes]]:
     elif stat == "Special":
         val = input("Enter the special: ")
         mode = input("Choose whether you want [With/Without/Both]: ")
-        clearAfter = input("Choose whether you would like to clear after [Y/N]:")
         for i in range(0, len(dataList)):
             if mode == "With":
                 filters.append(
