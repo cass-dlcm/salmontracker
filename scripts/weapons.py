@@ -35,11 +35,11 @@ for weapon in weaponsList:
         typesList.append(cast(Dict[str, str], weapon["type"])["key"])
 typeCombinations = combinations(typesList, 4)
 typeComboDict: dict = {}
-clear_waves = []
+clear_waves: List[float] = []
 for line in data:
     job = Job(**ujson.loads(zlib.decompress(line)))
-    clear_waves.append(job.clear_waves)
-clear_waves_std = np.std(clear_waves)
+    clear_waves.append(float(job.clear_waves))
+clear_waves_std: float = np.std(clear_waves)
 for combo in typeCombinations:
     result = filters.hasWeaponTypes("mem", data, combo, "and")
     typeComboDict[combo] = {

@@ -1012,7 +1012,7 @@ def getArrayOfStat(location, data, stat) -> List[float]:
         reader = gzip.open(data)
     else:
         reader = data
-    results = []
+    results: List[float] = []
     for line in reader:
         if location == "disk":
             job = Job(**ujson.loads(line))
