@@ -10,7 +10,6 @@ from filters import (
     usesWeapons,
     onStages,
     withSpecial,
-    failReasons,
     duringRotationInts,
     dangerRate,
     clearWave,
@@ -18,7 +17,6 @@ from filters import (
 import ujson
 from typing import List, Tuple, cast
 import sys
-import os
 import jsonlines
 from scipy.stats import ttest_ind
 import numpy as np
@@ -44,7 +42,6 @@ def filterBy(dataList: List[List[bytes]]) -> List[List[bytes]]:
         print(playerId)
         val: str = playerId[int(input("Pick the player id by index: "))]
         mode: str = input("Choose whether you want [With/Without/Both]: ")
-        clearAfter: str = input("Choose whether you would like to clear after [Y/N]: ")
         for i in range(0, len(dataList)):
             if mode == "With":
                 filters.append(

@@ -18,7 +18,7 @@ def filterJobs(
             and os.path.exists(data[0:-6] + "/not" + outpath + ".jl.gz")
         ):
             with gzip.open(data) as reader:
-                if hasJobs(data):
+                if hasJobs("disk", data):
                     with gzip.open(
                         data[0:-6] + "/" + outpath + ".jl.gz",
                         "at",
@@ -65,7 +65,7 @@ def filterJobsOr(
             and os.path.exists(data[0:-6] + "/not" + outpath + ".jl.gz")
         ):
             with gzip.open(data) as reader:
-                if hasJobs(data):
+                if hasJobs("disk", data):
                     with gzip.open(
                         data[0:-6] + "/" + outpath + ".jl.gz",
                         "at",
@@ -118,7 +118,7 @@ def filterJobsAnd(
             and os.path.exists(data[0:-6] + "/not" + outpath + ".jl.gz")
         ):
             with gzip.open(data) as reader:
-                if hasJobs(data):
+                if hasJobs("disk", data):
                     with gzip.open(
                         data[0:-6] + "/" + outpath + ".jl.gz",
                         "at",

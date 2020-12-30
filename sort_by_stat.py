@@ -11,7 +11,6 @@ import pprint
 from typing import Tuple, List, Dict, Union, cast
 import ujson
 import zlib
-import os
 
 
 def hasVal(var: List[Dict[str, str]], val) -> bool:

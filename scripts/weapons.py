@@ -66,9 +66,9 @@ for combo in typeCombinations:
     typeComboDict[combo]["x\u0304_1 - x\u0304_2"] = np.mean(
         typeComboDict[combo]["clear_waves"]
     ) - np.mean(typeComboDict[combo]["not_clear_waves"])
-    typeComboDict[combo]["d"], typeComboDict[combo][
-        "x\u0304_1 - x\u0304_2"
-    ] / clear_waves_std
+    typeComboDict[combo]["d"] = (
+        typeComboDict[combo]["x\u0304_1 - x\u0304_2"] / clear_waves_std
+    )
     typeComboDict[combo]["clear_waves"] = None
     typeComboDict[combo]["not_clear_waves"] = None
 with open("reports/weaponTypes.txt", "wt", encoding="utf-8") as out:
