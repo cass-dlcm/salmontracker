@@ -2,7 +2,7 @@ import cython
 
 cdef class Time:
     cdef public int time
-    cdef str iso8601
+    cdef public str iso8601
 
 cdef class Name:
     cdef public str de_DE, en_GB, en_US, es_ES, es_MX, fr_CA, fr_FR, it_IT, ja_JP, nl_NL, ru_RU, zh_CN, zh_TW
