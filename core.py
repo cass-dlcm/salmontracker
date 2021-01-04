@@ -1094,7 +1094,7 @@ def init(mode, data_path, api_key="") -> str:
                         writer.write("\n")
                         recentId = line["id"]
             os.remove(fileName[0:-6] + "Temp.jl.gz")
-        except jsonlines.jsonlines.InvalidLineError:
+        except (jsonlines.jsonlines.InvalidLineError, zlib.error):
             os.replace(fileName[0:-6] + "Temp.jl.gz", fileName)
         prevLastId: int = 0
         params: Dict[str, str] = {"order": "asc", "newer_than": str(recentId)}
@@ -1111,6 +1111,8 @@ def init(mode, data_path, api_key="") -> str:
                     for job in temp:
                         ujson.dump(job, writer)
                         writer.write("\n")
+                    writer.flush()
+                    os.fsync(writer.fileno())
                     params["newer_than"] = str(lastId)
                     result = requests.get(
                         url,
@@ -1135,6 +1137,8 @@ def init(mode, data_path, api_key="") -> str:
                 for job in temp:
                     ujson.dump(job, writer)
                     writer.write("\n")
+                writer.flush()
+                os.fsync(writer.fileno())
                 params["newer_than"] = str(lastId)
                 result = requests.get(url, headers=headers, params=params)
                 print(result.url)
