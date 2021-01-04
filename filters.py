@@ -10,22 +10,22 @@ import requests
 
 
 def filterJobs(
-    location, data, filterFunction: Callable, outpath
+    location, data: Union[str, List[bytes]], filterFunction: Callable, outpath
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     if location == "disk":
         if not (
-            os.path.exists(data[0:-6] + "/" + outpath + ".jl.gz")
-            and os.path.exists(data[0:-6] + "/not" + outpath + ".jl.gz")
+            os.path.exists(cast(str, data[:-6]) + "/" + outpath + ".jl.gz")
+            and os.path.exists(cast(str, data[:-6]) + "/not" + outpath + ".jl.gz")
         ):
-            with gzip.open(data) as reader:
+            with gzip.open(cast(str, data)) as reader:
                 if hasJobs("disk", data):
                     with gzip.open(
-                        data[0:-6] + "/" + outpath + ".jl.gz",
+                        cast(str, data[:-6]) + "/" + outpath + ".jl.gz",
                         "at",
                         encoding="utf8",
                     ) as writerA:
                         with gzip.open(
-                            data[0:-6] + "/not" + outpath + ".jl.gz",
+                            cast(str, data[:-6]) + "/not" + outpath + ".jl.gz",
                             "at",
                             encoding="utf8",
                         ) as writerB:
@@ -42,37 +42,37 @@ def filterJobs(
                                     )
                                     writerB.write("\n")
         return (
-            data[0:-6] + "/" + outpath + ".jl.gz",
-            data[0:-6] + "/not" + outpath + ".jl.gz",
+            cast(str, data[:-6]) + "/" + outpath + ".jl.gz",
+            cast(str, data[:-6]) + "/not" + outpath + ".jl.gz",
         )
     jobsWith: List[bytes] = []
     jobsWithout: List[bytes] = []
-    for line in data:
-        job = Job(**ujson.loads(zlib.decompress(line)))
+    for jobLine in cast(List[bytes], data):
+        job = Job(**ujson.loads(zlib.decompress(jobLine)))
         if filterFunction(job):
-            jobsWith.append(line)
+            jobsWith.append(jobLine)
         else:
-            jobsWithout.append(line)
+            jobsWithout.append(jobLine)
     return (jobsWith, jobsWithout)
 
 
 def filterJobsOr(
-    location, data, filterFunctions: List[Callable], outpath
+    location, data: Union[str, List[bytes]], filterFunctions: List[Callable], outpath
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     if location == "disk":
         if not (
-            os.path.exists(data[0:-6] + "/" + outpath + ".jl.gz")
-            and os.path.exists(data[0:-6] + "/not" + outpath + ".jl.gz")
+            os.path.exists(cast(str, data[:-6]) + "/" + outpath + ".jl.gz")
+            and os.path.exists(cast(str, data[:-6]) + "/not" + outpath + ".jl.gz")
         ):
-            with gzip.open(data) as reader:
+            with gzip.open(cast(str, data)) as reader:
                 if hasJobs("disk", data):
                     with gzip.open(
-                        data[0:-6] + "/" + outpath + ".jl.gz",
+                        cast(str, data[:-6]) + "/" + outpath + ".jl.gz",
                         "at",
                         encoding="utf8",
                     ) as writerA:
                         with gzip.open(
-                            data[0:-6] + "/not" + outpath + ".jl.gz",
+                            cast(str, data[:-6]) + "/not" + outpath + ".jl.gz",
                             "at",
                             encoding="utf8",
                         ) as writerB:
@@ -92,40 +92,40 @@ def filterJobsOr(
                                     )
                                     writerB.write("\n")
         return (
-            data[0:-6] + "/" + outpath + ".jl.gz",
-            data[0:-6] + "/not" + outpath + ".jl.gz",
+            cast(str, data[:-6]) + "/" + outpath + ".jl.gz",
+            cast(str, data[:-6]) + "/not" + outpath + ".jl.gz",
         )
     jobsWith: List[bytes] = []
     jobsWithout: List[bytes] = []
-    for line in data:
-        job = Job(**ujson.loads(zlib.decompress(line)))
+    for jobLine in cast(List[bytes], data):
+        job = Job(**ujson.loads(zlib.decompress(jobLine)))
         found = False
         for funct in filterFunctions:
             found = found or funct(job)
         if found:
-            jobsWith.append(line)
+            jobsWith.append(jobLine)
         else:
-            jobsWithout.append(line)
+            jobsWithout.append(jobLine)
     return (jobsWith, jobsWithout)
 
 
 def filterJobsAnd(
-    location, data, filterFunctions: List[Callable], outpath
+    location, data: Union[str, List[bytes]], filterFunctions: List[Callable], outpath
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     if location == "disk":
         if not (
-            os.path.exists(data[0:-6] + "/" + outpath + ".jl.gz")
-            and os.path.exists(data[0:-6] + "/not" + outpath + ".jl.gz")
+            os.path.exists(cast(str, data[:-6]) + "/" + outpath + ".jl.gz")
+            and os.path.exists(cast(str, data[:-6]) + "/not" + outpath + ".jl.gz")
         ):
-            with gzip.open(data) as reader:
+            with gzip.open(cast(str, data)) as reader:
                 if hasJobs("disk", data):
                     with gzip.open(
-                        data[0:-6] + "/" + outpath + ".jl.gz",
+                        cast(str, data[:-6]) + "/" + outpath + ".jl.gz",
                         "at",
                         encoding="utf8",
                     ) as writerA:
                         with gzip.open(
-                            data[0:-6] + "/not" + outpath + ".jl.gz",
+                            cast(str, data[:-6]) + "/not" + outpath + ".jl.gz",
                             "at",
                             encoding="utf8",
                         ) as writerB:
@@ -145,25 +145,25 @@ def filterJobsAnd(
                                     )
                                     writerB.write("\n")
         return (
-            data[0:-6] + "/" + outpath + ".jl.gz",
-            data[0:-6] + "/not" + outpath + ".jl.gz",
+            cast(str, data[:-6]) + "/" + outpath + ".jl.gz",
+            cast(str, data[:-6]) + "/not" + outpath + ".jl.gz",
         )
     jobsWith: List[bytes] = []
     jobsWithout: List[bytes] = []
-    for line in data:
-        job = Job(**ujson.loads(zlib.decompress(line)))
+    for jobLine in cast(List[bytes], data):
+        job = Job(**ujson.loads(zlib.decompress(jobLine)))
         found = True
         for funct in filterFunctions:
             found = found and funct(job)
         if found:
-            jobsWith.append(line)
+            jobsWith.append(jobLine)
         else:
-            jobsWithout.append(line)
+            jobsWithout.append(jobLine)
     return (jobsWith, jobsWithout)
 
 
 def hasPlayers(
-    location, data, players: List[str], mode=""
+    location, data: Union[str, List[bytes]], players: List[str], mode=""
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the jobs in the given data file to jobs that contain the chosen player.
@@ -189,15 +189,15 @@ def hasPlayers(
     """
     if location == "disk":
         try:
-            os.mkdir(data[0:-6] + "/")
+            os.mkdir(cast(str, data[:-6]) + "/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/playerIds/")
+            os.mkdir(cast(str, data[:-6]) + "/playerIds/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/notplayerIds/")
+            os.mkdir(cast(str, data[:-6]) + "/notplayerIds/")
         except FileExistsError:
             pass
     outPath = "playerIds/"
@@ -229,7 +229,7 @@ def hasPlayers(
 
 
 def hasWeapons(
-    location, data, weapons: List[str], mode=""
+    location, data: Union[str, List[bytes]], weapons: List[str], mode=""
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs that contain the chosen weapon(s).
@@ -255,15 +255,15 @@ def hasWeapons(
     """
     if location == "disk":
         try:
-            os.mkdir(data[0:-6] + "/")
+            os.mkdir(cast(str, data[:-6]) + "/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/weapons/")
+            os.mkdir(cast(str, data[:-6]) + "/weapons/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/notweapons/")
+            os.mkdir(cast(str, data[:-6]) + "/notweapons/")
         except FileExistsError:
             pass
     outPath = "weapons/"
@@ -341,7 +341,7 @@ def hasWeapons(
 
 
 def usesWeapons(
-    location, data, weapons: List[str], mode=""
+    location, data: Union[str, List[bytes]], weapons: List[str], mode=""
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the player uses the chosen weapon(s).
@@ -367,15 +367,15 @@ def usesWeapons(
     """
     if location == "disk":
         try:
-            os.mkdir(data[0:-6] + "/")
+            os.mkdir(cast(str, data[:-6]) + "/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/usesWeapons/")
+            os.mkdir(cast(str, data[:-6]) + "/usesWeapons/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/notusesWeapons/")
+            os.mkdir(cast(str, data[:-6]) + "/notusesWeapons/")
         except FileExistsError:
             pass
     outPath = "usesWeapons/"
@@ -403,7 +403,7 @@ def usesWeapons(
 
 
 def onStages(
-    location, data, stages: List[str], mode=None
+    location, data: Union[str, List[bytes]], stages: List[str], mode=None
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs on the chosen stage(s).
@@ -429,15 +429,15 @@ def onStages(
     """
     if location == "disk":
         try:
-            os.mkdir(data[0:-6] + "/")
+            os.mkdir(cast(str, data[:-6]) + "/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/stages/")
+            os.mkdir(cast(str, data[:-6]) + "/stages/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/notstages/")
+            os.mkdir(cast(str, data[:-6]) + "/notstages/")
         except FileExistsError:
             pass
     outPath = "stages/"
@@ -453,7 +453,7 @@ def onStages(
 
 
 def withSpecial(
-    location, data, special
+    location, data: Union[str, List[bytes]], special
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the player had the chosen special.
@@ -479,15 +479,15 @@ def withSpecial(
     """
     if location == "disk":
         try:
-            os.mkdir(data[0:-6] + "/")
+            os.mkdir(cast(str, data[:-6]) + "/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/special/")
+            os.mkdir(cast(str, data[:-6]) + "/special/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/notspecial/")
+            os.mkdir(cast(str, data[:-6]) + "/notspecial/")
         except FileExistsError:
             pass
     return filterJobs(
@@ -499,7 +499,7 @@ def withSpecial(
 
 
 def failReasons(
-    location, data, reasons: List[str], mode=""
+    location, data: Union[str, List[bytes]], reasons: List[str], mode=""
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the fail reason was the chosen reason.
@@ -525,15 +525,15 @@ def failReasons(
     """
     if location == "disk":
         try:
-            os.mkdir(data[0:-6] + "/")
+            os.mkdir(cast(str, data[:-6]) + "/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/failReasons/")
+            os.mkdir(cast(str, data[:-6]) + "/failReasons/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/notfailReasons/")
+            os.mkdir(cast(str, data[:-6]) + "/notfailReasons/")
         except FileExistsError:
             pass
     filterFunctions: List[Callable] = []
@@ -547,7 +547,7 @@ def failReasons(
 
 
 def duringRotationInts(
-    location, data, rotations: List[int], mode=""
+    location, data: Union[str, List[bytes]], rotations: List[int], mode=""
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the rotation was the chosen rotation.
@@ -571,15 +571,15 @@ def duringRotationInts(
     """
     if location == "disk":
         try:
-            os.mkdir(data[0:-6])
+            os.mkdir(cast(str, data[:-6]))
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/rotations/")
+            os.mkdir(cast(str, data[:-6]) + "/rotations/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/notrotations/")
+            os.mkdir(cast(str, data[:-6]) + "/notrotations/")
         except FileExistsError:
             pass
     filterFunctions: List[Callable] = []
@@ -595,7 +595,7 @@ def duringRotationInts(
 
 
 def clearWave(
-    location, data, wave, comparison="="
+    location, data: Union[str, List[bytes]], wave, comparison="="
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the clear wave was the chosen clear wave.
@@ -621,22 +621,22 @@ def clearWave(
     """
     if location == "disk":
         try:
-            os.mkdir(data[0:-6] + "/")
+            os.mkdir(cast(str, data[:-6]) + "/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/clearWaves/")
+            os.mkdir(cast(str, data[:-6]) + "/clearWaves/")
         except FileExistsError:
             pass
     outPath = "clearWaves/"
     if comparison == ">":
         outPath += "greaterThan" + str(wave)
         try:
-            os.mkdir(data[0:-6] + "/clearWaves/greaterThan/")
+            os.mkdir(cast(str, data[:-6]) + "/clearWaves/greaterThan/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/clearWaves/notgreaterThan/")
+            os.mkdir(cast(str, data[:-6]) + "/clearWaves/notgreaterThan/")
         except FileExistsError:
             pass
         return filterJobs(
@@ -645,11 +645,11 @@ def clearWave(
     if comparison == "<":
         outPath += "lessThan" + str(wave)
         try:
-            os.mkdir(data[0:-6] + "/clearWaves/lessThan/")
+            os.mkdir(cast(str, data[:-6]) + "/clearWaves/lessThan/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/clearWaves/notlessThan/")
+            os.mkdir(cast(str, data[:-6]) + "/clearWaves/notlessThan/")
         except FileExistsError:
             pass
         return filterJobs(
@@ -657,11 +657,11 @@ def clearWave(
         )
     outPath += "equal" + str(wave)
     try:
-        os.mkdir(data[0:-6] + "/clearWaves/equal/")
+        os.mkdir(cast(str, data[:-6]) + "/clearWaves/equal/")
     except FileExistsError:
         pass
     try:
-        os.mkdir(data[0:-6] + "/clearWaves/notequal/")
+        os.mkdir(cast(str, data[:-6]) + "/clearWaves/notequal/")
     except FileExistsError:
         pass
     return filterJobs(
@@ -670,7 +670,7 @@ def clearWave(
 
 
 def dangerRate(
-    location, data, rate, comparison="="
+    location, data: Union[str, List[bytes]], rate, comparison="="
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the danger rate was the chosen danger rate.
@@ -696,11 +696,11 @@ def dangerRate(
     """
     if location == "disk":
         try:
-            os.mkdir(data[0:-6] + "/")
+            os.mkdir(cast(str, data[:-6]) + "/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/dangerRate/")
+            os.mkdir(cast(str, data[:-6]) + "/dangerRate/")
         except FileExistsError:
             pass
     outPath = "dangerRate/"
@@ -708,11 +708,11 @@ def dangerRate(
         if location == "disk":
             outPath += "greaterThan" + str(rate)
             try:
-                os.mkdir(data[0:-6] + "/dangerRate/greaterThan/")
+                os.mkdir(cast(str, data[:-6]) + "/dangerRate/greaterThan/")
             except FileExistsError:
                 pass
             try:
-                os.mkdir(data[0:-6] + "/dangerRate/notgreaterThan/")
+                os.mkdir(cast(str, data[:-6]) + "/dangerRate/notgreaterThan/")
             except FileExistsError:
                 pass
         return filterJobs(
@@ -725,11 +725,11 @@ def dangerRate(
         if location == "disk":
             outPath += "lessThan" + str(rate)
             try:
-                os.mkdir(data[0:-6] + "/dangerRate/lessThan/")
+                os.mkdir(cast(str, data[:-6]) + "/dangerRate/lessThan/")
             except FileExistsError:
                 pass
             try:
-                os.mkdir(data[0:-6] + "/dangerRate/notlessThan/")
+                os.mkdir(cast(str, data[:-6]) + "/dangerRate/notlessThan/")
             except FileExistsError:
                 pass
         return filterJobs(
@@ -741,11 +741,11 @@ def dangerRate(
     if location == "disk":
         outPath += "equal" + str(rate)
         try:
-            os.mkdir(data[0:-6] + "/dangerRate/equal/")
+            os.mkdir(cast(str, data[:-6]) + "/dangerRate/equal/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/dangerRate/notequal/")
+            os.mkdir(cast(str, data[:-6]) + "/dangerRate/notequal/")
         except FileExistsError:
             pass
     return filterJobs(
@@ -754,7 +754,7 @@ def dangerRate(
 
 
 def hasTides(
-    location, data, tides: List[str], mode=""
+    location, data: Union[str, List[bytes]], tides: List[str], mode=""
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the tide of at least one wave is the chosen tide.
@@ -778,15 +778,15 @@ def hasTides(
     """
     if location == "disk":
         try:
-            os.mkdir(data[0:-6])
+            os.mkdir(cast(str, data[:-6]))
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/tides/")
+            os.mkdir(cast(str, data[:-6]) + "/tides/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/nottides/")
+            os.mkdir(cast(str, data[:-6]) + "/nottides/")
         except FileExistsError:
             pass
     filterFunctions: List[Callable] = []
@@ -808,7 +808,7 @@ def hasTides(
 
 
 def hasEvents(
-    location, data, events: List[str], mode=""
+    location, data: Union[str, List[bytes]], events: List[str], mode=""
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     """
     Filter the data file to only jobs where the event of at least one wave is the chosen event.
@@ -832,15 +832,15 @@ def hasEvents(
     """
     if location == "disk":
         try:
-            os.mkdir(data[0:-6])
+            os.mkdir(cast(str, data[:-6]))
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/events/")
+            os.mkdir(cast(str, data[:-6]) + "/events/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/notevents/")
+            os.mkdir(cast(str, data[:-6]) + "/notevents/")
         except FileExistsError:
             pass
     filterFunctions: List[Callable] = []
@@ -873,19 +873,22 @@ def hasEvents(
 
 
 def hasWeaponTypes(
-    location, data, types: Union[List[str], Tuple[str, str, str, str]], mode=""
+    location,
+    data: Union[str, List[bytes]],
+    types: Union[List[str], Tuple[str, str, str, str]],
+    mode="",
 ) -> Union[Tuple[str, str], Tuple[List[bytes], List[bytes]]]:
     if location == "disk":
         try:
-            os.mkdir(data[0:-6])
+            os.mkdir(cast(str, data[:-6]))
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/weaponTypes/")
+            os.mkdir(cast(str, data[:-6]) + "/weaponTypes/")
         except FileExistsError:
             pass
         try:
-            os.mkdir(data[0:-6] + "/notweaponTypes/")
+            os.mkdir(cast(str, data[:-6]) + "/notweaponTypes/")
         except FileExistsError:
             pass
     weaponList = requests.get("https://stat.ink/api/v2/weapon").json()
