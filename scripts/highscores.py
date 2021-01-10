@@ -38,7 +38,7 @@ for keyA in scoresDict:
                 "polaris": {
                     "total": 0,
                     "url": None,
-                }
+                },
             }
     else:
         scoresDict[keyA] = {
@@ -61,7 +61,7 @@ for keyA in scoresDict:
             "polaris": {
                 "total": 0,
                 "url": None,
-            }
+            },
         }
 with gzip.open(data) as reader:
     for line in reader:
