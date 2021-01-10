@@ -234,7 +234,7 @@
 
 <dl class="function">
 <dt id="core.getArrayOfStat">
-<code class="descclassname">core.</code><code class="descname">getArrayOfStat</code><span class="sig-paren">(</span><em>location</em>, <em>data</em>, <em>stat</em><span class="sig-paren">)</span> &#x2192; List[float]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getArrayOfStat" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">getArrayOfStat</code><span class="sig-paren">(</span><em>location, data: Union[str, List[bytes]], stat</em><span class="sig-paren">)</span> &#x2192; List[float]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.getArrayOfStat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collect all the values of a single stat for a given list of jobs.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -584,7 +584,7 @@
 
 <dl class="function">
 <dt id="core.statSummary">
-<code class="descclassname">core.</code><code class="descname">statSummary</code><span class="sig-paren">(</span><em>location</em>, <em>data</em>, <em>stat</em><span class="sig-paren">)</span> &#x2192; Tuple[float, float, float, float]<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.statSummary" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">core.</code><code class="descname">statSummary</code><span class="sig-paren">(</span><em>location, data: Union[str, List[bytes]], stats</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference external" href="https://github.com/cassdelacruzmunoz/salmontracker/blob/dev/core.py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.statSummary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the average, min, median, and max of a stat given a data file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
