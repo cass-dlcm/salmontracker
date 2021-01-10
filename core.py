@@ -417,7 +417,7 @@ def getValMultiDimensional(data, statArr: List[Union[str, int]]) -> str:
     return getattr(data, statArr[0])
 
 
-def statSummary(location, data, stat) -> Tuple[float, float, float, float]:
+def statSummary(location, data: Union[str, List[bytes]], stats) -> dict:
     """
     Find the average, min, median, and max of a stat given a data file
 
@@ -428,34 +428,62 @@ def statSummary(location, data, stat) -> Tuple[float, float, float, float]:
 
     """
     if location == "disk":
-        reader = gzip.open(data)
+        reader: Union[GzipFile, List[bytes]] = gzip.open(cast(str, data))
     else:
-        reader = data
-    statArr: List[str] = stat.split()
-    sumVal: float = 0.0
-    maxVal: float = 0.0
-    minVal: float = sys.float_info.max
-    vals: List[float] = []
-    count: float = 0.0
+        reader = cast(List[bytes], data)
+    statDict: Dict[str, Dict[str, Union[float, List[float]]]] = {}
+    resultDict: Dict[str, Dict[str, float]] = {}
+    for stat in stats:
+        statDict[stat] = {
+            "sum_val": 0.0,
+            "max_val": 0.0,
+            "min_val": sys.float_info.max,
+            "vals": [],
+            "count": 0.0,
+        }
+        resultDict[stat] = {
+            "min_val": sys.float_info.max,
+            "max_val": 0.0,
+            "count": 0.0,
+            "median": 0.0,
+            "standard_deviation": 0.0,
+            "mean": 0.0,
+            "sum": 0.0,
+        }
     for line in reader:
         if location == "disk":
             job = Job(**ujson.loads(line))
         else:
             job = Job(**ujson.loads(zlib.decompress(line)))
-        val = float(
-            getValMultiDimensional(
-                job,
-                list(map(lambda ele: int(ele) if ele.isdigit() else ele, statArr)),
+        for stat in statDict:
+            val = float(
+                getValMultiDimensional(
+                    job,
+                    list(
+                        map(
+                            lambda ele: int(ele) if ele.isdigit() else ele, stat.split()
+                        )
+                    ),
+                )
             )
-        )
-        sumVal += val
-        count += 1.0
-        maxVal = max(maxVal, val)
-        minVal = min(minVal, val)
-        vals.append(val)
+            cast(Dict[str, float], statDict[stat])["sum_val"] += val
+            cast(Dict[str, float], statDict[stat])["count"] += 1.0
+            statDict[stat]["max_val"] = max(statDict[stat]["max_val"], val)
+            statDict[stat]["min_val"] = min(statDict[stat]["min_val"], val)
+            cast(List[float], statDict[stat]["vals"]).append(val)
     if location == "disk":
-        reader.close()
-    return (sumVal / count, minVal, np.median(vals), maxVal)
+        cast(GzipFile, reader).close()
+    for stat in stats:
+        resultDict[stat]["min_val"] = cast(float, statDict[stat]["min_val"])
+        resultDict[stat]["max_val"] = cast(float, statDict[stat]["max_val"])
+        resultDict[stat]["mean"] = cast(float, statDict[stat]["sum_val"]) / cast(
+            float, statDict[stat]["count"]
+        )
+        resultDict[stat]["standard_deviation"] = np.std(statDict[stat]["vals"])
+        resultDict[stat]["median"] = np.median(statDict[stat]["vals"])
+        resultDict[stat]["sum"] = cast(float, statDict[stat]["sum_val"])
+        resultDict[stat]["count"] = cast(float, statDict[stat]["count"])
+    return resultDict
 
 
 def waveClearPercentageWithWeapon(location, data, weapon):
@@ -990,7 +1018,7 @@ def printBosses(data: Job) -> None:
             )
 
 
-def getArrayOfStat(location, data, stat) -> List[float]:
+def getArrayOfStat(location, data: Union[str, List[bytes]], stat) -> List[float]:
     """
     Collect all the values of a single stat for a given list of jobs.
 
@@ -1009,9 +1037,9 @@ def getArrayOfStat(location, data, stat) -> List[float]:
 
     """
     if location == "disk":
-        reader = gzip.open(data)
+        reader: Union[GzipFile, List[bytes]] = gzip.open(cast(str, data))
     else:
-        reader = data
+        reader = cast(List[bytes], data)
     results: List[float] = []
     for line in reader:
         if location == "disk":
@@ -1035,7 +1063,7 @@ def getArrayOfStat(location, data, stat) -> List[float]:
             )
         )
     if location == "disk":
-        reader.close()
+        cast(GzipFile, reader).close()
     return results
 
 
