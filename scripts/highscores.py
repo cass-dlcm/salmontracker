@@ -6,6 +6,7 @@ import gzip
 data = core.init("User", "data/", ujson.load(open("keys.json"))["statink_key"])
 scoresDict: dict = {
     "All": None,
+    "All (no night)": None,
     "Princess": None,
     "None": {"low": None, "normal": None, "high": None},
     "mothership": {"low": None, "normal": None, "high": None},
@@ -38,7 +39,7 @@ for keyA in scoresDict:
                 "polaris": {
                     "total": 0,
                     "url": None,
-                }
+                },
             }
     else:
         scoresDict[keyA] = {
@@ -61,7 +62,7 @@ for keyA in scoresDict:
             "polaris": {
                 "total": 0,
                 "url": None,
-            }
+            },
         }
 with gzip.open(data) as reader:
     for line in reader:
@@ -70,6 +71,7 @@ with gzip.open(data) as reader:
         if job is not None and job.stage is not None and job.waves is not None:
             for wave in job.waves:
                 totalEggs += wave.golden_egg_delivered
+                events = False
                 if hasattr(wave, "known_occurrence"):
                     if (
                         wave.golden_egg_delivered
@@ -77,6 +79,7 @@ with gzip.open(data) as reader:
                             job.stage.key
                         ]["total"]
                     ):
+                        events = True
                         scoresDict[wave.known_occurrence.key][wave.water_level.key][
                             job.stage.key
                         ]["url"] = job.url
@@ -99,6 +102,12 @@ with gzip.open(data) as reader:
             if totalEggs > scoresDict["All"][job.stage.key]["total"]:
                 scoresDict["All"][job.stage.key]["total"] = totalEggs
                 scoresDict["All"][job.stage.key]["url"] = job.url
+            if (
+                not events
+                and totalEggs > scoresDict["All (no night)"][job.stage.key]["total"]
+            ):
+                scoresDict["All (no night)"][job.stage.key]["total"] = totalEggs
+                scoresDict["All (no night)"][job.stage.key]["url"] = job.url
             if job.my_data is not None and (
                 job.my_data.golden_egg_delivered
                 > scoresDict["Princess"][job.stage.key]["total"]
