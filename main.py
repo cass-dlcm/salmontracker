@@ -17,7 +17,6 @@ from filters import (
 import ujson
 from typing import List, Tuple, cast
 import sys
-import jsonlines
 from scipy.stats import ttest_ind
 import numpy as np
 import matplotlib.pyplot as plt
@@ -250,7 +249,8 @@ def printAllJobs(dataList):
     :type dataList: str
     """
     with gzip.open(dataList) as reader:
-        for job in jsonlines.Reader(reader, loads=ujson.loads):
+        for line in reader:
+            job = Job(**ujson.loads(line))
             core.printGeneral(job)
             print()
             core.printWaves(job)

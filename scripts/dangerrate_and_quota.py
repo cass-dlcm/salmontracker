@@ -3,7 +3,6 @@ from objects import Job
 import matplotlib.pyplot as plt
 import numpy
 from typing import List, cast, Union, Tuple
-import jsonlines
 import ujson
 import gzip
 

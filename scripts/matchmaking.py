@@ -4,7 +4,6 @@ import core
 from typing import List, Union, Tuple, Dict, cast
 import ujson
 import gzip
-import jsonlines
 
 
 class PlayerData:

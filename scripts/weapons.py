@@ -2,7 +2,6 @@ import core
 from objects import Job
 import filters
 from core import locale
-import jsonlines
 import ujson
 import gzip
 import requests

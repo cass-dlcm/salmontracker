@@ -58,7 +58,6 @@ master_doc = "index"
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
-    "jsonlines": ("https://jsonlines.readthedocs.io/en/latest/", None),
     "requests": ("https://requests.readthedocs.io/en/master/", None),
 }
 

@@ -2,7 +2,6 @@ import os.path
 import ujson
 import numpy as np
 import requests
-import jsonlines
 import sys
 from typing import Tuple, List, Union, Dict, cast, Optional, Callable, Any
 import gzip
@@ -31,7 +30,6 @@ def hasJobs(location, data: Union[str, List[bytes]]) -> bool:
     :rtype: bool
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     :Example:
 
@@ -49,10 +47,10 @@ def hasJobs(location, data: Union[str, List[bytes]]) -> bool:
     try:
         if location == "disk":
             with gzip.open(cast(str, data)) as reader:
-                jsonlines.Reader(reader, ujson.loads).read()
+                ujson.loads(reader.read())
                 return True
         else:
-            jsonlines.Reader(data, ujson.loads).read()
+            ujson.loads(zlib.decompress(cast(bytes, data[0])))
             return True
     except EOFError:
         return False
@@ -98,7 +96,6 @@ def findRotationByWeaponsAndStage(
     :rtype: List[int]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     :Example:
 
@@ -298,7 +295,6 @@ def findWeaponsAndStageByRotation(
     :rtype: Dict[str, Union[str, List[str]]]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     :Example:
 
@@ -362,7 +358,6 @@ def findPlayerIdByName(location, data, player) -> List[str]:
     :rtype: List[str]
     :raises gzip.BadGzipFile: if the file exists but isn't a gzip file
     :raises FileNotFoundError: if the file doesn't exist
-    :raises jsonlines.InvalidLineError: if the file is a gzip file of something else
 
     >>> import core
     >>> core.findPlayerIdByName("data/salmonAll.jl.gz", "CassTheFae")
@@ -1117,12 +1112,13 @@ def init(mode, data_path, api_key="") -> str:
                 with gzip.open(
                     fileName[0:-6] + "Temp.jl.gz", "at", encoding="utf8"
                 ) as writer:
-                    for line in jsonlines.Reader(reader, ujson.loads):
-                        ujson.dump(line, writer)
+                    for line in reader:
+                        job = ujson.loads(line)
+                        writer.write(ujson.dumps(job))
                         writer.write("\n")
-                        recentId = line["id"]
+                        recentId = job["id"]
             os.remove(fileName[0:-6] + "Temp.jl.gz")
-        except (jsonlines.jsonlines.InvalidLineError, zlib.error):
+        except (zlib.error):
             os.replace(fileName[0:-6] + "Temp.jl.gz", fileName)
         prevLastId: int = 0
         params: Dict[str, str] = {"order": "asc", "newer_than": str(recentId)}

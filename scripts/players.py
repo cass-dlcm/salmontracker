@@ -3,7 +3,6 @@ import sys
 from core import getValMultiDimensional
 from objects import Job
 import gzip
-import jsonlines
 import os
 import ujson
 import numpy as np

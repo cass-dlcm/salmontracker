@@ -1,6 +1,5 @@
 import core
 from objects import Job
-import jsonlines
 import ujson
 import gzip
 from typing import Dict, List, Union, cast
