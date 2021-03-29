@@ -1,5 +1,5 @@
 matplotlib==3.3.3
-numpy==1.19.5
+numpy==1.20.2
 requests==2.25.1
 scipy==1.6.0
 ujson==4.0.2
