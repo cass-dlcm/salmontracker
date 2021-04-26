@@ -1,7 +1,7 @@
 matplotlib==3.3.3
 numpy==1.19.5
 requests==2.25.1
-scipy==1.6.0
+scipy==1.6.3
 ujson==4.0.2
 Sphinx==3.4.3
 guzzle-sphinx-theme==0.7.11
